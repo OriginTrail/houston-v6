@@ -1,21 +1,11 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-    <ul>
-      <li :key="d" v-for="d in list">{{ d }}</li>
-    </ul>
-  </div>
+  <div class="homepage-wrapper"></div>
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue';
-
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld,
-  },
+  name: 'Homepage',
+  components: {},
   data() {
     return {
       list: [],
@@ -35,3 +25,8 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.homepage-wrapper {
+}
+</style>
