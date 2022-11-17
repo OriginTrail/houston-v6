@@ -1,16 +1,24 @@
 <template>
   <div id="app">
     <Header></Header>
+    <div class="page-body">
+      <sidebar-nav></sidebar-nav>
+      <overview></overview>
+    </div>
   </div>
 </template>
 
 <script>
 import Header from './components/sections/Header';
+import Overview from './components/sections/Overview';
+import SidebarNav from './components/sections/SidebarNav';
 
 export default {
   name: 'App',
   components: {
     Header,
+    SidebarNav,
+    Overview,
   },
 };
 </script>
@@ -63,5 +71,10 @@ export default {
   // p {
   //   margin-top: 0;
   // }
+
+  .page-body {
+    display: flex;
+    column-gap: 48px;
+  }
 }
 </style>
