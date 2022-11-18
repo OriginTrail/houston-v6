@@ -40,8 +40,14 @@ export default {
     box-sizing: border-box;
   }
 
+  p {
+    margin: 0;
+    padding: 0;
+  }
+
   /* Typography */
   font-family: 'Poppins', sans-serif;
+  font-style: normal;
 
   h1,
   h2,
@@ -51,26 +57,19 @@ export default {
     margin-bottom: 10px;
   }
 
+  h1 {
+    font-size: 32px;
+    line-height: 44px;
+  }
+
+  h2 {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
   .grey-text {
     color: $black-tertiary;
   }
-
-  // h1 {
-  //   font-size: 6rem;
-  // }
-
-  // h2 {
-  //   font-size: 4rem;
-  // }
-
-  // h3 {
-  //   font-size: 3rem;
-  //   font-weight: 500;
-  // }
-
-  // p {
-  //   margin-top: 0;
-  // }
 
   .page-body {
     display: flex;
