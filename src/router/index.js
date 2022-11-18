@@ -1,14 +1,26 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Homepage.vue';
+import Overview from '../components/sections/Overview';
+import Tokenomics from '../components/sections/Tokenomics';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: 'Homepage',
+    name: 'homepage',
     component: Home,
+  },
+  {
+    path: '/overview',
+    name: 'overview',
+    component: Overview,
+  },
+  {
+    path: '/tokenomics',
+    name: 'tokenomics',
+    component: Tokenomics,
   },
 ];
 

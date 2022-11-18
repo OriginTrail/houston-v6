@@ -1,27 +1,16 @@
 <template>
   <div id="app">
-    <Header></Header>
-    <div class="page-body">
-      <sidebar-nav></sidebar-nav>
-      <!-- <overview></overview> -->
-      <tokenomics></tokenomics>
-    </div>
+    <Homepage />
   </div>
 </template>
 
 <script>
-import Header from './components/sections/Header';
-import SidebarNav from './components/sections/SidebarNav';
-// import Overview from './components/sections/Overview';
-import Tokenomics from './components/sections/Tokenomics';
+import Homepage from './views/Homepage';
 
 export default {
   name: 'App',
   components: {
-    Header,
-    SidebarNav,
-    // Overview,
-    Tokenomics,
+    Homepage,
   },
 };
 </script>
@@ -31,11 +20,6 @@ export default {
 @import './assets/variable';
 
 #app {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-height: 100vh;
-
   /* Resets*/
   *,
   *::before,
@@ -72,11 +56,6 @@ export default {
 
   .grey-text {
     color: $black-tertiary;
-  }
-
-  .page-body {
-    display: flex;
-    column-gap: 48px;
   }
 }
 </style>

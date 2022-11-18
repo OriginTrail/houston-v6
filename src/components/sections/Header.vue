@@ -51,7 +51,7 @@ export default {
   display: flex;
   align-items: center;
   height: 128px;
-  padding: 20px 64px;
+  padding: 20px 30px;
 
   .logo {
     width: 218px;
