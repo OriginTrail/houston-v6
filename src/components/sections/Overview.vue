@@ -1,9 +1,9 @@
 <template>
   <div class="overview-wrapper">
-    <h1>Overview</h1>
+    <h2>Overview</h2>
     <div class="page-content">
       <div class="trac-balance">
-        <h2>TRAC Balance</h2>
+        <h3>TRAC Balance</h3>
         <div class="stakes">
           <div class="property-wrapper">
             <p class="title">Staked</p>
@@ -39,7 +39,7 @@
       </div>
 
       <div class="useful-links">
-        <h2>Useful links:</h2>
+        <h3>Useful links:</h3>
         <div class="social-icons">
           <a href="#" target="_blank"
             ><img src="../../../public/images/icons/file-icon.svg" alt=""

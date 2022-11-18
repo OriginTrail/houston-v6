@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar-nav-wrapper">
     <ul class="sidebar-nav">
-      <li class="active">Overview</li>
-      <li>Service tokenomics</li>
+      <li>Overview</li>
+      <li class="active">Service tokenomics</li>
       <li>Node configuration</li>
       <li>API keys</li>
       <li>Node telemetry</li>

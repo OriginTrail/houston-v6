@@ -3,22 +3,25 @@
     <Header></Header>
     <div class="page-body">
       <sidebar-nav></sidebar-nav>
-      <overview></overview>
+      <!-- <overview></overview> -->
+      <tokenomics></tokenomics>
     </div>
   </div>
 </template>
 
 <script>
 import Header from './components/sections/Header';
-import Overview from './components/sections/Overview';
 import SidebarNav from './components/sections/SidebarNav';
+// import Overview from './components/sections/Overview';
+import Tokenomics from './components/sections/Tokenomics';
 
 export default {
   name: 'App',
   components: {
     Header,
     SidebarNav,
-    Overview,
+    // Overview,
+    Tokenomics,
   },
 };
 </script>
@@ -57,12 +60,12 @@ export default {
     margin-bottom: 10px;
   }
 
-  h1 {
+  h2 {
     font-size: 32px;
     line-height: 44px;
   }
 
-  h2 {
+  h3 {
     font-size: 20px;
     line-height: 28px;
   }
