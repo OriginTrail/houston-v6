@@ -3,7 +3,7 @@
     <h2>Overview</h2>
     <div class="page-content">
       <div class="trac-balance">
-        <h3>TRAC Balance</h3>
+        <h3>TRAC balance</h3>
         <div class="stakes">
           <div class="property-wrapper">
             <p class="title">Staked</p>
@@ -70,7 +70,7 @@ export default {
   height: 880px;
   background: #f6f6f6;
   border-radius: 20px;
-  padding: 80px 56px;
+  padding: 82px 40px;
 
   .page-content {
     display: flex;

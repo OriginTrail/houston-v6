@@ -70,7 +70,7 @@ export default {
   height: 880px;
   background: #f6f6f6;
   border-radius: 20px;
-  padding: 80px 56px;
+  padding: 82px 40px;
 
   .section-heading {
     margin-bottom: 24px;
@@ -82,7 +82,7 @@ export default {
     align-items: flex-start;
     padding: 16px;
     gap: 10px;
-    width: 1024px;
+    max-width: 1024px;
     height: 128px;
     background: #ffffff;
     box-shadow: 0px 4px 8px rgba(82, 97, 115, 0.18);
@@ -94,7 +94,7 @@ export default {
       column-gap: 16px;
 
       .current-ask-label {
-        margin-right: 40px !important;
+        max-width: 108px;
       }
 
       input {
