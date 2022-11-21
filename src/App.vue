@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <Homepage />
+    <MainLayout />
   </div>
 </template>
 
 <script>
-import Homepage from './views/Homepage';
+import MainLayout from './views/MainLayout';
 
 export default {
   name: 'App',
   components: {
-    Homepage,
+    MainLayout,
   },
 };
 </script>

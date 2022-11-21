@@ -1,10 +1,9 @@
 <template>
-  <div class="homepage-wrapper">
+  <div class="main-layout-wrapper">
     <Header></Header>
     <div class="page-body">
       <sidebar-nav></sidebar-nav>
-      <overview></overview>
-      <!-- <tokenomics></tokenomics> -->
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -12,16 +11,12 @@
 <script>
 import Header from '../components/sections/Header';
 import SidebarNav from '../components/sections/SidebarNav';
-import Overview from '../components/sections/Overview';
-// import Tokenomics from '../components/sections/Tokenomics';
 
 export default {
-  name: 'Homepage',
+  name: 'MainLayout',
   components: {
     Header,
     SidebarNav,
-    Overview,
-    // Tokenomics,
   },
   data() {
     return {
@@ -44,7 +39,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.homepage-wrapper {
+.main-layout-wrapper {
   display: flex;
   flex-direction: column;
   width: 100%;

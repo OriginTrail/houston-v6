@@ -1,13 +1,37 @@
 <template>
   <div class="sidebar-nav-wrapper">
     <ul class="sidebar-nav">
-      <li @click="activate(1)" :class="{ active: activeElement === 1 }">Overview</li>
-      <li @click="activate(2)" :class="{ active: activeElement === 2 }">Service tokenomics</li>
-      <li @click="activate(3)" :class="{ active: activeElement === 3 }">Node configuration</li>
-      <li @click="activate(4)" :class="{ active: activeElement === 4 }">API keys</li>
-      <li @click="activate(5)" :class="{ active: activeElement === 5 }">Node telemetry</li>
-      <li @click="activate(6)" :class="{ active: activeElement === 6 }">Logs</li>
-      <li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li>
+      <router-link to="/"
+        ><li @click="activate(1)" :class="{ active: activeElement === 1 }">
+          Overview
+        </li></router-link
+      >
+      <router-link to="/tokenomics"
+        ><li @click="activate(2)" :class="{ active: activeElement === 2 }">
+          Service tokenomics
+        </li></router-link
+      >
+      <router-link to="#"
+        ><li @click="activate(3)" :class="{ active: activeElement === 3 }">
+          Node configuration
+        </li></router-link
+      >
+      <router-link to="#"
+        ><li @click="activate(4)" :class="{ active: activeElement === 4 }">
+          API keys
+        </li></router-link
+      >
+      <router-link to="#"
+        ><li @click="activate(5)" :class="{ active: activeElement === 5 }">
+          Node telemetry
+        </li></router-link
+      >
+      <router-link to="#"
+        ><li @click="activate(6)" :class="{ active: activeElement === 6 }">Logs</li></router-link
+      >
+      <router-link to="#"
+        ><li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li></router-link
+      >
     </ul>
   </div>
 </template>
@@ -62,6 +86,10 @@ export default {
       &:hover {
         cursor: pointer;
       }
+    }
+
+    a {
+      text-decoration: none;
     }
   }
 }
