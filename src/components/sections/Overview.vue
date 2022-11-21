@@ -11,7 +11,7 @@
           </div>
           <div class="property-wrapper">
             <p class="title">Delegated</p>
-            <p class="value">0 TRAC(Delegator share 0%)</p>
+            <p class="value">0 TRAC <br />(Delegator share 0%)</p>
           </div>
           <div class="property-wrapper property-short">
             <p class="title">Slashed</p>
@@ -66,7 +66,7 @@ export default {
 @import '../../assets/variable.scss';
 
 .overview-wrapper {
-  width: 1104px;
+  width: 100%;
   height: 880px;
   background: #f6f6f6;
   border-radius: 20px;

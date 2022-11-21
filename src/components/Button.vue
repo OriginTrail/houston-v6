@@ -13,6 +13,7 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 14px;
   padding: 12px 16px;
   min-width: 113px;
   height: 40px;

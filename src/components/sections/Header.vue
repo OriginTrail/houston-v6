@@ -76,7 +76,7 @@ export default {
 
   .blockchain-rpc-status {
     height: 98px;
-    margin-left: 200px;
+    margin-left: 260px;
 
     p {
       font-style: normal;

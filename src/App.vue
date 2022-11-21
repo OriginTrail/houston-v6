@@ -41,7 +41,6 @@ export default {
   h3 {
     color: $black-primary;
     font-weight: 700;
-    margin-bottom: 10px;
   }
 
   h2 {

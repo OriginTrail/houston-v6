@@ -1,7 +1,7 @@
 <template>
   <div class="tokenomics-wrapper">
     <!-- Service Tokenomics -->
-    <h2>Service Tokenomics</h2>
+    <h2 class="section-heading">Service tokenomics</h2>
     <div class="current-ask">
       <div class="top-row">
         <p class="current-ask-label">Current ask</p>
@@ -15,12 +15,12 @@
           <info-pair title="Average ask in neighborhoods" description="0.000012"></info-pair>
           <info-pair title="Average ask on the network" description="0.000013"></info-pair>
         </div>
-        <Button class="update-button">Update Ask</Button>
+        <Button class="update-button">Update ask</Button>
       </div>
     </div>
 
     <!-- Stake Settings -->
-    <h2 class="stake-settings-heading">Stake Settings</h2>
+    <h2 class="section-heading stake-settings-heading">Stake settings</h2>
     <div class="current-ask">
       <div class="top-row">
         <p class="current-ask-label">Current stake</p>
@@ -33,7 +33,7 @@
         <div class="average-ask-info">
           <info-pair title="Delegated" description="0"></info-pair>
         </div>
-        <Button class="update-button">Update Ask</Button>
+        <Button class="update-button">Update stake</Button>
       </div>
     </div>
 
@@ -66,11 +66,15 @@ export default {
 @import '../../assets/variable.scss';
 
 .tokenomics-wrapper {
-  width: 1104px;
+  width: 100%;
   height: 880px;
   background: #f6f6f6;
   border-radius: 20px;
   padding: 80px 56px;
+
+  .section-heading {
+    margin-bottom: 24px;
+  }
 
   .current-ask {
     display: flex;

@@ -33,14 +33,14 @@ export default {
   .title {
     font-style: normal;
     font-weight: 400;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 16px;
   }
 
   .description {
     font-style: normal;
     font-weight: 400;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 16px;
     color: $black-secondary;
   }
