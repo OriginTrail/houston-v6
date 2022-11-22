@@ -41,13 +41,15 @@
       <div class="useful-links">
         <h3>Useful links:</h3>
         <div class="social-icons">
-          <a href="#" target="_blank"
+          <a
+            href="https://docs.origintrail.io/decentralized-knowledge-graph-layer-2/testnet-node-setup-instructions/houston-origintrail-node-control-center"
+            target="_blank"
             ><img src="../../../public/images/icons/file-icon.svg" alt=""
           /></a>
-          <a href="#" target="_blank"
+          <a href="https://discord.com/invite/FCgYk2S" target="_blank"
             ><img src="../../../public/images/icons/discord-icon.svg" alt=""
           /></a>
-          <a href="#" target="_blank"
+          <a href="https://origintrail.io/" target="_blank"
             ><img src="../../../public/images/icons/origintrail-icon.svg" alt=""
           /></a>
         </div>
