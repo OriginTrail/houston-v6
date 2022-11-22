@@ -11,25 +11,25 @@
           Service tokenomics
         </li></router-link
       >
-      <router-link to="#"
+      <router-link to="#" class="disabled"
         ><li @click="activate(3)" :class="{ active: activeElement === 3 }">
           Node configuration
         </li></router-link
       >
-      <router-link to="#"
+      <router-link to="#" class="disabled"
         ><li @click="activate(4)" :class="{ active: activeElement === 4 }">
           API keys
         </li></router-link
       >
-      <router-link to="#"
+      <router-link to="#" class="disabled"
         ><li @click="activate(5)" :class="{ active: activeElement === 5 }">
           Node telemetry
         </li></router-link
       >
-      <router-link to="#"
+      <router-link to="#" class="disabled"
         ><li @click="activate(6)" :class="{ active: activeElement === 6 }">Logs</li></router-link
       >
-      <router-link to="#"
+      <router-link to="#" class="disabled"
         ><li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li></router-link
       >
     </ul>
@@ -90,6 +90,10 @@ export default {
 
     a {
       text-decoration: none;
+    }
+
+    .disabled {
+      pointer-events: none;
     }
   }
 }
