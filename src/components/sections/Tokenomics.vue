@@ -132,6 +132,10 @@ export default {
 
       .update-button {
         margin-right: 173px;
+
+        @media screen and (min-width: 1920px) {
+          margin-right: 212px;
+        }
       }
     }
   }
