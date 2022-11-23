@@ -12,33 +12,35 @@
         </li></router-link
       >
       <router-link to="#" class="disabled"
-        ><li @click="activate(3)" :class="{ active: activeElement === 3 }">
-          Node configuration
-        </li></router-link
+        ><li @click="activate(3)" :class="{ active: activeElement === 3 }">Node configuration</li>
+        <Pill class="coming-soon">coming soon</Pill></router-link
       >
       <router-link to="#" class="disabled"
-        ><li @click="activate(4)" :class="{ active: activeElement === 4 }">
-          API keys
-        </li></router-link
+        ><li @click="activate(4)" :class="{ active: activeElement === 4 }">API keys</li>
+        <Pill class="coming-soon">coming soon</Pill></router-link
       >
       <router-link to="#" class="disabled"
-        ><li @click="activate(5)" :class="{ active: activeElement === 5 }">
-          Node telemetry
-        </li></router-link
+        ><li @click="activate(5)" :class="{ active: activeElement === 5 }">Node telemetry</li>
+        <Pill class="coming-soon">coming soon</Pill></router-link
       >
       <router-link to="#" class="disabled"
-        ><li @click="activate(6)" :class="{ active: activeElement === 6 }">Logs</li></router-link
+        ><li @click="activate(6)" :class="{ active: activeElement === 6 }">Logs</li>
+        <Pill class="coming-soon">coming soon</Pill></router-link
       >
       <router-link to="#" class="disabled"
-        ><li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li></router-link
+        ><li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li>
+        <Pill class="coming-soon">coming soon</Pill></router-link
       >
     </ul>
   </div>
 </template>
 
 <script>
+import Pill from '../Pill.vue';
+
 export default {
   name: 'SidebarNav',
+  components: { Pill },
   data() {
     return {
       activeElement: 1,
@@ -71,12 +73,14 @@ export default {
     padding-left: 0;
 
     li {
-      padding: 9px 12px 12px;
+      font-size: 14px;
+      padding: 9px 12px;
       gap: 8px;
       width: 208px;
       height: 40px;
       border-radius: 8px;
       color: $white-secondary;
+      white-space: nowrap;
 
       &.active {
         background-color: white;
@@ -94,6 +98,17 @@ export default {
 
     .disabled {
       pointer-events: none;
+      display: flex;
+      align-items: center;
+
+      & > li {
+        width: auto;
+        padding-right: 8px;
+      }
+
+      .coming-soon {
+        width: 67px;
+      }
     }
   }
 }
