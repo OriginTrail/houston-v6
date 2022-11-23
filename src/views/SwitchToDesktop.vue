@@ -54,7 +54,9 @@ export default {
       max-width: 344px;
 
       @media screen and (min-width: 768px) {
-        max-width: 405px;
+        font-size: 20px;
+        line-height: 30px;
+        max-width: 547px;
       }
     }
   }
