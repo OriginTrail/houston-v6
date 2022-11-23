@@ -1,6 +1,6 @@
 <template>
   <div class="page-not-found-wrapper">
-    <img class="logo" src="../../../public/images/logo.svg" alt="Houston application logo" />
+    <img class="logo" src="../../public/images/logo.svg" alt="Houston application logo" />
     <h1 id="title">404</h1>
     <p id="description">The resource requested could not be found on this server</p>
     <Button id="button">Go back to the overview page</Button>
@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import Button from '../Button';
+import Button from '../components/Button';
 
 export default {
   name: 'PageNotFound',
@@ -19,7 +19,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variable';
+@import '../assets/variable';
 
 .page-not-found-wrapper {
   display: flex;
