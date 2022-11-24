@@ -2,38 +2,38 @@
   <div class="tokenomics-wrapper">
     <!-- Service Tokenomics -->
     <h2 class="section-heading">Service tokenomics</h2>
-    <div class="current-ask">
-      <div class="top-row">
-        <p class="current-ask-label">Current ask</p>
-        <input type="text" class="yellow-500" />
-        <p>TRAC / (kb-epoch)</p>
-        <input type="text" />
-        <p>TRAC / (kb-epoch)</p>
-      </div>
-      <div class="bottom-row">
-        <div class="average-ask-info">
-          <info-pair title="Average ask in neighborhoods" description="0.000012"></info-pair>
-          <info-pair title="Average ask on the network" description="0.000013"></info-pair>
+    <div class="current-form">
+      <div class="first-col">
+        <div class="label-and-first-input">
+          <p class="settings-label">Current ask</p>
+          <InputPair label="TRAC / (kb-epoch)" isYellow="true" />
         </div>
-        <Button class="update-button">Update ask</Button>
+        <InfoPair
+          class="average-ask-neighbourhoods"
+          title="Average ask in neighborhoods"
+          description="0.000012"
+        />
+        <InfoPair title="Average ask on the network" description="0.000013" />
+      </div>
+
+      <div class="second-col">
+        <InputPairWithBtn label="TRAC / (kb-epoch)" btnLabel="Update ask" />
       </div>
     </div>
 
     <!-- Stake Settings -->
     <h2 class="section-heading stake-settings-heading">Stake settings</h2>
-    <div class="current-ask">
-      <div class="top-row">
-        <p class="current-ask-label">Current stake</p>
-        <input type="text" />
-        <p>TRAC</p>
-        <input type="text" class="trac-input-2" />
-        <p>TRAC</p>
-      </div>
-      <div class="bottom-row">
-        <div class="average-ask-info">
-          <info-pair title="Delegated" description="0"></info-pair>
+    <div class="current-form">
+      <div class="first-col">
+        <div class="label-and-first-input">
+          <p class="settings-label">Current stake</p>
+          <InputPair label="TRAC" />
         </div>
-        <Button class="update-button">Update stake</Button>
+        <InfoPair class="average-ask-neighbourhoods" title="Delegated:" description="0" />
+      </div>
+
+      <div class="second-col">
+        <InputPairWithBtn label="TRAC" btnLabel="Update stake" />
       </div>
     </div>
 
@@ -53,12 +53,14 @@
 </template>
 
 <script>
-import InfoPair from '../InfoPair';
 import Button from '../Button';
+import InputPair from '../InputPair';
+import InfoPair from '../InfoPair';
+import InputPairWithBtn from '../InputPairWithBtn';
 
 export default {
   name: 'Tokenomics',
-  components: { InfoPair, Button },
+  components: { Button, InputPair, InfoPair, InputPairWithBtn },
 };
 </script>
 
@@ -76,67 +78,57 @@ export default {
     margin-bottom: 24px;
   }
 
-  .current-ask {
+  .current-form {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    justify-content: space-between;
     padding: 16px;
-    gap: 10px;
+    min-width: 864px;
     max-width: 1024px;
-    height: 128px;
+    height: 170px;
     background: #ffffff;
     box-shadow: 0px 4px 8px rgba(82, 97, 115, 0.18);
     border-radius: 16px;
 
-    .top-row {
+    @media screen and (min-width: 1440px) {
+      height: 128px;
+    }
+
+    .first-col {
       display: flex;
-      align-items: center;
-      column-gap: 16px;
+      flex-direction: column;
+    }
 
-      .current-ask-label {
-        max-width: 108px;
-      }
+    .second-col {
+      display: flex;
+      flex-direction: column;
+      padding-top: 37px;
+      width: 50%;
 
-      input {
-        padding: 10px 10px 8px;
-        width: 244px;
-        height: 40px;
-        background: #ffffff;
-        border: 1px solid #dfdfdf;
-        border-radius: 8px;
-        color: $green-500;
-        text-align: right;
-      }
-
-      .trac-input-2 {
-        margin-left: 95px;
-      }
-
-      .yellow-500 {
-        color: $yellow-500;
+      @media screen and (min-width: 1440px) {
+        width: 43%;
+        padding-top: 0;
       }
     }
 
-    .bottom-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
+    .label-and-first-input {
+      margin-bottom: 16px;
 
-      .average-ask-info {
+      @media screen and (min-width: 1440px) {
         display: flex;
-        flex-direction: column;
-        row-gap: 8px;
-        margin-top: 8px;
+        align-items: center;
       }
 
-      .update-button {
-        margin-right: 173px;
+      .settings-label {
+        margin-bottom: 16px !important;
 
-        @media screen and (min-width: 1920px) {
-          margin-right: 212px;
+        @media screen and (min-width: 1440px) {
+          margin: 0 16px 0 0 !important;
         }
       }
+    }
+
+    .average-ask-neighbourhoods {
+      margin-bottom: 10px;
     }
   }
 
@@ -181,10 +173,6 @@ export default {
         line-height: 16px;
         color: $blue-primary;
       }
-    }
-
-    .property-short {
-      height: 56px;
     }
 
     .full-width {
