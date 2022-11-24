@@ -29,7 +29,7 @@
           <p class="settings-label">Current stake</p>
           <InputPair label="TRAC" />
         </div>
-        <InfoPair class="average-ask-neighbourhoods" title="Delegated:" description="0" />
+        <InfoPair title="Delegated:" description="0" />
       </div>
 
       <div class="second-col">
