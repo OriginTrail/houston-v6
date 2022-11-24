@@ -68,6 +68,7 @@ export default {
 @import '../../assets/variable.scss';
 
 .overview-wrapper {
+  min-width: 944px;
   width: 100%;
   height: 880px;
   background: #f6f6f6;

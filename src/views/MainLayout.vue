@@ -47,8 +47,12 @@ export default {
 
   .page-body {
     display: flex;
-    column-gap: 48px;
+    column-gap: 24px;
     padding: 0 30px;
+
+    @media screen and (min-width: 1440px) {
+      column-gap: 48px;
+    }
   }
 }
 </style>
