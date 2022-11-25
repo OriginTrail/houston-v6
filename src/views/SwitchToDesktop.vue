@@ -1,7 +1,7 @@
 <template>
   <div class="switch-to-desktop-wrapper">
     <div class="header">
-      <img class="logo" src="../../public/images/logo.svg" alt="Houston application logo" />
+      <img class="logo" src="images/logo.svg" alt="Houston application logo" />
     </div>
     <div class="body">
       <h2 class="title">Switch to desktop</h2>

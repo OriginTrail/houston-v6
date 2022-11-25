@@ -1,6 +1,6 @@
 <template>
   <div class="page-not-found-wrapper">
-    <img class="logo" src="../../public/images/logo.svg" alt="Houston application logo" />
+    <img class="logo" src="images/logo.svg" alt="Houston application logo" />
     <h1 id="title">404</h1>
     <p id="description">The resource requested could not be found on this server</p>
     <Button id="button">Go back to the overview page</Button>

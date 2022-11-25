@@ -44,13 +44,13 @@
           <a
             href="https://docs.origintrail.io/decentralized-knowledge-graph-layer-2/testnet-node-setup-instructions/houston-origintrail-node-control-center"
             target="_blank"
-            ><img src="../../../public/images/icons/file-icon.svg" alt=""
+            ><img src="images/icons/file-icon.svg" alt=""
           /></a>
           <a href="https://discord.com/invite/FCgYk2S" target="_blank"
-            ><img src="../../../public/images/icons/discord-icon.svg" alt=""
+            ><img src="images/icons/discord-icon.svg" alt=""
           /></a>
           <a href="https://origintrail.io/" target="_blank"
-            ><img src="../../../public/images/icons/origintrail-icon.svg" alt=""
+            ><img src="images/icons/origintrail-icon.svg" alt=""
           /></a>
         </div>
       </div>

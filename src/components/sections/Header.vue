@@ -1,7 +1,7 @@
 <template>
   <div class="header-wrapper">
     <div class="logo-node-and-assets-info">
-      <img class="logo" src="../../../public/images/logo.svg" alt="Houston application logo" />
+      <img class="logo" src="images/logo.svg" alt="Houston application logo" />
       <div class="node-info">
         <info-pair
           title="Node version"
@@ -20,15 +20,15 @@
     <div class="blockchain-rpc-status">
       <p class="rpc-status">Blockchain RPC status</p>
       <div class="status-pair">
-        <img src="../../../public/images/circle-green.svg" alt="" />
+        <img src="images/circle-green.svg" alt="" />
         <p>OriginTrail Parachain</p>
       </div>
       <div class="status-pair">
-        <img src="../../../public/images/circle-green.svg" alt="" />
+        <img src="images/circle-green.svg" alt="" />
         <p>Polygon</p>
       </div>
       <div class="status-pair">
-        <img src="../../../public/images/circle-amber.svg" alt="" />
+        <img src="images/circle-amber.svg" alt="" />
         <p>Ethereum</p>
       </div>
     </div>
