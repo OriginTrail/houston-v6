@@ -1,42 +1,46 @@
 <template>
-  <button @click="onClick" :class="{ disabled: disabled }"><slot></slot></button>
+  <a class="link-button" :href="href">
+    <span class="link-content">
+      <slot>
+        {{ text }}
+      </slot>
+    </span>
+  </a>
 </template>
 
 <script>
 export default {
-  name: 'Button',
+  name: 'LinkButton',
   props: {
-    disabled: {
-      type: Boolean,
-      default: false,
+    href: {
+      type: String,
+      default: null,
     },
-  },
-
-  methods: {
-    onClick() {
-      if (!this.disabled) {
-        this.$emit('click');
-      }
+    text: {
+      type: String,
+      default: null,
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-@import '../assets/variable.scss';
-button {
+<style scoped lang="scss">
+@import '../../assets/variable';
+.link-button {
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  padding: 12px 16px;
-  min-width: 113px;
-  height: 40px;
+  padding: 16px 16px;
+  height: 56px;
   background: #0e3fe5;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 16px;
   cursor: pointer;
+  .link-content {
+    margin: auto;
+  }
   &:hover {
     background-color: $blue-accent-hover;
   }

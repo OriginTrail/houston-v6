@@ -5,9 +5,9 @@
       <div class="trac-balance">
         <h3>TRAC balance</h3>
         <div class="stakes">
-          <div class="property-wrapper">
+          <div class="property-wrapper" v-if="tracBalance.staked">
             <p class="title">Staked</p>
-            <p class="value">50 500 TRAC</p>
+            <p class="value">{{ tracBalance.staked.toLocaleString('en') }} TRAC</p>
           </div>
           <div class="property-wrapper">
             <p class="title">Delegated</p>
@@ -31,7 +31,7 @@
             <p class="title">Your rewards</p>
             <p class="value">1509 TRAC</p>
           </div>
-          <div class="property-wrapper property-short full-width">
+          <div class="property-wrapper property-short">
             <p class="title">Delegator rewards</p>
             <p class="value">0 TRAC</p>
           </div>
@@ -41,17 +41,17 @@
       <div class="useful-links">
         <h3>Useful links:</h3>
         <div class="social-icons">
-          <a
+          <link-button
             href="https://docs.origintrail.io/decentralized-knowledge-graph-layer-2/testnet-node-setup-instructions/houston-origintrail-node-control-center"
             target="_blank"
             ><img src="images/icons/file-icon.svg" alt=""
-          /></a>
-          <a href="https://discord.com/invite/FCgYk2S" target="_blank"
-            ><img src="images/icons/discord-icon.svg" alt=""
-          /></a>
-          <a href="https://origintrail.io/" target="_blank"
-            ><img src="images/icons/origintrail-icon.svg" alt=""
-          /></a>
+          /></link-button>
+          <link-button href="https://discord.com/invite/FCgYk2S">
+            <img src="images/icons/discord-icon.svg" alt="" />
+          </link-button>
+          <link-button href="https://origintrail.io/">
+            <img src="images/icons/ot-icon.svg" />
+          </link-button>
         </div>
       </div>
     </div>
@@ -59,8 +59,31 @@
 </template>
 
 <script>
+import LinkButton from '@/components/shared/LinkButton';
+
 export default {
   name: 'Overview',
+  components: { LinkButton },
+  data() {
+    return {
+      tracBalance: {
+        staked: 50500,
+        delegated: {
+          value: 0,
+          share: 0,
+        },
+        slashed: 0,
+        total: 50500,
+      },
+      rewards: {
+        previousEpoch: 1509,
+        myReward: 1509,
+        delegator: 0,
+      },
+    };
+  },
+  computed: {},
+  methods: {},
 };
 </script>
 
@@ -68,13 +91,6 @@ export default {
 @import '../../assets/variable.scss';
 
 .overview-wrapper {
-  min-width: 944px;
-  width: 100%;
-  height: 880px;
-  background: #f6f6f6;
-  border-radius: 20px;
-  padding: 82px 40px;
-
   .page-content {
     display: flex;
     column-gap: 32px;
@@ -99,7 +115,8 @@ export default {
           flex-direction: column;
           padding: 8px 16px;
           gap: 8px;
-          width: 232px;
+          min-width: 48%;
+          flex-grow: 2;
           height: 82px;
           background: linear-gradient(0deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
             $blue-primary;
@@ -144,9 +161,10 @@ export default {
           flex-direction: column;
           padding: 8px 16px;
           gap: 8px;
-          width: 232px;
+          min-width: 48%;
+          flex-grow: 2;
           height: 61px;
-          background: $grey-light;
+          background: $section-grey-50;
           border-radius: 8px;
 
           .title {
@@ -168,10 +186,6 @@ export default {
 
         .property-short {
           height: 56px;
-        }
-
-        .full-width {
-          width: 100%;
         }
       }
     }

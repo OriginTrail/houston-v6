@@ -1,6 +1,6 @@
 <template>
   <div class="input-pair-wrapper">
-    <input :class="{ yellow: isYellow }" type="text" />
+    <input v-model="inputValue" :class="{ yellow: isYellow }" type="text" />
     <p class="label">{{ label }}</p>
   </div>
 </template>
@@ -17,6 +17,10 @@ export default {
     isYellow: {
       type: Boolean,
       default: false,
+    },
+    inputValue: {
+      type: String,
+      default: null,
     },
   },
 };

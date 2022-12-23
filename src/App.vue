@@ -24,6 +24,12 @@ export default {
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Roboto:wght@500&display=swap');
 @import './assets/variable';
+@import './assets/general';
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+}
 
 #app {
   /* Resets*/

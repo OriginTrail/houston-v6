@@ -1,8 +1,8 @@
 <template>
   <div class="input-pair-with-btn-wrapper">
     <div class="input-and-btn">
-      <input :class="{ yellow: isYellow }" type="text" />
-      <Button class="button">{{ btnLabel }}</Button>
+      <input v-model="value" :class="{ yellow: isYellow }" type="text" />
+      <Button class="button" @click="onButtonClick">{{ btnLabel }}</Button>
     </div>
     <p class="label">{{ label }}</p>
   </div>
@@ -28,6 +28,25 @@ export default {
       type: String,
       required: true,
       default: 'Button',
+    },
+    inputValue: {
+      type: String,
+      default: null,
+    },
+  },
+  data() {
+    return {
+      value: this.inputValue,
+    };
+  },
+  watch: {
+    inputValue(n) {
+      this.value = n;
+    },
+  },
+  methods: {
+    onButtonClick() {
+      this.$emit('click', this.value);
     },
   },
 };

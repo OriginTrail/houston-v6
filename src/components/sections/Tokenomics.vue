@@ -2,11 +2,15 @@
   <div class="tokenomics-wrapper">
     <!-- Service Tokenomics -->
     <h2 class="section-heading">Service tokenomics</h2>
-    <div class="current-form">
+    <div class="current-form ask-setting">
       <div class="first-col">
         <div class="label-and-first-input">
           <p class="settings-label">Current ask</p>
-          <InputPair label="TRAC / (kb-epoch)" isYellow="true" />
+          <InputPair
+            :input-value="getReadableTokenAmount(currentAsk, 18)"
+            label="TRAC / (kb-epoch)"
+            :isYellow="true"
+          />
         </div>
         <InfoPair
           class="average-ask-neighbourhoods"
@@ -57,10 +61,37 @@ import Button from '../Button';
 import InputPair from '../InputPair';
 import InfoPair from '../InfoPair';
 import InputPairWithBtn from '../InputPairWithBtn';
+import metamask from '@/service/metamask';
+import { getReadableTokenAmount } from '@/utils/cryptoUtils';
 
 export default {
   name: 'Tokenomics',
   components: { Button, InputPair, InfoPair, InputPairWithBtn },
+  data() {
+    return {
+      currentAsk: null,
+    };
+  },
+  computed: {
+    getIdentityId() {
+      return this.$store.getters.isIdentityResolved;
+    },
+  },
+  mounted() {
+    this.getAsk();
+  },
+  methods: {
+    getReadableTokenAmount,
+    getAsk() {
+      const loader = this.$loading({ target: '.ask-setting' });
+      metamask.contractService.getAsk(this.getIdentityId).then((askData) => {
+        this.currentAsk = askData;
+        loader.close();
+      });
+    },
+
+    updateAsk() {},
+  },
 };
 </script>
 
@@ -68,12 +99,6 @@ export default {
 @import '../../assets/variable.scss';
 
 .tokenomics-wrapper {
-  width: 100%;
-  height: 880px;
-  background: #f6f6f6;
-  border-radius: 20px;
-  padding: 82px 40px;
-
   .section-heading {
     margin-bottom: 24px;
   }
@@ -155,7 +180,7 @@ export default {
       gap: 8px;
       width: 232px;
       height: 56px;
-      background: $grey-light;
+      background: $section-grey-50;
       border-radius: 8px;
 
       .title {
