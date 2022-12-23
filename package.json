@@ -10,10 +10,14 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "big.js": "^6.2.1",
     "core-js": "^3.6.5",
+    "element-ui": "^2.15.12",
+    "ethers": "^5.7.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "web3": "^1.8.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
