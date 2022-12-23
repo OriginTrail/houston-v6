@@ -1,30 +1,66 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Overview from '../components/sections/Overview';
+import Tokenomics from '../components/sections/Tokenomics';
+import store from '../store';
+import LoginPage from '@/views/LoginPage';
+import metamask from '@/service/metamask';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
-    component: Home,
+    path: '/',
+    name: 'overview',
+    component: Overview,
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+    path: '/tokenomics',
+    name: 'tokenomics',
+    component: Tokenomics,
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginPage,
+    meta: {
+      public: true,
+      fullPage: true,
+    },
   },
 ];
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.public) {
+    return next();
+  }
+  if (!store.getters.isLoggedIn) {
+    if (metamask.isSavedConnection()) {
+      await store.dispatch('toggleGlobalLoader', { status: true, text: null });
+      await store
+        .dispatch('connectToMetamask')
+        .then(() => {
+          next();
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .then(() => {
+          next('/login');
+        });
+      await store.dispatch('toggleGlobalLoader', { status: false, text: null });
+    } else {
+      next('/login');
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

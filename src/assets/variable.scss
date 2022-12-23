@@ -1,0 +1,113 @@
+
+// Colors
+
+$white-secondary: #dcdcdc;
+$blue-primary: #0e3fe5;
+$green-500: #21AE94;
+
+
+// Body
+$body-bg: #f8fafc;
+
+// Typography
+$font-family-sans-serif: 'Nunito', sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+// Body
+$body-bg: #f8fafc;
+
+// Background color
+$section-grey-50: #f6f6f6;
+$section-grey-100: #EDEDED;
+$section-grey-100-disabled : rgba($section-grey-100, 0.85);
+$cta-card-grey: #F3F5FE;
+
+// Fill colors
+$white: #ffffff;
+$white-hover: #F5F5F5;
+$white-focus: #E6E6E6;
+$white-disabled: #686868;
+
+$dark: #0C0C0C;
+$dark-hover: #262728;
+$dark-focus: #111213;
+$dark-disabled: #A5A6A6;
+
+$grey-100: #eaeaea;
+$grey-200: #DFDFDF;
+$grey-300: #ACACAC;
+$grey-400: #646566;
+$grey-100-disabled: rgba($grey-100, 0.15);
+
+$lavender: #6344DF;
+$lavender-hover: #6F53E2;
+$lavender-focus: #593DC9;
+$lavender-disabled: #C4B8F3;
+$lavender-disabled-dark: #2D215C;
+
+$blue: #4744DF;
+$blue-hover: #5653E2;
+$blue-focus: #4744DF;
+$blue-disabled: #B9B8F3;
+$blue-disabled-dark: #22215C;
+$blue-accent: #0E3FE6;
+$blue-accent-disabled: #0E3FE561;
+$blue-accent-hover: #325ce9;
+$blue-accent-focus: #0b32b7;
+$blue-50: #EBF9FF;
+$blue-600: #023B76;
+
+$brand-blue: #0E3FE5;
+$brand-blue-lighter: #3E66FB;
+$brand-blue-lightest: rgba(#3E66FB, 0.05);
+$brand-blue-lighter-background: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #3E66FB;;
+
+$grey-light: #C2C9D1;
+
+$red: #DE3860;
+$red-hover: #E1486D;
+$red-focus: #C83256;
+$red-error: #DE3860;
+$red-error: #F03738;
+$red-disabled: #F2B3C3;
+$red-disabled-dark: #5C1D2C;
+$red-pale: #FEEBEB;
+
+$red-50 : #FFF7F7;
+
+$yellow-500: #EAA901;
+
+
+$green-600: #107F6B;
+$green-100: #E3FBF8;
+
+$pink: #FB5DEB;
+$pink-hover: rgba(251, 93, 235, 0.9);
+$pink-focus: rgba(251, 93, 235, 1);
+$pink-disabled: rgba(251, 93, 235, 0.38);
+$pink-disabled-dark: #5C1D2C;
+
+$teal: #06C8D4;
+$teal-hover: #1ACCD7;
+$teal-focus: #05B4BF;
+$teal-disabled: #A0EAEF;
+$teal-disabled-dark: #0A5358;
+
+// Text Colors
+$dark-text-primary: #131415;
+$dark-text-secondary: #404040;
+$dark-text-disabled: #A5A6A6;
+$light-text-primary: #ffffff;
+$light-text-secondary: #DCDCDC;
+$light-text-disabled: #686868;
+
+$black-tertiary: #777778;
+$black-primary: #131415;
+$black-primary-disabled: rgba(#131415, 0.15);
+$black: #000000;
+$black-light: rgba(0, 0, 0, 0.5);
+$black-secondary: #404040;
+
+$green: #32c738;
+$polkadot-pink: #E6007A;
