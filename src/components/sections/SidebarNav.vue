@@ -10,31 +10,6 @@
         <li :class="{ active: isActive(link.route) }">{{ link.label }}</li>
         <Pill v-if="link.disable" class="coming-soon">coming soon</Pill>
       </router-link>
-      <!--      <router-link to="/tokenomics"
-        ><li @click="activate(2)" :class="{ active: activeElement === 2 }">
-          Service tokenomics
-        </li></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(3)" :class="{ active: activeElement === 3 }">Node configuration</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(4)" :class="{ active: activeElement === 4 }">API keys</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(5)" :class="{ active: activeElement === 5 }">Node telemetry</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(6)" :class="{ active: activeElement === 6 }">Logs</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >-->
     </ul>
   </div>
 </template>
@@ -107,7 +82,6 @@ export default {
   padding: 40px 16px 0px;
   gap: 5px;
   width: 240px;
-  height: 880px;
   background: $blue-primary;
   border-radius: 20px;
 
