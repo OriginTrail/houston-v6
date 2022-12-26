@@ -40,20 +40,32 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.public) {
     return next();
   }
-  if (!store.getters.isLoggedIn) {
+  if (!store.getters.isConnectedToHouston) {
+    console.log('not connected to houston');
     if (metamask.isSavedConnection()) {
+      console.log('metamask saved connection');
       await store.dispatch('toggleGlobalLoader', { status: true, text: null });
-      await store
-        .dispatch('connectToMetamask')
-        .then(() => {
-          next();
+      store
+        .dispatch('readAuthInfo')
+        .then(async (userData) => {
+          await store.dispatch('isAccountSaved', userData);
+          await store.dispatch('connectToMetamask');
+          return userData;
+        })
+        .then(async (userData) => {
+          console.log('connected to metamask');
+          await store.dispatch('getIdentityAction', {
+            opw: userData.operationalWallet,
+            adminw: userData.currentAddress,
+          });
+          next(to.path);
+          return;
         })
         .catch((err) => {
           console.error(err);
-        })
-        .then(() => {
           next('/login');
         });
+
       await store.dispatch('toggleGlobalLoader', { status: false, text: null });
     } else {
       next('/login');

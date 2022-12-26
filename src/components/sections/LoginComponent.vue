@@ -148,7 +148,11 @@ export default {
         target: '.login-view-wrapper',
         text: 'Verifying operational wallet',
       });
-      this.getIdentityId()
+      this.$store
+        .dispatch('getIdentityAction', {
+          opw: this.userForm.operationalWallet,
+          adminw: metamask.accounts[0],
+        })
         .then(() => {
           this.$router.push({
             name: 'overview',
@@ -204,6 +208,7 @@ export default {
           console.log(identity);
           if (Number(identity) > 0) {
             this.$store.commit('SAVE_IDENTITY', identity);
+            this.$store.commit('SAVE_OPERATIONAL_WALLET', this.userForm.operationalWallet);
             return identity;
           } else {
             throw 'NOT_CONNECTED_OP_WALLET';

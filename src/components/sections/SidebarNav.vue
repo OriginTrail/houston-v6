@@ -1,12 +1,16 @@
 <template>
   <div class="sidebar-nav-wrapper">
     <ul class="sidebar-nav">
-      <router-link to="/"
-        ><li @click="activate(1)" :class="{ active: activeElement === 1 }">
-          Overview
-        </li></router-link
+      <router-link
+        :class="{ disabled: link.disable }"
+        :to="link.link"
+        v-for="link of sidebarList"
+        :key="link.label + link.route"
       >
-      <router-link to="/tokenomics"
+        <li :class="{ active: isActive(link.route) }">{{ link.label }}</li>
+        <Pill v-if="link.disable" class="coming-soon">coming soon</Pill>
+      </router-link>
+      <!--      <router-link to="/tokenomics"
         ><li @click="activate(2)" :class="{ active: activeElement === 2 }">
           Service tokenomics
         </li></router-link
@@ -30,7 +34,7 @@
       <router-link to="#" class="disabled"
         ><li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li>
         <Pill class="coming-soon">coming soon</Pill></router-link
-      >
+      >-->
     </ul>
   </div>
 </template>
@@ -44,11 +48,50 @@ export default {
   data() {
     return {
       activeElement: 1,
+      sidebarList: [
+        {
+          label: 'Overview',
+          link: '/',
+          route: 'overview',
+        },
+        {
+          label: 'Service tokenomics',
+          link: '/tokenomics',
+          route: 'tokenomics',
+        },
+        {
+          label: 'Node configuration',
+          link: '#',
+          route: 'nodeConfig',
+          disable: true,
+        },
+        {
+          label: 'Node telemetry',
+          link: '#',
+          route: 'nodeTelemetry',
+          disable: true,
+        },
+        {
+          label: 'Logs',
+          link: '#',
+          route: 'logs',
+          disable: true,
+        },
+        {
+          label: 'Backups',
+          link: '#',
+          route: 'backups',
+          disable: true,
+        },
+      ],
     };
   },
   methods: {
     activate: function (element) {
       this.activeElement = element;
+    },
+    isActive(routeName) {
+      return this.$route.name === routeName;
     },
   },
 };
@@ -81,7 +124,7 @@ export default {
       border-radius: 8px;
       color: $white-secondary;
       white-space: nowrap;
-
+      transition: all 0.2s ease-out;
       &.active {
         background-color: white;
         color: $blue-primary;
