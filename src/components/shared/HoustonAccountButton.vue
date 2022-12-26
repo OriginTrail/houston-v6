@@ -21,7 +21,9 @@
           <div class="user-info">
             <div class="item">
               <div class="label">Network</div>
-              <div class="value">{{ $store.getters.selectedNetwork.label }}</div>
+              <div class="value" v-if="$store.getters.selectedNetwork">
+                {{ $store.getters.selectedNetwork.label }}
+              </div>
             </div>
             <div class="item">
               <div class="label">Operational wallet</div>

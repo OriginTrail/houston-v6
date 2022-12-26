@@ -8,3 +8,9 @@ export const getAddressShortForm = (address, { rightHandLength, leftHandLength }
   let value = address?.match(addrRegEx);
   return value[1] + '...' + value[3];
 };
+
+export const formatNumberWithSpaces = (input) => {
+  return (input && !isNaN(Number(input))) || input === 0
+    ? Number(input).toLocaleString('en').replace(/,/g, ' ')
+    : '';
+};

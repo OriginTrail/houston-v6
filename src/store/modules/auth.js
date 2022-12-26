@@ -82,7 +82,6 @@ export default {
     async isAccountSaved(store) {
       let userData = readFromStorage('user_id');
       if (userData) userData = JSON.parse(userData);
-      console.log(store.state, userData);
       if (store.state.currentAddress === userData.currentAddress) {
         return userData;
       } else {

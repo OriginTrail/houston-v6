@@ -7,7 +7,10 @@ import profileAbi from '../abis/Profile.json';
 import profileStorage from '../abis/ProfileStorage.json';
 import IdentityStorage from '../abis/identityStorage.json';
 import hubContractAbi from '../abis/HubContract.json';
+import contentAssetStorage from '../abis/contentAssetStorage.json';
+import ERC20Token from '../abis/ERC20Token.json';
 import { ethers } from 'ethers';
+import store from '../store';
 
 import {
   STAKING_CONTRACT_ADDRESS,
@@ -29,7 +32,10 @@ class ContractService {
     return this[contractName];
   }
   getContractAddressesFromHubContract(contractName) {
-    const hubContract = new this.web3.eth.Contract(hubContractAbi, HUB_CONTRACT_ADDRESS);
+    const hubContract = new this.web3.eth.Contract(
+      hubContractAbi,
+      store.getters.selectedNetwork.hubContract,
+    );
     return hubContract.methods.getContractAddress(contractName).call();
   }
 
@@ -39,15 +45,13 @@ class ContractService {
     const identity = await IdentityStorageProfile.methods
       .getIdentityId(operationalAddress)
       .call({ from: this.web3.eth.defaultAccount });
-    console.log(adminWalletAddress);
     const adminKey = ethers.utils.keccak256(
       ethers.utils.solidityPack(['address'], [adminWalletAddress]),
     );
     const hasPurpose = await IdentityStorageProfile.methods
       .keyHasPurpose(identity, adminKey, 1)
       .call({ from: this.web3.eth.defaultAccount });
-    console.log(hasPurpose, identity, adminWalletAddress, adminKey);
-    return hasPurpose ? identity : identity;
+    return hasPurpose ? identity : identity; // TODO remove this bypass whe pushing to production
     //return hasPurpose ? identity : 0;
   }
 
@@ -77,12 +81,27 @@ class ContractService {
     return stakeContract.methods.setAsk(identityId, ask).send();
   }
 
-  getTotalStake(identityId) {
-    const stakeContract = new this.web3.eth.Contract(
-      stakingStorage,
-      STAKING_STORAGE_CONTRACT_ADDRESS,
-    );
-    return stakeContract.methods.totalStakes(identityId).call();
+  async getTotalStake(identityId) {
+    const address = await this.getContractAddress('StakingStorage');
+    const stakeContract = new this.web3.eth.Contract(stakingStorage, address);
+    return await stakeContract.methods.totalStakes(identityId).call();
+  }
+  async getAccumulatorOperatorFee(identityId) {
+    const address = await this.getContractAddress('ProfileStorage');
+    const ProfileStorageContract = new this.web3.eth.Contract(profileStorage, address);
+    return await ProfileStorageContract.methods.getAccumulatedOperatorFee(identityId).call();
+  }
+
+  async getAssetsOnDkg() {
+    const address = store.getters.selectedNetwork.contentAssetStorageContractAddress;
+    return await this.ethersSigner.provider.getStorageAt(address, 7);
+  }
+
+  async getStakedTRAC() {
+    const address = await this.getContractAddress('Token');
+    const StakingStorageAddress = await this.getContractAddress('StakingStorage');
+    const TRACContract = new this.web3.eth.Contract(ERC20Token, address);
+    return await TRACContract.methods.balanceOf(StakingStorageAddress).call();
   }
 }
 

@@ -41,9 +41,7 @@ router.beforeEach(async (to, from, next) => {
     return next();
   }
   if (!store.getters.isConnectedToHouston) {
-    console.log('not connected to houston');
     if (metamask.isSavedConnection()) {
-      console.log('metamask saved connection');
       await store.dispatch('toggleGlobalLoader', { status: true, text: null });
       store
         .dispatch('readAuthInfo')
@@ -53,7 +51,6 @@ router.beforeEach(async (to, from, next) => {
           return userData;
         })
         .then(async (userData) => {
-          console.log('connected to metamask');
           await store.dispatch('getIdentityAction', {
             opw: userData.operationalWallet,
             adminw: userData.currentAddress,
