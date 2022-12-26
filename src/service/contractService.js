@@ -39,6 +39,7 @@ class ContractService {
     const identity = await IdentityStorageProfile.methods
       .getIdentityId(operationalAddress)
       .call({ from: this.web3.eth.defaultAccount });
+    console.log(adminWalletAddress);
     const adminKey = ethers.utils.keccak256(
       ethers.utils.solidityPack(['address'], [adminWalletAddress]),
     );

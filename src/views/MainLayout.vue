@@ -9,9 +9,6 @@
       <template v-else>
         <sidebar-nav></sidebar-nav>
         <div class="main-content" v-if="identityId">
-          <div class="upper-section">
-            <metamask-connect-button :button-text="walletAddress" @click="connectToMetamask" />
-          </div>
           <router-view></router-view>
         </div>
         <login-view v-else />
@@ -23,7 +20,6 @@
 <script>
 import Header from '../components/sections/Header';
 import SidebarNav from '../components/sections/SidebarNav';
-import MetamaskConnectButton from '@/components/shared/MetamaskConnectButton';
 import { getAddressShortForm } from '@/utils/stringUtil';
 import LoginView from '@/components/sections/LoginView';
 
@@ -31,7 +27,6 @@ export default {
   name: 'MainLayout',
   components: {
     LoginView,
-    MetamaskConnectButton,
     Header,
     SidebarNav,
   },
@@ -123,7 +118,7 @@ export default {
         display: flex;
         padding: 24px 0px 10px 0px;
 
-        .metamask-button {
+        .houston-account-button {
           margin-left: auto;
         }
       }
