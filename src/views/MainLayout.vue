@@ -99,7 +99,7 @@ export default {
   .page-body {
     display: flex;
     column-gap: 24px;
-    padding: 0 24px;
+    padding: 0 24px 32px 24px;
     height: 100%;
     flex-grow: 4;
     z-index: 1;
