@@ -104,8 +104,12 @@ export default {
   },
   methods: {
     formatNumberWithSpaces,
-    getOverviewData() {
-      this.$store.dispatch('getOverviewData', this.$store.getters.isIdentityResolved);
+    async getOverviewData() {
+      const loader = this.$loading({ target: '.trac-balance' });
+      const loader2 = this.$loading({ target: '.network-metrics' });
+      await this.$store.dispatch('getOverviewData', this.$store.getters.isIdentityResolved);
+      loader.close();
+      loader2.close();
     },
   },
 };
