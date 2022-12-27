@@ -46,8 +46,8 @@ router.beforeEach(async (to, from, next) => {
       store
         .dispatch('readAuthInfo')
         .then(async (userData) => {
-          await store.dispatch('isAccountSaved', userData);
           await store.dispatch('connectToMetamask');
+          await store.dispatch('isAccountSaved', userData);
           return userData;
         })
         .then(async (userData) => {

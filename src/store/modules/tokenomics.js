@@ -13,9 +13,10 @@ export default {
       pendingWithdrawal: 0,
     },
     nodeShareTokens: {
-      total: 0,
-      owned: 0,
+      totalSupply: 0,
+      myBalance: 0,
       name: '',
+      symbol: '',
       address: '',
     },
     withdrawal: {
@@ -31,28 +32,36 @@ export default {
   },
   actions: {
     async getOverviewData(store, identity) {
-      console.log(identity);
       await Promise.allSettled([
         metamask.contractService.getAsk(identity).then((data) => {
           store.commit('SAVE_METRICS', {
-            'ask.currentAsk': data,
+            'ask.currentAsk': parseFloat(getReadableTokenAmount(data, 18, { fixed: 12 })),
           });
         }),
         metamask.contractService.getTotalStake(identity).then((data) => {
           store.commit('SAVE_METRICS', {
-            'stake.activeStake': getReadableTokenAmount(data, 18, { fixed: 0 }),
+            'stake.activeStake': parseFloat(getReadableTokenAmount(data, 18, { fixed: 12 })),
           });
         }),
         metamask.contractService
           .getStakeAmountPendingWithdrawal(identity, store.getters.connectedAddress)
           .then((data) => {
-            store.commit('SAVE_METRICS', { 'stake.pendingWithdrawal': data });
+            store.commit('SAVE_METRICS', {
+              'stake.pendingWithdrawal': getReadableTokenAmount(data, 18, { fixed: 0 }),
+            });
           }),
         metamask.contractService
           .getSharesContractInfo(identity, store.getters.connectedAddress)
           .then((data) => {
             store.commit('SAVE_METRICS', {
               nodeShareTokens: data,
+            });
+          }),
+        metamask.contractService
+          .getLastWithdrawalTimestamp(identity, store.getters.connectedAddress)
+          .then((data) => {
+            store.commit('SAVE_METRICS', {
+              'withdrawal.requestTime': data,
             });
           }),
       ]).then((data) => {
