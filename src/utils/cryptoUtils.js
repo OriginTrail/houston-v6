@@ -8,3 +8,8 @@ export const getReadableTokenAmount = (amount, decimals, { fixed } = {}) => {
   }
   return parsedAmount.toString();
 };
+
+export const getAmountWithDecimals = (amount, decimals = 18) => {
+  if (!amount) return '';
+  return Big(amount).mul(Math.pow(10, decimals)).toString();
+};

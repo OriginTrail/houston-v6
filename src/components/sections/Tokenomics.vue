@@ -2,85 +2,129 @@
   <div class="tokenomics-wrapper">
     <!-- Service Tokenomics -->
     <h2 class="section-heading">Service tokenomics</h2>
-    <div class="current-form ask-setting">
-      <div class="first-col">
-        <div class="label-and-first-input">
-          <p class="settings-label">Current ask</p>
-          <InputPair
-            :input-value="getReadableTokenAmount(currentAsk, 18)"
-            label="TRAC / (kb-epoch)"
-            :isYellow="true"
-          />
+    <div class="node-ask">
+      <tokenomics-card title="Set your node ask" class="ask-card">
+        <div class="card-content">
+          <div class="description label-inline-14">
+            Setting a node service ask will determine the preferred amount of TRAC your node is
+            requiring for its services in the network. Your node ask is denominated in TRAC /
+            kb-epoch.
+            <br />
+            <br />
+            Setting ask will execute one transaction.
+          </div>
+          <div class="form ask-form">
+            <InputPairWithBtn
+              :button="false"
+              color="blue"
+              input-suffix="TRAC / (kb-epoch)"
+              btnLabel="Update ask"
+              :input-value="getAskValueInString"
+              @update="(v) => (newAsk = v)"
+            />
+            <div class="sub-label label-inline-12">
+              Current ask <span class="trac-amount">{{ getAskValueInString }} TRAC</span>
+            </div>
+          </div>
+          <div class="cta-section">
+            <Button class="cta-button" @click="updateAsk">Update ask</Button>
+          </div>
         </div>
-        <InfoPair
-          class="average-ask-neighbourhoods"
-          title="Average ask in neighborhoods"
-          description="0.000012"
-        />
-        <InfoPair title="Average ask on the network" description="0.000013" />
-      </div>
-
-      <div class="second-col">
-        <InputPairWithBtn label="TRAC / (kb-epoch)" btnLabel="Update ask" />
-      </div>
+      </tokenomics-card>
     </div>
 
     <!-- Stake Settings -->
-    <h2 class="section-heading stake-settings-heading">Stake settings</h2>
-    <div class="current-form">
-      <div class="first-col">
-        <div class="label-and-first-input">
-          <p class="settings-label">Current stake</p>
-          <InputPair label="TRAC" />
+    <h2 class="section-heading stake-settings-heading">Node stake settings</h2>
+    <div class="node-stake">
+      <tokenomics-card title="Add TRAC to Node stake" class="add-stake-card">
+        <div class="card-content">
+          <div class="description label-inline-14">
+            This will add additional TRAC tokens to your node. You need to use the admin wallet for
+            adding stake. This will execute two transactions on the blockchain (the allowance
+            transaction and adding stake). This action will mint share tokens.
+          </div>
+          <div class="form ask-form">
+            <InputPairWithBtn
+              :button="false"
+              color="green"
+              input-suffix="TRAC"
+              input-prefix="+"
+              btnLabel="Update ask"
+              :input-value="'0'"
+              @update="(v) => (newStake = v)"
+            >
+              <img
+                slot="inputPrefix"
+                class="input-prefix-plus"
+                src="/images/icons/plus-grey-icon.svg"
+              />
+            </InputPairWithBtn>
+            <div class="sub-label label-inline-12">
+              Total stake after addition
+              <span class="trac-amount">{{ getTotalStakeValueAfterAddition }} TRAC</span>
+            </div>
+          </div>
+          <div class="cta-section">
+            <Button class="cta-button" @click="addStake">Add stake</Button>
+          </div>
         </div>
-        <InfoPair title="Delegated:" description="0" />
-      </div>
-
-      <div class="second-col">
-        <InputPairWithBtn label="TRAC" btnLabel="Update stake" />
-      </div>
-    </div>
-
-    <!-- Claim Rewards -->
-    <div class="claim-rewards">
-      <div class="property-wrapper">
-        <p class="title">Claimable TRAC:</p>
-        <p class="value">1092.43 TRAC</p>
-      </div>
-      <div class="property-wrapper">
-        <p class="title">Commited for:</p>
-        <p class="value">3021.74 TRAC</p>
-      </div>
-      <Button class="full-width">Claim rewards</Button>
+      </tokenomics-card>
     </div>
   </div>
 </template>
 
 <script>
 import Button from '../Button';
-import InputPair from '../InputPair';
-import InfoPair from '../InfoPair';
 import InputPairWithBtn from '../InputPairWithBtn';
 import metamask from '@/service/metamask';
 import { getReadableTokenAmount } from '@/utils/cryptoUtils';
+import TokenomicsCard from '@/components/shared/TokenomicsCard';
 
 export default {
   name: 'Tokenomics',
-  components: { Button, InputPair, InfoPair, InputPairWithBtn },
+  components: { TokenomicsCard, Button, InputPairWithBtn },
   data() {
     return {
       currentAsk: null,
+      newAsk: null,
+      newStake: null,
     };
   },
   computed: {
     getIdentityId() {
       return this.$store.getters.isIdentityResolved;
     },
+    getStakeData() {
+      return this.$store.getters.getStake;
+    },
+    getAskData() {
+      return this.$store.getters.getAsk;
+    },
+    getNodeSharesToken() {
+      return this.$store.getters.nodeShareTokens;
+    },
+    getWithdrawalInfo() {
+      return this.$store.getters.getWithdrawalInfo;
+    },
+    getAskValueInString() {
+      return this.getAskData?.currentAsk ?? '0';
+    },
+    getTotalStakeValue() {
+      return this.getStakeData?.activeStake ?? '0';
+    },
+    getTotalStakeValueAfterAddition() {
+      return Number(this.getTotalStakeValue) + Number(this.newStake ?? '0');
+    },
   },
-  mounted() {
-    this.getAsk();
+  async mounted() {
+    await this.refreshAllTokenomicsData();
   },
   methods: {
+    async refreshAllTokenomicsData() {
+      const loader = this.$loading({ target: '.tokenomics-wrapper' });
+      await this.$store.dispatch('getOverviewData', this.getIdentityId);
+      loader.close();
+    },
     getReadableTokenAmount,
     getAsk() {
       const loader = this.$loading({ target: '.ask-setting' });
@@ -90,7 +134,36 @@ export default {
       });
     },
 
-    updateAsk() {},
+    async updateAsk() {
+      if (this.newAsk) {
+        const loader = this.$loading({ target: '.ask-card', text: 'Updating ask value...' });
+        try {
+          await metamask.contractService.updateAsk(this.getIdentityId, this.newAsk);
+          this.$notify.success('Ask updated successfully!');
+          await this.refreshAllTokenomicsData();
+        } catch (err) {
+          console.log(err);
+          this.$notify.error('Ask update error occurred!');
+        } finally {
+          loader.close();
+        }
+      }
+    },
+    async addStake() {
+      if (this.newStake) {
+        const loader = this.$loading({ target: '.add-stake-card', text: 'Adding stake...' });
+        try {
+          await metamask.contractService.addStakeEthers(this.getIdentityId, this.newStake);
+          this.$notify.success('Stake added successfully!');
+          await this.refreshAllTokenomicsData();
+        } catch (err) {
+          console.log(err);
+          this.$notify.error('An error occurred when adding stake');
+        } finally {
+          loader.close();
+        }
+      }
+    },
   },
 };
 </script>
@@ -101,6 +174,39 @@ export default {
 .tokenomics-wrapper {
   .section-heading {
     margin-bottom: 24px;
+  }
+
+  .tokenomics-card-wrapper {
+    max-width: 504px;
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      .description {
+        color: $black-secondary;
+        line-height: 150%;
+      }
+      .form {
+        .sub-label {
+          margin-top: 16px;
+          color: $black-tertiary;
+          .trac-amount {
+            margin-left: 8px;
+            color: $black;
+          }
+        }
+        .input-prefix-plus {
+          width: 14px;
+          height: 14px;
+        }
+      }
+      .cta-section {
+        display: flex;
+        .cta-button {
+          align-self: flex-start;
+        }
+      }
+    }
   }
 
   .current-form {
