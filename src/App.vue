@@ -75,4 +75,10 @@ body {
 .el-tooltip__popper.is-light {
   border-radius: 8px;
 }
+
+.el-notification {
+  .el-notification__title {
+    @extend .label-inline-14;
+  }
+}
 </style>

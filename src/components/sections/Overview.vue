@@ -24,7 +24,7 @@
         </div>
         <div class="rewards">
           <div class="property-wrapper">
-            <p class="title">locked rewards</p>
+            <p class="title">Locked rewards</p>
             <p class="value">{{ formatNumberWithSpaces(rewards.locked) }} TRAC</p>
           </div>
           <div class="property-wrapper property-short">
@@ -48,7 +48,7 @@
           </div>
           <div class="property-wrapper full">
             <p class="title label-inline-12">Total Graph Size / Number of triples</p>
-            <p class="value label-plat-h5 disabled">(Coming soon)</p>
+            <p class="value label-plat-h5 disabled">(coming soon)</p>
           </div>
           <div class="property-wrapper full">
             <p class="title label-inline-12">TRAC Staked</p>
@@ -273,6 +273,7 @@ export default {
     }
   }
   .useful-links {
+    margin-top: 64px;
     .social-icons {
       display: flex;
       column-gap: 16px;
