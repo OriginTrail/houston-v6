@@ -88,6 +88,30 @@ export default {
         throw 'not saved';
       }
     },
+
+    async metamaskAccountChange(store) {
+      await store.dispatch('toggleGlobalLoader', { status: true, text: null });
+      await store
+        .dispatch('readAuthInfo')
+        .then(async (userData) => {
+          await store.dispatch('connectToMetamask');
+          await store.dispatch('isAccountSaved', userData);
+          return userData;
+        })
+        .then(async (userData) => {
+          await store.dispatch('getIdentityAction', {
+            opw: userData.operationalWallet,
+            adminw: userData.currentAddress,
+          });
+          return true;
+        })
+        .catch((err) => {
+          console.error(err);
+          throw 'error when re-logging in';
+        });
+
+      await store.dispatch('toggleGlobalLoader', { status: false, text: null });
+    },
   },
   getters: {
     isLoggedIn(state) {

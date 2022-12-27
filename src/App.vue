@@ -69,4 +69,10 @@ body {
     color: $black-tertiary;
   }
 }
+.withdrawal-availability-message {
+  color: #0c0c0c;
+}
+.el-tooltip__popper.is-light {
+  border-radius: 8px;
+}
 </style>

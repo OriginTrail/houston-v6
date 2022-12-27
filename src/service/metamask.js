@@ -3,6 +3,7 @@ import ContractService from '@/service/contractService';
 import store from '../store';
 import { ethers } from 'ethers';
 import { networkList } from '@/utils/lists';
+import router from '../router';
 
 class metamaskService {
   web3;
@@ -135,7 +136,7 @@ class metamaskService {
       window.ethereum.on('disconnect', () => {
         this.disconnectFromMetamask();
       });
-      window.ethereum.on('accountsChanged', (accounts) => {
+      window.ethereum.on('accountsChanged', async (accounts) => {
         console.log('Account Changed');
         if (this.accountChangedListener) {
           this.accountChangedListener(accounts);
@@ -143,7 +144,20 @@ class metamaskService {
         if (accounts?.length === 0) {
           this.disconnectFromMetamask();
         } else {
-          store.commit('LOGIN_METAMASK', { address: accounts[0] });
+          if (store.getters.isConnectedToHouston) {
+            await store
+              .dispatch('metamaskAccountChange', { address: accounts[0] })
+              .catch(async () => {
+                await store.dispatch('disconnectFromHouston');
+                await router.push({
+                  name: 'login',
+                });
+                await store.dispatch('toggleGlobalLoader', { status: false, text: null });
+              });
+          } else {
+            store.commit('LOGIN_METAMASK', { address: accounts[0] });
+          }
+          this.web3.eth.defaultAccount = accounts[0];
         }
       });
       window.ethereum.on('chainChanged', (chainId) => {

@@ -11,7 +11,6 @@
         <div class="main-content" v-if="identityId">
           <router-view></router-view>
         </div>
-        <login-view v-else />
       </template>
     </div>
   </div>
@@ -21,12 +20,10 @@
 import Header from '../components/sections/Header';
 import SidebarNav from '../components/sections/SidebarNav';
 import { getAddressShortForm } from '@/utils/stringUtil';
-import LoginView from '@/components/sections/LoginView';
 
 export default {
   name: 'MainLayout',
   components: {
-    LoginView,
     Header,
     SidebarNav,
   },

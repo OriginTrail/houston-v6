@@ -153,6 +153,11 @@ export default {
             color: $green-500;
           }
         }
+        &.red {
+          input {
+            color: $red-error;
+          }
+        }
         input {
           width: var(--input-width);
           padding-left: var(--input-left-padding);

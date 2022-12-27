@@ -1,0 +1,65 @@
+<template>
+  <div class="backward-timer label-inline-12">
+    {{ currentTime }}
+  </div>
+</template>
+
+<script>
+import * as moment from 'moment';
+export default {
+  name: 'BackwardTimer',
+  props: {
+    startTimestamp: {
+      type: Number,
+      default: 0,
+    },
+    endTimestamp: {
+      type: Number,
+      default: 0,
+    },
+    instantlyStart: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  data() {
+    return {
+      currentTime: '00:00:00:00',
+      timerStarted: false,
+    };
+  },
+  mounted() {
+    if (this.instantlyStart) {
+      this.startTimer();
+    }
+  },
+  methods: {
+    startTimer() {
+      let eventTime = this.startTimestamp ?? moment().unix(); // Timestamp - Sun, 21 Apr 2013 13:00:00 GMT
+      let currentTime = this.endTimestamp ?? 1366547400; // Timestamp - Sun, 21 Apr 2013 12:30:00 GMT
+      let diffTime = eventTime - currentTime;
+      let duration = moment.duration(diffTime * 1000, 'milliseconds');
+      let interval = 1000;
+      this.timerStarted = true;
+      setInterval(() => {
+        duration = moment.duration(duration - interval, 'milliseconds');
+        this.currentTime =
+          duration.days() +
+          ':' +
+          `${duration.hours() < 10 ? '0' : ''}${duration.hours()}` +
+          ':' +
+          `${duration.minutes() < 10 ? '0' : ''}${duration.minutes()}` +
+          ':' +
+          `${duration.seconds() < 10 ? '0' : ''}${duration.seconds()}`;
+      }, interval);
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+@import '../../assets/variable.scss';
+.backward-timer {
+  color: $black;
+}
+</style>

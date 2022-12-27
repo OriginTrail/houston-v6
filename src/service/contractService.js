@@ -19,6 +19,7 @@ import {
   HUB_CONTRACT_ADDRESS,
 } from '@/utils/constants';
 import { getAmountWithDecimals } from '@/utils/cryptoUtils';
+import Big from 'big.js';
 
 class ContractService {
   constructor(web3, ethersSigner) {
@@ -52,8 +53,7 @@ class ContractService {
     const hasPurpose = await IdentityStorageProfile.methods
       .keyHasPurpose(identity, adminKey, 1)
       .call({ from: this.web3.eth.defaultAccount });
-    return hasPurpose ? identity : identity; // TODO remove this bypass whe pushing to production
-    //return hasPurpose ? identity : 0;
+    return hasPurpose ? identity : 0;
   }
 
   async getAsk(identityId) {
@@ -65,7 +65,8 @@ class ContractService {
   async updateAsk(identityId, newAsk) {
     const address = await this.getContractAddress('Profile');
     const ProfileContract = new this.web3.eth.Contract(profileAbi, address);
-    return await ProfileContract.methods.setAsk(identityId, newAsk).send({
+    const sanitizedNewAsk = getAmountWithDecimals(newAsk);
+    return await ProfileContract.methods.setAsk(identityId, sanitizedNewAsk).send({
       from: this.web3.eth.defaultAccount,
     });
   }
@@ -131,27 +132,64 @@ class ContractService {
   async addStakeEthers(identityId, stakeAmountToAdd) {
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
-    const tokenContract = new ethers.Contract(address, ERC20Token, this.ethersSigner.provider);
+    const tokenContract = new ethers.Contract(address, ERC20Token, this.ethersSigner);
     const stakeWei = ethers.utils.parseEther(stakeAmountToAdd);
-    let allowanceReceipt = await tokenContract
-      .connect(this.ethersSigner)
-      .increaseAllowance(stakingContractAddress, stakeWei, {
-        gasPrice: 8,
-        gasLimit: 500000,
-      });
+    let allowanceReceipt = await tokenContract.increaseAllowance(stakingContractAddress, stakeWei, {
+      gasPrice: 8,
+      gasLimit: 500000,
+    });
     await allowanceReceipt.wait();
     const stakingContract = new ethers.Contract(
       stakingContractAddress,
       stakingAbi,
-      this.ethersSigner.provider,
+      this.ethersSigner,
     );
-    let stakingReceipt = await stakingContract
-      .connect(this.ethersSigner) // eslint-disable-next-line no-unexpected-multiline
-      ['addStake(uint72,uint96)'](identityId, stakeWei, {
-        gasPrice: 1000,
-        gasLimit: 500000,
-      });
+    let stakingReceipt = await stakingContract['addStake(uint72,uint96)'](identityId, stakeWei, {
+      gasPrice: 1000,
+      gasLimit: 500000,
+    });
     await stakingReceipt.wait();
+  }
+
+  async getLastWithdrawalTimestamp(identityId, adminWallet) {
+    const address = await this.getContractAddress('StakingStorage');
+    const stakeContract = new this.web3.eth.Contract(stakingStorage, address);
+    return await stakeContract.methods
+      .getWithdrawalRequestTimestamp(identityId, adminWallet)
+      .call();
+  }
+
+  async requestWithdrawal(identityId, stakeToWithdraw) {
+    const address = await this.getContractAddress('ProfileStorage');
+    const stakingContractAddress = await this.getContractAddress('Staking');
+    const ProfileStorageContract = new this.web3.eth.Contract(profileStorage, address);
+    const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
+    const sharesContractAddress = await ProfileStorageContract.methods
+      .getSharesContractAddress(identityId)
+      .call();
+    const shareContract = new this.web3.eth.Contract(ERC20Token, sharesContractAddress);
+    const totalSupply = await shareContract.methods.totalSupply().call();
+    const totalStakes = await this.getTotalStake(identityId);
+    console.log(getAmountWithDecimals(stakeToWithdraw));
+    const sharesToBurn = Big(getAmountWithDecimals(stakeToWithdraw))
+      .mul(totalSupply)
+      .div(totalStakes)
+      .toString();
+
+    await shareContract.methods.increaseAllowance(stakingContractAddress, sharesToBurn).send({
+      from: this.web3.eth.defaultAccount,
+    });
+    return await stakingContract.methods.startStakeWithdrawal(identityId, sharesToBurn).send({
+      from: this.web3.eth.defaultAccount,
+    });
+  }
+
+  async withdrawStake(identityId) {
+    const stakingContractAddress = await this.getContractAddress('Staking');
+    const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
+    return await stakingContract.methods.withdrawStake(identityId).send({
+      from: this.web3.eth.defaultAccount,
+    });
   }
 }
 
