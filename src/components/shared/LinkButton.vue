@@ -49,9 +49,9 @@ export default {
   }
 
   &.disabled {
-    opacity: 85%;
+    opacity: 0.85;
     img {
-      opacity: 15%;
+      opacity: 0.15;
     }
     background-color: $grey-100;
     &:hover {
