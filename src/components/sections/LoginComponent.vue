@@ -20,11 +20,13 @@
         </div>
 
         <div class="form-item">
+          <div class="label label-inline-12">Admin wallet address</div>
           <el-form-item>
             <metamask-connect-button
               :disabled="!userForm.network"
               :button-text="walletAddress"
               :error="metamaskError"
+              :success="!!$store.getters.connectedAddress"
               @click="connectToMetamask"
             />
           </el-form-item>

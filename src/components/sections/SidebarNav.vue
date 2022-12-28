@@ -1,15 +1,37 @@
 <template>
   <div class="sidebar-nav-wrapper">
     <ul class="sidebar-nav">
-      <router-link
-        :class="{ disabled: link.disable }"
-        :to="link.link"
-        v-for="link of sidebarList"
-        :key="link.label + link.route"
-      >
-        <li :class="{ active: isActive(link.route) }">{{ link.label }}</li>
-        <Pill v-if="link.disable" class="coming-soon">coming soon</Pill>
-      </router-link>
+      <template v-for="link of sidebarList">
+        <router-link
+          :class="{ disabled: link.disable }"
+          :to="link.link"
+          :key="link.label + link.route"
+        >
+          <li :class="{ active: isActive(link.route) }">{{ link.label }}</li>
+          <Pill v-if="link.disable" class="coming-soon">coming soon</Pill>
+        </router-link>
+        <div
+          :key="link.label + link.route + 'children'"
+          class="link-children"
+          v-if="link.children && link.children.length"
+        >
+          <ul>
+            <li
+              :class="{ disabled: link.disabled || child.disable }"
+              v-for="child of link.children"
+              :key="child.label + link.label + link.route"
+            >
+              <router-link
+                :class="{ disabled: link.disabled || child.disable }"
+                :to="child.link"
+                :key="child.label + child.route"
+              >
+                <div :class="{ active: isActive(child.route) }">{{ child.label }}</div>
+              </router-link>
+            </li>
+          </ul>
+        </div>
+      </template>
     </ul>
   </div>
 </template>
@@ -35,28 +57,42 @@ export default {
           route: 'tokenomics',
         },
         {
-          label: 'Node configuration',
+          label: 'Connect to node',
           link: '#',
           route: 'nodeConfig',
           disable: true,
-        },
-        {
-          label: 'Node telemetry',
-          link: '#',
-          route: 'nodeTelemetry',
-          disable: true,
-        },
-        {
-          label: 'Logs',
-          link: '#',
-          route: 'logs',
-          disable: true,
-        },
-        {
-          label: 'Backups',
-          link: '#',
-          route: 'backups',
-          disable: true,
+          children: [
+            {
+              label: 'Node configuration',
+              link: '#',
+              route: 'nodeConfiguration',
+              disable: true,
+            },
+            {
+              label: 'API keys',
+              link: '#',
+              route: 'apiKeys',
+              disable: true,
+            },
+            {
+              label: 'Node telemetry',
+              link: '#',
+              route: 'nodeTelemetry',
+              disable: true,
+            },
+            {
+              label: 'Logs',
+              link: '#',
+              route: 'logs',
+              disable: true,
+            },
+            {
+              label: 'Backups',
+              link: '#',
+              route: 'backups',
+              disable: true,
+            },
+          ],
         },
       ],
     };
@@ -125,6 +161,28 @@ export default {
 
       .coming-soon {
         width: 67px;
+      }
+    }
+    .link-children {
+      ul {
+        list-style: none;
+        padding-inline-start: 15px;
+        li {
+          .disabled {
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.32);
+            .coming-soon {
+              width: 67px;
+            }
+          }
+          &.disabled {
+            &:hover {
+              cursor: default;
+            }
+          }
+        }
       }
     }
   }

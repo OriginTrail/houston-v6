@@ -1,8 +1,8 @@
 <template>
   <button
     type="button"
-    :class="{ 'metamask-button': true, error: error, disabled: disabled }"
-    v-on="$listeners"
+    :class="{ 'metamask-button': true, error: error, disabled: disabled, success: success }"
+    @click="onButtonClick"
   >
     <span class="button-text">{{ buttonText }}</span>
   </button>
@@ -24,6 +24,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    success: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -33,6 +37,13 @@ export default {
   watch: {
     buttonText(n) {
       this.text = n;
+    },
+  },
+  methods: {
+    onButtonClick() {
+      if (!this.disabled) {
+        this.$emit('click');
+      }
     },
   },
 };
@@ -82,6 +93,15 @@ export default {
 
   &.error {
     border: 1px solid $red-error;
+  }
+  &.success {
+    .button-text {
+      margin: auto auto auto 0;
+    }
+    border: 1px solid $brand-blue;
+    background-color: $cta-card-grey;
+    color: $black-primary;
+    font-weight: 400;
   }
 }
 </style>

@@ -89,7 +89,7 @@ export default {
     z-index: 0;
     width: 100vw;
     height: 100%;
-    max-width: 1128px;
+    //max-width: 1128px;
     right: 10%;
   }
 
@@ -104,7 +104,6 @@ export default {
       column-gap: 48px;
     }
     .main-content {
-      min-width: 944px;
       width: 100%;
       background: #f6f6f6;
       border-radius: 20px;

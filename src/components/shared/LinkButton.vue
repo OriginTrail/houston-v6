@@ -38,6 +38,7 @@ export default {
   border: none;
   border-radius: 16px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
   .link-content {
     margin: auto;
   }

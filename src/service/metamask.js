@@ -158,6 +158,7 @@ class metamaskService {
             store.commit('LOGIN_METAMASK', { address: accounts[0] });
           }
           this.web3.eth.defaultAccount = accounts[0];
+          this.accounts = accounts;
         }
       });
       window.ethereum.on('chainChanged', (chainId) => {
