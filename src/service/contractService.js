@@ -177,9 +177,11 @@ class ContractService {
 
     await shareContract.methods.increaseAllowance(stakingContractAddress, sharesToBurn).send({
       from: this.web3.eth.defaultAccount,
+      gasLimit: 500000,
     });
     return await stakingContract.methods.startStakeWithdrawal(identityId, sharesToBurn).send({
       from: this.web3.eth.defaultAccount,
+      gasLimit: 500000,
     });
   }
 
@@ -188,6 +190,7 @@ class ContractService {
     const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
     return await stakingContract.methods.withdrawStake(identityId).send({
       from: this.web3.eth.defaultAccount,
+      gasLimit: 500000,
     });
   }
 }

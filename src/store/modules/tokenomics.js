@@ -53,8 +53,13 @@ export default {
         metamask.contractService
           .getSharesContractInfo(identity, store.getters.connectedAddress)
           .then((data) => {
+            console.log(data);
             store.commit('SAVE_METRICS', {
-              nodeShareTokens: data,
+              nodeShareTokens: {
+                ...data,
+                totalSupply: getReadableTokenAmount(data.totalSupply, 18),
+                myBalance: getReadableTokenAmount(data.myBalance, 18),
+              },
             });
           }),
         metamask.contractService

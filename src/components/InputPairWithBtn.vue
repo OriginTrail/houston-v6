@@ -2,10 +2,11 @@
   <div class="input-pair-with-btn-wrapper" :style="computePrefixTextWidth">
     <div class="input-and-btn">
       <el-input
-        v-model="value"
+        v-model="cValue"
         @input="$emit('update', value)"
         :class="{ [color]: color }"
-        type="text"
+        :type="inputType"
+        :min="0"
       >
         <div slot="suffix" v-if="inputSuffix" class="suffix-inner" :ref="'suffix' + randomNumber">
           {{ inputSuffix }}
@@ -62,6 +63,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    inputType: {
+      type: String,
+      default: 'text',
+    },
+    inputPattern: {
+      type: String,
+      default: '[0-9]+([\\.][0-9]+)?',
+    },
   },
   data() {
     return {
@@ -71,6 +80,16 @@ export default {
     };
   },
   computed: {
+    cValue: {
+      get() {
+        return this.value;
+      },
+      set(val) {
+        if (!isNaN(val) && Number(val) >= 0) {
+          this.value = val;
+        }
+      },
+    },
     inputSuffixWidth() {
       return this.isMounted
         ? Math.min(this.$refs['suffix' + this.randomNumber]?.clientWidth, 130) ?? 0
@@ -143,6 +162,16 @@ export default {
       border: 1px solid $grey-200;
       border-radius: 8px;
       ::v-deep {
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* Firefox */
+        input[type='number'] {
+          -moz-appearance: textfield;
+        }
         &.blue {
           input {
             color: $brand-blue;
