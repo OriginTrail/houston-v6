@@ -15,6 +15,8 @@
           </div>
           <div class="form ask-form">
             <InputPairWithBtn
+              ref="askUpdateInput"
+              input-type="number"
               :button="false"
               color="blue"
               input-suffix="TRAC / (kb-epoch)"
@@ -93,7 +95,9 @@
             </div>
             <div class="form ask-form">
               <InputPairWithBtn
+                ref="newStakeInput"
                 :button="false"
+                input-type="number"
                 color="green"
                 input-suffix="TRAC"
                 input-prefix="+"
@@ -133,6 +137,8 @@
             </div>
             <div class="form ask-form">
               <InputPairWithBtn
+                ref="withdrawStakeInput"
+                input-type="number"
                 :button="false"
                 color="red"
                 input-suffix="TRAC"
@@ -157,7 +163,12 @@
             <div class="cta-section-with-steps">
               <div class="step-count">Step 1</div>
               <div>
-                <Button class="cta-button" @click="startWithdrawal">Start withdrawal</Button>
+                <Button
+                  :disabled="!withdrawalStake || Number(withdrawalStake) <= 0"
+                  class="cta-button"
+                  @click="startWithdrawal"
+                  >Start withdrawal</Button
+                >
               </div>
               <div class="step-divider"></div>
               <div class="step-count">Step 2</div>
@@ -212,6 +223,7 @@ import {
 } from '@/utils/stringUtil';
 import BackwardTimer from '@/components/shared/BackwardTimer';
 import * as moment from 'moment';
+import { generateToast } from '@/utils/toastObjectGenerator';
 
 export default {
   name: 'Tokenomics',
@@ -288,12 +300,13 @@ export default {
         const loader = this.$loading({ target: '.ask-card', text: 'Updating ask value...' });
         try {
           await metamask.contractService.updateAsk(this.getIdentityId, this.newAsk);
-          this.$notify.success('Ask updated successfully!');
+          this.notify(null, 'Ask updated successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newAsk = 0;
+          this.$refs.askUpdateInput.value = 0;
         } catch (err) {
           console.log(err);
-          this.$notify.error('Ask update error occurred!');
+          this.notify(null, 'Ask update error occurred!', 'error');
         } finally {
           loader.close();
         }
@@ -304,12 +317,13 @@ export default {
         const loader = this.$loading({ target: '.add-stake-card', text: 'Adding stake...' });
         try {
           await metamask.contractService.addStakeEthers(this.getIdentityId, this.newStake);
-          this.$notify.success('Stake added successfully!');
+          this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newStake = 0;
+          this.$refs.newStakeInput.value = 0;
         } catch (err) {
           console.log(err);
-          this.$notify.error('An error occurred when adding stake');
+          this.notify(null, 'An error occurred when adding stake', 'error');
         } finally {
           loader.close();
         }
@@ -319,18 +333,20 @@ export default {
       if (this.withdrawalStake) {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
-          text: 'requesting stake withdrawal...',
+          text: 'Requesting stake withdrawal...',
         });
         try {
           await metamask.contractService.requestWithdrawal(
             this.getIdentityId,
             this.withdrawalStake,
           );
-          this.$notify.success('Stake withdrawal requested successfully!');
+          this.notify(null, 'Stake withdrawal requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
+          this.$refs.withdrawStakeInput.value = 0;
+          this.withdrawalStake = 0;
         } catch (err) {
           console.log(err);
-          this.$notify.error('An error occurred when requesting stake withdrawal');
+          this.notify(null, 'An error occurred when requesting stake withdrawal', 'error');
         } finally {
           loader.close();
         }
@@ -344,15 +360,19 @@ export default {
         });
         try {
           await metamask.contractService.withdrawStake(this.getIdentityId);
-          this.$notify.success('Stake withdrawn successfully!');
+          this.notify(null, 'Stake withdrawn successfully!', 'success');
           await this.refreshAllTokenomicsData();
         } catch (err) {
           console.log(err);
-          this.$notify.error('An error occurred when withdrawing stake');
+          this.notify(null, 'An error occurred when withdrawing stake', 'error');
         } finally {
           loader.close();
         }
       }
+    },
+    notify(title, message, type, options) {
+      const notificationArray = generateToast(title, message, type, options);
+      return this.$toast(notificationArray[0], notificationArray[1]);
     },
   },
 };
