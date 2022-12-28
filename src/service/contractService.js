@@ -170,7 +170,6 @@ class ContractService {
     const shareContract = new this.web3.eth.Contract(ERC20Token, sharesContractAddress);
     const totalSupply = await shareContract.methods.totalSupply().call();
     const totalStakes = await this.getTotalStake(identityId);
-    console.log(getAmountWithDecimals(stakeToWithdraw));
     const sharesToBurn = Big(getAmountWithDecimals(stakeToWithdraw))
       .mul(totalSupply)
       .div(totalStakes)

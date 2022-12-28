@@ -109,11 +109,18 @@
               </InputPairWithBtn>
               <div class="sub-label label-inline-12">
                 Total stake after addition:
-                <span class="trac-amount">{{ getTotalStakeValueAfterAddition }} TRAC</span>
+                <span class="trac-amount"
+                  >{{ formatNumberWithSpaces(getTotalStakeValueAfterAddition) }} TRAC</span
+                >
               </div>
             </div>
             <div class="cta-section">
-              <Button class="cta-button" @click="addStake">Add stake</Button>
+              <Button
+                :disabled="!newStake || Number(newStake) <= 0"
+                class="cta-button"
+                @click="addStake"
+                >Add stake</Button
+              >
             </div>
           </div>
         </tokenomics-card>
@@ -142,7 +149,9 @@
               </InputPairWithBtn>
               <div class="sub-label label-inline-12">
                 Total free stake after withdrawal:
-                <span class="trac-amount">{{ getTotalStakeAfterWithdrawal }} TRAC</span>
+                <span class="trac-amount"
+                  >{{ formatNumberWithSpaces(getTotalStakeAfterWithdrawal) }} TRAC</span
+                >
               </div>
             </div>
             <div class="cta-section-with-steps">
@@ -281,6 +290,7 @@ export default {
           await metamask.contractService.updateAsk(this.getIdentityId, this.newAsk);
           this.$notify.success('Ask updated successfully!');
           await this.refreshAllTokenomicsData();
+          this.newAsk = 0;
         } catch (err) {
           console.log(err);
           this.$notify.error('Ask update error occurred!');
@@ -296,6 +306,7 @@ export default {
           await metamask.contractService.addStakeEthers(this.getIdentityId, this.newStake);
           this.$notify.success('Stake added successfully!');
           await this.refreshAllTokenomicsData();
+          this.newStake = 0;
         } catch (err) {
           console.log(err);
           this.$notify.error('An error occurred when adding stake');
