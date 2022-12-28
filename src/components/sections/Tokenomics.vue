@@ -15,6 +15,7 @@
           </div>
           <div class="form ask-form">
             <InputPairWithBtn
+              ref="askUpdateInput"
               input-type="number"
               :button="false"
               color="blue"
@@ -94,6 +95,7 @@
             </div>
             <div class="form ask-form">
               <InputPairWithBtn
+                ref="newStakeInput"
                 :button="false"
                 input-type="number"
                 color="green"
@@ -135,6 +137,7 @@
             </div>
             <div class="form ask-form">
               <InputPairWithBtn
+                ref="withdrawStakeInput"
                 input-type="number"
                 :button="false"
                 color="red"
@@ -295,6 +298,7 @@ export default {
           this.notify(null, 'Ask updated successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newAsk = 0;
+          this.$refs.askUpdateInput.value = 0;
         } catch (err) {
           console.log(err);
           this.notify(null, 'Ask update error occurred!', 'error');
@@ -311,6 +315,7 @@ export default {
           this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newStake = 0;
+          this.$refs.newStakeInput.value = 0;
         } catch (err) {
           console.log(err);
           this.notify(null, 'An error occurred when adding stake', 'error');
@@ -332,6 +337,7 @@ export default {
           );
           this.notify(null, 'Stake withdrawal requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
+          this.$refs.withdrawStakeInput.value = 0;
         } catch (err) {
           console.log(err);
           this.notify(null, 'An error occurred when requesting stake withdrawal', 'error');

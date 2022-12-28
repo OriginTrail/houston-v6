@@ -288,8 +288,12 @@ export default {
       }
 
       .operational-wallet {
-        @extend .label-inline-14;
-        color: $black-secondary;
+        ::v-deep {
+          input {
+            @extend .label-inline-14;
+            color: $black-secondary;
+          }
+        }
       }
 
       .cta-section {

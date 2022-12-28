@@ -121,7 +121,7 @@ export default {
 .overview-wrapper {
   .page-content {
     display: flex;
-    column-gap: 16px;
+    gap: 16px;
     flex-wrap: wrap;
 
     .trac-balance {
