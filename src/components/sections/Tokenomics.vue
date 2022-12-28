@@ -163,7 +163,12 @@
             <div class="cta-section-with-steps">
               <div class="step-count">Step 1</div>
               <div>
-                <Button class="cta-button" @click="startWithdrawal">Start withdrawal</Button>
+                <Button
+                  :disabled="!withdrawalStake || Number(withdrawalStake) <= 0"
+                  class="cta-button"
+                  @click="startWithdrawal"
+                  >Start withdrawal</Button
+                >
               </div>
               <div class="step-divider"></div>
               <div class="step-count">Step 2</div>
@@ -328,7 +333,7 @@ export default {
       if (this.withdrawalStake) {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
-          text: 'requesting stake withdrawal...',
+          text: 'Requesting stake withdrawal...',
         });
         try {
           await metamask.contractService.requestWithdrawal(
@@ -338,6 +343,7 @@ export default {
           this.notify(null, 'Stake withdrawal requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.$refs.withdrawStakeInput.value = 0;
+          this.withdrawalStake = 0;
         } catch (err) {
           console.log(err);
           this.notify(null, 'An error occurred when requesting stake withdrawal', 'error');
