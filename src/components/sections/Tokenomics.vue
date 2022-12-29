@@ -295,7 +295,11 @@ export default {
           this.$refs.askUpdateInput.value = 0;
         } catch (err) {
           console.log(err);
-          this.notify(null, 'Ask update error occurred!', 'error');
+          this.notify(
+            null,
+            err.code === 4001 ? 'METAMASK_TRANSACTION_REFUSED' : 'Ask update error occurred!',
+            'error',
+          );
         } finally {
           loader.close();
         }
@@ -318,7 +322,13 @@ export default {
           this.$refs.newStakeInput.value = 0;
         } catch (err) {
           console.log(err);
-          this.notify(null, 'An error occurred when adding stake', 'error');
+          this.notify(
+            null,
+            err.code === 4001
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when adding stake',
+            'error',
+          );
         } finally {
           loader.close();
         }
@@ -342,7 +352,13 @@ export default {
           this.refreshWithdrawalTimer();
         } catch (err) {
           console.log(err);
-          this.notify(null, 'An error occurred when requesting stake withdrawal', 'error');
+          this.notify(
+            null,
+            err.code === 4001
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when requesting stake withdrawal',
+            'error',
+          );
         } finally {
           loader.close();
         }
@@ -361,7 +377,13 @@ export default {
           this.refreshWithdrawalTimer();
         } catch (err) {
           console.log(err);
-          this.notify(null, 'An error occurred when withdrawing stake', 'error');
+          this.notify(
+            null,
+            err.code === 4001
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when withdrawing stake',
+            'error',
+          );
         } finally {
           loader.close();
         }

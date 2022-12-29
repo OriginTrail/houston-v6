@@ -149,6 +149,7 @@ export default {
       const loader = this.$loading({
         target: '.login-view-wrapper',
         text: 'Verifying operational wallet',
+        customClass: 'backdrop_border_radius',
       });
       this.$store
         .dispatch('getIdentityAction', {
