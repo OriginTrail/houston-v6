@@ -9,12 +9,8 @@
       <template v-else>
         <sidebar-nav></sidebar-nav>
         <div class="main-content" v-if="identityId">
-          <div class="upper-section">
-            <metamask-connect-button :button-text="walletAddress" @click="connectToMetamask" />
-          </div>
           <router-view></router-view>
         </div>
-        <login-view v-else />
       </template>
     </div>
   </div>
@@ -23,15 +19,11 @@
 <script>
 import Header from '../components/sections/Header';
 import SidebarNav from '../components/sections/SidebarNav';
-import MetamaskConnectButton from '@/components/shared/MetamaskConnectButton';
 import { getAddressShortForm } from '@/utils/stringUtil';
-import LoginView from '@/components/sections/LoginView';
 
 export default {
   name: 'MainLayout',
   components: {
-    LoginView,
-    MetamaskConnectButton,
     Header,
     SidebarNav,
   },
@@ -97,14 +89,14 @@ export default {
     z-index: 0;
     width: 100vw;
     height: 100%;
-    max-width: 1128px;
+    //max-width: 1128px;
     right: 10%;
   }
 
   .page-body {
     display: flex;
     column-gap: 24px;
-    padding: 0 30px;
+    padding: 0 24px 32px 24px;
     height: 100%;
     flex-grow: 4;
     z-index: 1;
@@ -112,9 +104,7 @@ export default {
       column-gap: 48px;
     }
     .main-content {
-      min-width: 944px;
       width: 100%;
-      height: 880px;
       background: #f6f6f6;
       border-radius: 20px;
       padding: 0 40px 82px 40px;
@@ -123,7 +113,7 @@ export default {
         display: flex;
         padding: 24px 0px 10px 0px;
 
-        .metamask-button {
+        .houston-account-button {
           margin-left: auto;
         }
       }

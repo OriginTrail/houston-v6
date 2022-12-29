@@ -1,5 +1,7 @@
 <template>
-  <button @click="onClick" :class="{ disabled: disabled }"><slot></slot></button>
+  <button :type="type" @click="onClick" :class="{ 'label-inline-14': true, disabled: disabled }">
+    <slot></slot>
+  </button>
 </template>
 
 <script>
@@ -9,6 +11,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    type: {
+      type: String,
+      default: 'button',
     },
   },
 
@@ -28,7 +34,6 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
   padding: 12px 16px;
   min-width: 113px;
   height: 40px;
@@ -37,6 +42,7 @@ button {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
   &:hover {
     background-color: $blue-accent-hover;
   }
@@ -45,9 +51,9 @@ button {
   }
 
   &.disabled {
-    opacity: 85%;
+    opacity: 0.85;
     img {
-      opacity: 15%;
+      opacity: 0.15;
     }
     background-color: $grey-100;
     &:hover {

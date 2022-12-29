@@ -2,7 +2,7 @@
   <div class="header-wrapper">
     <div class="logo-node-and-assets-info">
       <img class="logo" src="images/logo.svg" alt="Houston application logo" />
-      <div class="node-info">
+      <!--      <div class="node-info">
         <info-pair
           title="Node version"
           description="v6-beta.3.0.1 (autoupdate <b>ON</b>)"
@@ -14,10 +14,10 @@
         <info-pair title="Number of hosted assets" description="80219"></info-pair>
         <info-pair title="Stake" description="50 500 TRAC (Delegated 0 TRAC)"></info-pair>
         <info-pair title="Operational wallet" description="0x1234563234123411334"></info-pair>
-      </div>
+      </div>-->
     </div>
 
-    <div class="blockchain-rpc-status">
+    <!--    <div class="blockchain-rpc-status">
       <p class="rpc-status">Blockchain RPC status</p>
       <div class="status-pair">
         <img src="images/circle-green.svg" alt="" />
@@ -31,16 +31,21 @@
         <img src="images/circle-amber.svg" alt="" />
         <p>Ethereum</p>
       </div>
+    </div>-->
+    <div class="user-control">
+      <houston-account-button />
     </div>
   </div>
 </template>
 
 <script>
 import InfoPair from '../InfoPair.vue';
+import HoustonAccountButton from '@/components/shared/HoustonAccountButton';
 
 export default {
   name: 'Header',
-  components: { InfoPair },
+  // eslint-disable-next-line vue/no-unused-components
+  components: { HoustonAccountButton, InfoPair },
 };
 </script>
 
@@ -51,7 +56,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 128px;
   padding: 20px 30px;
 
   .logo {

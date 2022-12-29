@@ -5,6 +5,7 @@ import Tokenomics from '../components/sections/Tokenomics';
 import store from '../store';
 import LoginPage from '@/views/LoginPage';
 import metamask from '@/service/metamask';
+import Wallets from '@/components/sections/Wallets';
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,11 @@ const routes = [
     path: '/tokenomics',
     name: 'tokenomics',
     component: Tokenomics,
+  },
+  {
+    path: '/wallet-management',
+    name: 'wallet-management',
+    component: Wallets,
   },
   {
     path: '/login',
@@ -40,20 +46,29 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.public) {
     return next();
   }
-  if (!store.getters.isLoggedIn) {
+  if (!store.getters.isConnectedToHouston) {
     if (metamask.isSavedConnection()) {
       await store.dispatch('toggleGlobalLoader', { status: true, text: null });
-      await store
-        .dispatch('connectToMetamask')
-        .then(() => {
-          next();
+      store
+        .dispatch('readAuthInfo')
+        .then(async (userData) => {
+          await store.dispatch('connectToMetamask');
+          await store.dispatch('isAccountSaved', userData);
+          return userData;
+        })
+        .then(async (userData) => {
+          await store.dispatch('getIdentityAction', {
+            opw: userData.operationalWallet,
+            adminw: userData.currentAddress,
+          });
+          next(to.path);
+          return;
         })
         .catch((err) => {
           console.error(err);
-        })
-        .then(() => {
           next('/login');
         });
+
       await store.dispatch('toggleGlobalLoader', { status: false, text: null });
     } else {
       next('/login');

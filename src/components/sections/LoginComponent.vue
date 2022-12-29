@@ -20,11 +20,13 @@
         </div>
 
         <div class="form-item">
+          <div class="label label-inline-12">Admin wallet address</div>
           <el-form-item>
             <metamask-connect-button
               :disabled="!userForm.network"
               :button-text="walletAddress"
               :error="metamaskError"
+              :success="!!$store.getters.connectedAddress"
               @click="connectToMetamask"
             />
           </el-form-item>
@@ -147,8 +149,13 @@ export default {
       const loader = this.$loading({
         target: '.login-view-wrapper',
         text: 'Verifying operational wallet',
+        customClass: 'backdrop_border_radius',
       });
-      this.getIdentityId()
+      this.$store
+        .dispatch('getIdentityAction', {
+          opw: this.userForm.operationalWallet,
+          adminw: metamask.accounts[0],
+        })
         .then(() => {
           this.$router.push({
             name: 'overview',
@@ -204,6 +211,7 @@ export default {
           console.log(identity);
           if (Number(identity) > 0) {
             this.$store.commit('SAVE_IDENTITY', identity);
+            this.$store.commit('SAVE_OPERATIONAL_WALLET', this.userForm.operationalWallet);
             return identity;
           } else {
             throw 'NOT_CONNECTED_OP_WALLET';
@@ -281,8 +289,12 @@ export default {
       }
 
       .operational-wallet {
-        @extend .label-inline-14;
-        color: $black-secondary;
+        ::v-deep {
+          input {
+            @extend .label-inline-14;
+            color: $black-secondary;
+          }
+        }
       }
 
       .cta-section {

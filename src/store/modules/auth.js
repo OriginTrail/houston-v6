@@ -1,4 +1,5 @@
 import metamask from '@/service/metamask';
+import { deleteFromStorage, readFromStorage, saveToStorage } from '@/utils/storageUtils';
 
 export default {
   state: {
@@ -6,6 +7,7 @@ export default {
     selectedNetwork: null,
     currentAddress: null,
     identityId: null,
+    operationalWallet: null,
   },
   mutations: {
     LOGIN_METAMASK(state, data) {
@@ -20,18 +22,95 @@ export default {
     SAVE_IDENTITY(state, IID) {
       state.identityId = IID;
     },
+    SAVE_OPERATIONAL_WALLET(state, OPW) {
+      state.operationalWallet = OPW;
+    },
     SAVE_NETWORK_CHOICE(state, network) {
       state.selectedNetwork = network;
+    },
+    READ_SAVED_STORAGE_DATA(state, newData) {
+      Object.keys(newData).forEach((key) => {
+        state[key] = newData[key];
+      });
     },
   },
   actions: {
     async connectToMetamask(store) {
-      await metamask.connectToMetamask().then((accounts) => {
+      return await metamask.connectToMetamask().then((accounts) => {
         store.commit('LOGIN_METAMASK', { address: accounts[0] });
       });
     },
     async disconnectFromMetamask() {
       await metamask.disconnectFromMetamask();
+    },
+
+    async disconnectFromHouston() {
+      await metamask.disconnectFromMetamask();
+      deleteFromStorage('user_id');
+    },
+
+    async getIdentityAction(store, wallets) {
+      return await metamask.contractService
+        .getIdentity(wallets.opw, wallets.adminw)
+        .then(async (identity) => {
+          if (Number(identity) > 0) {
+            store.commit('SAVE_IDENTITY', identity);
+            store.commit('SAVE_OPERATIONAL_WALLET', wallets.opw);
+            await store.dispatch('saveAuthInfo');
+            return identity;
+          } else {
+            throw 'NOT_CONNECTED_OP_WALLET';
+          }
+        });
+    },
+
+    async saveAuthInfo(store) {
+      saveToStorage('user_id', {
+        selectedNetwork: store.state.selectedNetwork,
+        currentAddress: store.state.currentAddress,
+        identityId: store.state.identityId,
+        operationalWallet: store.state.operationalWallet,
+      });
+    },
+    async readAuthInfo(store, newData = null) {
+      let userData = newData ?? readFromStorage('user_id');
+      if (userData) userData = JSON.parse(userData);
+      store.commit('READ_SAVED_STORAGE_DATA', userData);
+      return userData;
+    },
+
+    async isAccountSaved(store) {
+      let userData = readFromStorage('user_id');
+      if (userData) userData = JSON.parse(userData);
+      if (store.state.currentAddress === userData.currentAddress) {
+        return userData;
+      } else {
+        throw 'not saved';
+      }
+    },
+
+    async metamaskAccountChange(store) {
+      await store.dispatch('toggleGlobalLoader', { status: true, text: null });
+      await store
+        .dispatch('readAuthInfo')
+        .then(async (userData) => {
+          await store.dispatch('connectToMetamask');
+          await store.dispatch('isAccountSaved', userData);
+          return userData;
+        })
+        .then(async (userData) => {
+          await store.dispatch('getIdentityAction', {
+            opw: userData.operationalWallet,
+            adminw: userData.currentAddress,
+          });
+          return true;
+        })
+        .catch((err) => {
+          console.error(err);
+          throw 'error when re-logging in';
+        });
+
+      await store.dispatch('toggleGlobalLoader', { status: false, text: null });
     },
   },
   getters: {
@@ -43,6 +122,9 @@ export default {
     },
     selectedNetwork(state) {
       return state.selectedNetwork;
+    },
+    useOperationalWallet(state) {
+      return state.operationalWallet;
     },
     isIdentityResolved(state) {
       return state.identityId;

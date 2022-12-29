@@ -1,5 +1,5 @@
 <template>
-  <a class="link-button" :href="href">
+  <a class="link-button" :href="href" target="_blank">
     <span class="link-content">
       <slot>
         {{ text }}
@@ -38,6 +38,7 @@ export default {
   border: none;
   border-radius: 16px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
   .link-content {
     margin: auto;
   }
@@ -49,9 +50,9 @@ export default {
   }
 
   &.disabled {
-    opacity: 85%;
+    opacity: 0.85;
     img {
-      opacity: 15%;
+      opacity: 0.15;
     }
     background-color: $grey-100;
     &:hover {

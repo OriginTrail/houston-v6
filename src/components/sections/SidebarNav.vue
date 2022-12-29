@@ -1,36 +1,37 @@
 <template>
   <div class="sidebar-nav-wrapper">
     <ul class="sidebar-nav">
-      <router-link to="/"
-        ><li @click="activate(1)" :class="{ active: activeElement === 1 }">
-          Overview
-        </li></router-link
-      >
-      <router-link to="/tokenomics"
-        ><li @click="activate(2)" :class="{ active: activeElement === 2 }">
-          Service tokenomics
-        </li></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(3)" :class="{ active: activeElement === 3 }">Node configuration</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(4)" :class="{ active: activeElement === 4 }">API keys</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(5)" :class="{ active: activeElement === 5 }">Node telemetry</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(6)" :class="{ active: activeElement === 6 }">Logs</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
-      <router-link to="#" class="disabled"
-        ><li @click="activate(7)" :class="{ active: activeElement === 7 }">Backups</li>
-        <Pill class="coming-soon">coming soon</Pill></router-link
-      >
+      <template v-for="link of sidebarList">
+        <router-link
+          :class="{ disabled: link.disable }"
+          :to="link.link"
+          :key="link.label + link.route"
+        >
+          <li :class="{ active: isActive(link.route) }">{{ link.label }}</li>
+          <Pill v-if="link.disable" class="coming-soon">coming soon</Pill>
+        </router-link>
+        <div
+          :key="link.label + link.route + 'children'"
+          class="link-children"
+          v-if="link.children && link.children.length"
+        >
+          <ul>
+            <li
+              :class="{ disabled: link.disabled || child.disable }"
+              v-for="child of link.children"
+              :key="child.label + link.label + link.route"
+            >
+              <router-link
+                :class="{ disabled: link.disabled || child.disable }"
+                :to="child.link"
+                :key="child.label + child.route"
+              >
+                <div :class="{ active: isActive(child.route) }">{{ child.label }}</div>
+              </router-link>
+            </li>
+          </ul>
+        </div>
+      </template>
     </ul>
   </div>
 </template>
@@ -44,11 +45,31 @@ export default {
   data() {
     return {
       activeElement: 1,
+      sidebarList: [
+        {
+          label: 'Overview',
+          link: '/',
+          route: 'overview',
+        },
+        {
+          label: 'Service tokenomics',
+          link: '/tokenomics',
+          route: 'tokenomics',
+        },
+        {
+          label: 'Node wallets',
+          link: '/wallet-management',
+          route: 'wallet-management',
+        },
+      ],
     };
   },
   methods: {
     activate: function (element) {
       this.activeElement = element;
+    },
+    isActive(routeName) {
+      return this.$route.name === routeName;
     },
   },
 };
@@ -64,7 +85,6 @@ export default {
   padding: 40px 16px 0px;
   gap: 5px;
   width: 240px;
-  height: 880px;
   background: $blue-primary;
   border-radius: 20px;
 
@@ -81,7 +101,7 @@ export default {
       border-radius: 8px;
       color: $white-secondary;
       white-space: nowrap;
-
+      transition: all 0.2s ease-out;
       &.active {
         background-color: white;
         color: $blue-primary;
@@ -108,6 +128,28 @@ export default {
 
       .coming-soon {
         width: 67px;
+      }
+    }
+    .link-children {
+      ul {
+        list-style: none;
+        padding-inline-start: 15px;
+        li {
+          .disabled {
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.32);
+            .coming-soon {
+              width: 67px;
+            }
+          }
+          &.disabled {
+            &:hover {
+              cursor: default;
+            }
+          }
+        }
       }
     }
   }

@@ -69,4 +69,45 @@ body {
     color: $black-tertiary;
   }
 }
+.withdrawal-availability-message {
+  color: #0c0c0c;
+}
+.el-tooltip__popper.is-light {
+  border-radius: 8px;
+}
+
+.el-notification {
+  .el-notification__title {
+    @extend .label-inline-14;
+  }
+}
+
+.loading-toast {
+  &.Vue-Toastification__toast--default {
+    background: #ffffff;
+  }
+
+  &.Vue-Toastification__toast {
+    border: 1px solid #dfdfdf;
+    box-shadow: 0px 24px 32px rgba(82, 97, 115, 0.1);
+    border-radius: 4px;
+    width: 352px;
+    min-height: 88px;
+    padding: 24px 16px 24px 32px;
+  }
+  .Vue-Toastification__icon {
+    height: 40px;
+    width: 40px;
+  }
+  .Vue-Toastification__close-button {
+    color: $dark;
+    opacity: 1;
+    line-height: 15px;
+    height: 100%;
+  }
+}
+
+.backdrop_border_radius {
+  border-radius: 8px;
+}
 </style>
