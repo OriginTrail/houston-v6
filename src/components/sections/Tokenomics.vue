@@ -155,7 +155,7 @@
               <div class="extra-step-cta">
                 <Button
                   class="cta-button"
-                  :disabled="!getRequestTime || mustWaitForWithdrawal"
+                  :disabled="!getRequestTime || getRequestTime < 0 || mustWaitForWithdrawal"
                   @click="withdrawStake"
                   >Withdraw now</Button
                 >
@@ -174,6 +174,7 @@
                   Estimated time:
                   <span
                     ><backward-timer
+                      @over="timerOver"
                       ref="timer"
                       :instantly-start="getRequestTime !== 0"
                       :start-timestamp="null"
@@ -245,7 +246,7 @@ export default {
       return Number(this.getTotalStakeValue) - Number(this.withdrawalStake ?? '0');
     },
     getRequestTime() {
-      return Number(this.getWithdrawalInfo?.requestTime ?? '0');
+      return Number(this.getWithdrawalInfo?.requestTime ?? '0') - 70;
     },
     //you need to wait
     mustWaitForWithdrawal() {
@@ -362,6 +363,11 @@ export default {
     },
     async copyAddress(address) {
       await navigator.clipboard.writeText(address);
+    },
+    async timerOver() {
+      await this.refreshAllTokenomicsData();
+      this.refreshWithdrawalTimer();
+      this.$forceUpdate();
     },
   },
 };
