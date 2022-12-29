@@ -1,80 +1,89 @@
-# Vue project boilerplate
-Boilerplate contains:
-- vue router
-- vuex
-- linter
-- prettier
-- linter
-- prettier
-- pre commit git hooks
-## Node version recommendation
-Node v16 should be used for development. To install it:
-```
-nvm install 16
-nvm use 16
-```
-⚠️ Note: If you haven't set node 16 as your default node version, you will have to set `nvm use 16` every time before spinnging up dev server
+# Houston V6 - Node command center
 
-## Code quality tools
->⚠️ Note: If project is not successfully linted, you will be unable to commit
+## Houston V6 is an application that allows node runners to easily control their nodes through an easy to understand UI.
 
-### Vscode
-Mandatory extensions:
-- vetur
-- vue (syntax highlight for vue)
-- eslint
-- prettier
+There are two ways you can use the Houston application:
+- Via a hosted application, which is available at the following link: https://houston.origintrail.io/ or
+- Run Houston Web application locally by following the setup instructions.
 
-Other useful extensions:
-- path intellisense
-- auto close tag
-- auto rename tag
-- barcket pair colorizer 2
-- color highlight
+## Houston is an open source project and we welcome your contributions on the [official project repository.](https://github.com/OriginTrail/houston-v6/)
 
-After installing mandatory extensions, in your root folder add
-`.vscode/settings.json`
-And put this code snippet inside:
+## Usage instructions
+>⚠️ Note: The Houston application currently requires the Metamask browser extension to be installed in order to connect to the node. Additional wallets will be supported in the future releases.
+
+- When Houston application opens, you will be presented with a login form. Make sure to choose the right network (OriginTrail DKG Mainnet or OriginTrail DKG Testnet).
+- After choosing the network you will have to connect and authenticate your node's admin key with Metamask by clicking the “**Connect admin wallet**” button.
+- Paste your node’s operational wallet address into the “**Operational wallet address**” input field.
+- Connect by clicking the “Connect via Houston” button.
+
+  ![Houston login](documentation/images/login.png)
+
+Houston currently helps you interact with OriginTrail DKG smart contracts. In the future versions Houston will enable connecting to your nodes directly as well.
+
+## Overview:
+The Overview section shows general information about your node TRAC balance and network metrics.
+
+![Houston login](documentation/images/overview_section.png)
+
+
+## Service tokenomics:
+Under “**Service tokenomics**” section, you’re able to manage TRAC stake settings on the node as well as updating:
+
+- Ask parameter, which will determine the preferred amount of TRAC your node is asking for its services in the network,
+- Add and withdraw TRAC stake. Note that both operations require executing 2 transactions.
+
+![Houston login](documentation/images/service_tokenomics.png)
+
+![Houston login](documentation/images/add_withdraw_stake.png)
+
+## Node wallets:
+This section allows node runners to add additional keys (wallets) or remove keys from the node. OriginTrail V6 node operates with 2 key types (admin key and operational key).
+
+
+Houston will allow a node runner to remove a key (of a certain type) if there are at least two keys available for that type (e.g. you cannot remove your only admin key, as you would lose the ability to manage your node).
+
+![Houston login](documentation/images/node_wallets.png)
+
+To find out more about OriginTrail Node keys, visit the following page: [Setup instructions: Node keys.](https://docs.origintrail.io/decentralized-knowledge-graph-layer-2/testnet-node-setup-instructions/node-keys)
+
+
+## Upcoming Houston features:
+With the future versions of Houston application, multiple features are to be introduced, such as connecting to your node and token delegation.
+If you have ideas on how to improve or extend Houston, we’d love to have you contribute to the project [via the official repository.](https://github.com/OriginTrail/houston-v6)
+
+In order to stay in the loop with the latest Houston & OriginTrail developments, please join our [Discord](https://discordapp.com/invite/FCgYk2S) channel and follow our social media accounts.
+
+
+## #TraceOn
+
+
+
+
+# Setup Houston locally:
+### Requirements:
+- Node.js: v16
+
+### How to run Houston:
+- Clone the project:
 ```
-{
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-}
+git clone https://github.com/OriginTrail/houston-v6.git  
 ```
-### Phpstorm
-⚠️ You should have PhpStorm 2020.3+
-
-- Install prettier extension
-- Settings>Languages and frameworks>Javascript>Code Quality Tools>Eslint
-    - Automatic ESLint configuration and Run eslint --fix on save  ✅(optional)
-- Settings>Languages and frameworks>Javascript>Prettier
-    - Node interpreter: ~/.nvm/versions/node/v16.13.2/bin/node
-    - Prettier package: ~/path_to_project/node_modules/prettier
-    - Run for files: {**/\*,\*}.{js,ts,jsx,tsx,vue}
-    - On code format: ✅
-    - On save: ✅
-- Settings>Languages and frameworks>Javascript>Webpack
-  - Automatic: ✅
-## Project setup
+- Install dependencies:
 ```
-npm install
+cd houston-v6 && npm install
 ```
-
-### Compiles and hot-reloads for development
+- Run Houston application:
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+The Houston application will be available at http://localhost:8080/ in the browser of your choice.
+
+- Compile and minify for production purposes:
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Contribution guidelines
+For more information on how to contribute, please follow this [link](https://docs.origintrail.io/useful-resources/contribute).
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

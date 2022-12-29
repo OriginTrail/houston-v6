@@ -112,8 +112,8 @@
           <div class="card-content">
             <div class="description label-inline-14">
               Withdrawing TRAC stake from your node is executed in two transactions, with the second
-              transaction being delayed in time for XX minutes. Once you start the withdrawal, a
-              counter will appear to instruct you on when to execute the second transaction.
+              transaction being delayed in time. Once you start the withdrawal, a counter will
+              appear to instruct you on when to execute the second transaction.
             </div>
             <div class="form ask-form">
               <InputPairWithBtn
