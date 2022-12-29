@@ -11,7 +11,7 @@
             <a
               target="_blank"
               href="https://docs.origintrail.io/decentralized-knowledge-graph-layer-2/testnet-node-setup-instructions/node-keys"
-              >Setup instructions : node keys</a
+              >Setup instructions: Node keys</a
             >
           </div>
           <div class="form add-key-form">
@@ -93,7 +93,7 @@
               target="_blank"
               href="https://docs.origintrail.io/decentralized-knowledge-graph-layer-2/testnet-node-setup-instructions/node-keys"
             >
-              Setup instructions : node keys
+              Setup instructions: Node keys
             </a>
           </div>
           <div class="form add-key-form">
