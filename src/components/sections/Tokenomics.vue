@@ -82,6 +82,7 @@
           <p class="item label-body-14">
             Share token address:
             <span class="item-value">{{ getAddressShortForm(getNodeSharesToken.address) }}</span>
+            <copy-button @click="copyAddress(getNodeSharesToken.address)" />
           </p>
         </div>
       </Card>
@@ -224,10 +225,11 @@ import {
 import BackwardTimer from '@/components/shared/BackwardTimer';
 import * as moment from 'moment';
 import { generateToast } from '@/utils/toastObjectGenerator';
+import CopyButton from '@/components/shared/copyButton';
 
 export default {
   name: 'Tokenomics',
-  components: { BackwardTimer, Card, TokenomicsCard, Button, InputPairWithBtn },
+  components: { CopyButton, BackwardTimer, Card, TokenomicsCard, Button, InputPairWithBtn },
   data() {
     return {
       currentAsk: null,
@@ -268,6 +270,7 @@ export default {
       return Number(this.getWithdrawalInfo?.requestTime ?? '0');
     },
     isWithdrawalRequestTimeOver() {
+      console.log(this.getRequestTime, moment().unix());
       return Number(this.getRequestTime) > 0 && moment(this.getRequestTime) <= moment();
     },
   },
@@ -373,6 +376,9 @@ export default {
     notify(title, message, type, options) {
       const notificationArray = generateToast(title, message, type, options);
       return this.$toast(notificationArray[0], notificationArray[1]);
+    },
+    async copyAddress(address) {
+      await navigator.clipboard.writeText(address);
     },
   },
 };
@@ -539,6 +545,8 @@ export default {
         color: $blue-primary;
       }
       .item {
+        display: flex;
+        flex-direction: row;
       }
     }
 
@@ -572,9 +580,13 @@ export default {
           color: $blue-primary;
         }
         .item {
+          display: flex;
           color: $black-secondary;
           .item-value {
             color: $brand-blue;
+          }
+          .copy-button-wrapper {
+            margin-left: auto;
           }
         }
       }
