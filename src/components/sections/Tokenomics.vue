@@ -246,7 +246,7 @@ export default {
       return Number(this.getTotalStakeValue) - Number(this.withdrawalStake ?? '0');
     },
     getRequestTime() {
-      return Number(this.getWithdrawalInfo?.requestTime ?? '0') - 70;
+      return Number(this.getWithdrawalInfo?.requestTime ?? '0');
     },
     //you need to wait
     mustWaitForWithdrawal() {
