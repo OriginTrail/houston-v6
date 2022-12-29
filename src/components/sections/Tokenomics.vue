@@ -155,7 +155,7 @@
               <div class="extra-step-cta">
                 <Button
                   class="cta-button"
-                  :disabled="!isWithdrawalRequestTimeOver"
+                  :disabled="!getRequestTime || mustWaitForWithdrawal"
                   @click="withdrawStake"
                   >Withdraw now</Button
                 >
@@ -247,21 +247,24 @@ export default {
     getRequestTime() {
       return Number(this.getWithdrawalInfo?.requestTime ?? '0');
     },
-    isWithdrawalRequestTimeOver() {
-      console.log(this.getRequestTime, moment().unix());
-      return Number(this.getRequestTime) > 0 && moment(this.getRequestTime) <= moment();
+    //you need to wait
+    mustWaitForWithdrawal() {
+      return Number(this.getRequestTime) > 0 && moment.unix(this.getRequestTime) >= moment();
     },
   },
   async mounted() {
     await this.refreshAllTokenomicsData();
-    if (this.getRequestTime > 0 && !this.isWithdrawalRequestTimeOver) {
-      this.$refs.timer.startTimer();
-    }
+    this.refreshWithdrawalTimer();
   },
   methods: {
     formatNumberWithSpaces,
     getAddressShortForm,
     formatNumbersToShort,
+    refreshWithdrawalTimer() {
+      if (this.mustWaitForWithdrawal) {
+        this.$refs.timer.startTimer();
+      }
+    },
     async refreshAllTokenomicsData() {
       const loader = this.$loading({ target: '.tokenomics-wrapper' });
       await this.$store.dispatch('getOverviewData', this.getIdentityId);
@@ -325,6 +328,7 @@ export default {
           await this.refreshAllTokenomicsData();
           this.$refs.withdrawStakeInput.value = 0;
           this.withdrawalStake = 0;
+          this.refreshWithdrawalTimer();
         } catch (err) {
           console.log(err);
           this.notify(null, 'An error occurred when requesting stake withdrawal', 'error');
@@ -334,7 +338,7 @@ export default {
       }
     },
     async withdrawStake() {
-      if (this.isWithdrawalRequestTimeOver) {
+      if (!this.mustWaitForWithdrawal) {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
           text: 'Withdrawing stake...',
@@ -343,6 +347,7 @@ export default {
           await metamask.contractService.withdrawStake(this.getIdentityId);
           this.notify(null, 'Stake withdrawn successfully!', 'success');
           await this.refreshAllTokenomicsData();
+          this.refreshWithdrawalTimer();
         } catch (err) {
           console.log(err);
           this.notify(null, 'An error occurred when withdrawing stake', 'error');

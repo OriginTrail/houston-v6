@@ -28,15 +28,11 @@ export default {
       timerStarted: false,
     };
   },
-  mounted() {
-    if (this.instantlyStart) {
-      this.startTimer();
-    }
-  },
+  mounted() {},
   methods: {
     startTimer() {
-      let eventTime = this.startTimestamp ?? moment().unix(); // Timestamp - Sun, 21 Apr 2013 13:00:00 GMT
-      let currentTime = this.endTimestamp ?? 1366547400; // Timestamp - Sun, 21 Apr 2013 12:30:00 GMT
+      let currentTime = this.startTimestamp ?? moment().unix(); // Timestamp - Sun, 21 Apr 2013 13:00:00 GMT
+      let eventTime = this.endTimestamp ?? 1366547400; // Timestamp - Sun, 21 Apr 2013 12:30:00 GMT
       let diffTime = eventTime - currentTime;
       let duration = moment.duration(diffTime * 1000, 'milliseconds');
       let interval = 1000;
