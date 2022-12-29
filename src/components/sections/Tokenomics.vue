@@ -215,6 +215,7 @@ export default {
       newAsk: null,
       newStake: null,
       withdrawalStake: null,
+      timerActive: 0,
     };
   },
   computed: {
@@ -250,6 +251,7 @@ export default {
     },
     //you need to wait
     mustWaitForWithdrawal() {
+      this.timerActive;
       return Number(this.getRequestTime) > 0 && moment.unix(this.getRequestTime) >= moment();
     },
   },
@@ -262,6 +264,7 @@ export default {
     getAddressShortForm,
     formatNumbersToShort,
     refreshWithdrawalTimer() {
+      this.timerActive++;
       if (this.mustWaitForWithdrawal) {
         this.$refs.timer.startTimer();
       }
