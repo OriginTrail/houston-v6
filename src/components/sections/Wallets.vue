@@ -61,7 +61,7 @@
                 <el-form-item prop="walletKey">
                   <el-input
                     class="walletKey-wallet"
-                    placeholder="Please input a valid wallet to create a key from"
+                    placeholder="Please input your wallet address"
                     v-model="userForm.walletKey"
                     v-on:keyup.enter.native.stop.prevent="addKey"
                   ></el-input>
@@ -105,11 +105,11 @@
               @validate="validateRemoveKeyStatus"
             >
               <div class="form-item">
-                <div class="label label-inline-12">Wallet to remove key of</div>
+                <div class="label label-inline-12">Wallet address to remove</div>
                 <el-form-item prop="walletKey">
                   <el-input
                     class="walletKey-wallet"
-                    placeholder="Please input a valid wallet to remove the associated key from"
+                    placeholder="Please input your wallet address"
                     v-model="removeKeyUserForm.walletKey"
                     v-on:keyup.enter.native.stop.prevent="removeKey()"
                   ></el-input>
