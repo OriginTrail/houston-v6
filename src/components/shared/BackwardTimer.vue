@@ -34,6 +34,8 @@ export default {
     stopTimer() {
       clearInterval(this.interval);
       this.currentTime = '00:00:00:00';
+      this.$emit('over');
+      return;
     },
     startTimer() {
       let currentTime = this.startTimestamp ?? moment().unix(); // Timestamp - Sun, 21 Apr 2013 13:00:00 GMT
@@ -53,7 +55,6 @@ export default {
           ':' +
           `${duration.seconds() < 10 ? '0' : ''}${duration.seconds()}`;
         if (duration.seconds() < 0) {
-          this.$emit('over');
           this.stopTimer();
         }
       }, interval);

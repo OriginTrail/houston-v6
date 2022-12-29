@@ -57,7 +57,7 @@ export default {
           route: 'tokenomics',
         },
         {
-          label: 'Wallet maangement',
+          label: 'Wallet management',
           link: '/wallet-management',
           route: 'wallet-management',
         },
