@@ -63,6 +63,14 @@ class ContractService {
     return ProfileStorageContract.methods.getAsk(identityId).call();
   }
 
+  async isKeyAlreadyUsed(identityId, adminWallet) {
+    const address = await this.getContractAddress('IdentityStorage');
+    const IdentityStorageContract = new this.web3.eth.Contract(IdentityStorage, address);
+    const adminKey = ethers.utils.keccak256(ethers.utils.solidityPack(['address'], [adminWallet]));
+    const keyObject = await IdentityStorageContract.methods.getKey(identityId, adminKey).call();
+    return (keyObject['2'] ?? keyObject.key) !== adminKey;
+  }
+
   async updateAsk(identityId, newAsk) {
     const address = await this.getContractAddress('Profile');
     const ProfileContract = new this.web3.eth.Contract(profileAbi, address);
@@ -153,7 +161,7 @@ class ContractService {
       gasLimit: 500000,
     });
     if (loadingMessageCallback) {
-      loadingMessageCallback('Adding stake (Transaction 2 of 2: Adding stake to node)');
+      loadingMessageCallback('Adding stake (Transaction 2 of 2: Adding stake to the node)');
     }
     await stakingReceipt.wait();
   }

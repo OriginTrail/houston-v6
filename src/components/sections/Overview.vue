@@ -13,27 +13,13 @@
             <p class="title">Delegated</p>
             <p class="value multi-line">0 TRAC <br />(Delegator share 0%)</p>
           </div>
-          <div class="property-wrapper property-short">
+          <div class="property-wrapper">
             <p class="title">Slashed</p>
             <p class="value">0 TRAC <span class="faded">(slashing is inactive)</span></p>
           </div>
-          <div class="property-wrapper property-short">
+          <div class="property-wrapper">
             <p class="title">Total</p>
             <p class="value">{{ formatNumberWithSpaces(balances.total) }} TRAC</p>
-          </div>
-        </div>
-        <div class="rewards">
-          <div class="property-wrapper">
-            <p class="title">Locked rewards</p>
-            <p class="value">{{ formatNumberWithSpaces(rewards.locked) }} TRAC</p>
-          </div>
-          <div class="property-wrapper property-short">
-            <p class="title">Accumulated operator fees</p>
-            <p class="value">{{ formatNumberWithSpaces(rewards.operatorFee) }} TRAC</p>
-          </div>
-          <div class="property-wrapper">
-            <p class="title">Delegator rewards</p>
-            <p class="value">{{ formatNumberWithSpaces(rewards.delegator) }} TRAC</p>
           </div>
         </div>
       </div>
@@ -47,7 +33,7 @@
             </p>
           </div>
           <div class="property-wrapper full">
-            <p class="title label-inline-12">TRAC Staked</p>
+            <p class="title label-inline-12">Total TRAC Staked</p>
             <p class="value label-plat-h5">
               {{ formatNumberWithSpaces(networkMetrics.stakedTRAC) }} TRAC
             </p>
@@ -139,7 +125,7 @@ export default {
           gap: 8px;
           min-width: 48%;
           flex-grow: 2;
-          height: 82px;
+          height: 101px;
           background: linear-gradient(0deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
             $blue-primary;
           border-radius: 8px;

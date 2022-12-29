@@ -3,6 +3,7 @@ import LoadingToastIcon from '../components/shared/toasts/LoadingToastIcon';
 import ErrorToastIcon from '../components/shared/toasts/ErrorToastIcon';
 import SuccessToastIcon from '../components/shared/toasts/SuccessToastIcon';
 import CloseToastComponent from '@/components/shared/toasts/CloseToastComponent';
+import { networkErrors } from '@/utils/errorMessages';
 
 const toastIcons = {
   loading: LoadingToastIcon,
@@ -18,7 +19,7 @@ export const generateToast = (title, message, type, { id, timeout } = {}) => {
       component: SuccessToastComponent,
       props: {
         title: title,
-        message: message,
+        message: networkErrors[message] ?? message,
       },
       listeners: {},
     },

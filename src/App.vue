@@ -106,4 +106,8 @@ body {
     height: 100%;
   }
 }
+
+.backdrop_border_radius {
+  border-radius: 8px;
+}
 </style>

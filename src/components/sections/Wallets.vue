@@ -153,11 +153,24 @@ export default {
     Button,
   },
   data() {
-    const validateWalletAddress = (rule, value, callback) => {
+    const validateWalletAddressWithoutVerification = async (rule, value, callback) => {
       if (value === '') {
         callback(new Error('Please input your wallet address'));
       } else if (!metamask.isAddress(value)) {
         callback(new Error('Please input a valid wallet address'));
+      } else {
+        callback();
+      }
+    };
+    const validateWalletAddress = async (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please input your wallet address'));
+      } else if (!metamask.isAddress(value)) {
+        callback(new Error('Please input a valid wallet address'));
+      }
+      const keysMatch = await this.isKeyUsed(value);
+      if (!keysMatch) {
+        callback(new Error('Please input a new wallet'));
       } else {
         callback();
       }
@@ -198,12 +211,12 @@ export default {
           },
           {
             validator: validateWalletAddress,
-            message: 'Please input a valid wallet',
             trigger: ['blur', 'change'],
           },
         ],
       },
       validationStatus: { walletKey: false },
+      validationKey: 0,
       removeKeyError: null,
       removeKeyUserForm: {
         purpose: null,
@@ -232,7 +245,7 @@ export default {
             trigger: ['blur', 'change'],
           },
           {
-            validator: validateWalletAddress,
+            validator: validateWalletAddressWithoutVerification,
             message: 'Please input a valid wallet',
             trigger: ['blur', 'change'],
           },
@@ -251,6 +264,7 @@ export default {
       );
     },
     isAddFormInvalid() {
+      this.validationKey;
       return (
         !this.userForm.walletKey ||
         !this.validationStatus['walletKey'] ||
@@ -261,6 +275,22 @@ export default {
   },
   async mounted() {},
   methods: {
+    async isKeyUsed(adminWallet) {
+      const loader = this.$loading({
+        target: '.add-key-card',
+        text: 'Validating wallet...',
+        customClass: 'backdrop_border_radius',
+      });
+      try {
+        return await metamask.contractService.isKeyAlreadyUsed(this.getIdentityId, adminWallet);
+      } catch (err) {
+        console.log(err);
+        this.notify(null, 'An error occurred when validating a key', 'error');
+        return false;
+      } finally {
+        loader.close();
+      }
+    },
     getAddressShortForm,
     resetValidationStatus() {
       this.validationStatus = {
@@ -274,7 +304,11 @@ export default {
     },
     async addKey() {
       if (!this.isAddFormInvalid) {
-        const loader = this.$loading({ target: '.add-key-card', text: 'Adding new key...' });
+        const loader = this.$loading({
+          target: '.add-key-card',
+          text: 'Adding new key...',
+          customClass: 'backdrop_border_radius',
+        });
         try {
           await metamask.contractService.addAdminKey(
             this.getIdentityId,
@@ -282,13 +316,19 @@ export default {
             this.userForm.purpose,
             this.userForm.keyType,
           );
-          this.notify(null, 'key added successfully!', 'success');
+          this.notify(null, 'Key added successfully!', 'success');
           this.newAsk = 0;
           this.$refs.addKeyForm.resetFields();
           this.resetValidationStatus();
         } catch (err) {
           console.log(err);
-          this.notify(null, 'An error occurred when adding a new key', 'error');
+          this.notify(
+            null,
+            err.code === 4001
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when adding a new key',
+            'error',
+          );
         } finally {
           loader.close();
         }
@@ -297,18 +337,28 @@ export default {
 
     async removeKey() {
       if (!this.isRemoveFormInvalid) {
-        const loader = this.$loading({ target: '.remove-key-card', text: 'Removing key...' });
+        const loader = this.$loading({
+          target: '.remove-key-card',
+          text: 'Removing key...',
+          customClass: 'backdrop_border_radius',
+        });
         try {
           await metamask.contractService.removeKey(
             this.getIdentityId,
             this.removeKeyUserForm.walletKey,
           );
-          this.notify(null, 'key removed successfully!', 'success');
+          this.notify(null, 'Key removed successfully!', 'success');
           this.$refs.removeKeyForm.resetFields();
           this.resetRemoveFormValidationStatus();
         } catch (err) {
           console.log(err);
-          this.notify(null, 'An error occurred when removing a key', 'error');
+          this.notify(
+            null,
+            err.code === 4001
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when removing a key',
+            'error',
+          );
         } finally {
           loader.close();
         }
@@ -322,6 +372,7 @@ export default {
       await navigator.clipboard.writeText(address);
     },
     validateStatus(prop, status) {
+      this.validationKey++;
       this.validationStatus[prop] = status;
     },
     validateRemoveKeyStatus(prop, status) {
