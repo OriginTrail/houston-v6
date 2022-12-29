@@ -25,6 +25,7 @@ export const purposeList = [
   {
     label: 'Operational key',
     value: 2,
+    disabled: true,
   },
 ];
 export const keyTypeList = [
@@ -35,5 +36,6 @@ export const keyTypeList = [
   {
     label: 'RSA',
     value: 2,
+    disabled: true,
   },
 ];

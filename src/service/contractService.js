@@ -130,7 +130,7 @@ class ContractService {
       from: this.web3.eth.defaultAccount,
     });
   }
-  async addStakeEthers(identityId, stakeAmountToAdd) {
+  async addStakeEthers(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const tokenContract = new ethers.Contract(address, ERC20Token, this.ethersSigner);
@@ -139,6 +139,9 @@ class ContractService {
       gasPrice: 8,
       gasLimit: 500000,
     });
+    if (loadingMessageCallback) {
+      loadingMessageCallback('Adding stake (Transaction 1 of 2: Increasing Allowance)');
+    }
     await allowanceReceipt.wait();
     const stakingContract = new ethers.Contract(
       stakingContractAddress,
@@ -149,6 +152,9 @@ class ContractService {
       gasPrice: 1000,
       gasLimit: 500000,
     });
+    if (loadingMessageCallback) {
+      loadingMessageCallback('Adding stake (Transaction 2 of 2: Adding stake to node)');
+    }
     await stakingReceipt.wait();
   }
 
@@ -160,7 +166,7 @@ class ContractService {
       .call();
   }
 
-  async requestWithdrawal(identityId, stakeToWithdraw) {
+  async requestWithdrawal(identityId, stakeToWithdraw, loadingMessageCallback = null) {
     const address = await this.getContractAddress('ProfileStorage');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const ProfileStorageContract = new this.web3.eth.Contract(profileStorage, address);
@@ -174,6 +180,7 @@ class ContractService {
     const sharesToBurn = Big(getAmountWithDecimals(stakeToWithdraw))
       .mul(totalSupply)
       .div(totalStakes)
+      .round()
       .toString();
 
     await shareContract.methods.increaseAllowance(stakingContractAddress, sharesToBurn).send({
