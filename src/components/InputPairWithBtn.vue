@@ -71,6 +71,10 @@ export default {
       type: String,
       default: '[0-9]+([\\.][0-9]+)?',
     },
+    max: {
+      type: Number,
+      default: null,
+    },
   },
   data() {
     return {
@@ -87,7 +91,15 @@ export default {
       set(val) {
         if (this.inputType === 'number') {
           if (!isNaN(val) && Number(val) >= 0) {
-            this.value = val;
+            if (this.max) {
+              if (Number(this.max) >= Number(val)) {
+                this.value = val;
+              } else {
+                this.value = this.max;
+              }
+            } else {
+              this.value = val;
+            }
           }
         } else {
           this.value = val;

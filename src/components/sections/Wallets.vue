@@ -1,7 +1,7 @@
 <template>
   <div class="wallet-management-wrapper">
     <!-- Service Tokenomics -->
-    <h2 class="section-heading">Wallet management</h2>
+    <h2 class="section-heading">Node wallets</h2>
     <div class="wallet-key-management">
       <tokenomics-card title="Add key" class="add-key-card">
         <div class="card-content">
@@ -33,7 +33,8 @@
                       v-for="net of purposeList"
                       :key="net.label"
                       :label="net.label"
-                      :value="net.value"
+                      :value="net.disabled ? undefined : net.value"
+                      :disabled="net.disabled"
                     ></el-option>
                   </el-select>
                 </el-form-item>
@@ -49,7 +50,8 @@
                       v-for="net of keyTypeList"
                       :key="net.label"
                       :label="net.label"
-                      :value="net.value"
+                      :value="net.disabled ? undefined : net.value"
+                      :disabled="net.disabled"
                     ></el-option>
                   </el-select>
                 </el-form-item>

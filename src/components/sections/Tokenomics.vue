@@ -126,6 +126,7 @@
                 btnLabel="start withdrawal"
                 :input-value="'0'"
                 @update="(v) => (withdrawalStake = v)"
+                :max="Number(getStakeData.activeStake)"
               >
                 <img
                   slot="inputPrefix"
@@ -304,7 +305,13 @@ export default {
       if (this.newStake) {
         const loader = this.$loading({ target: '.add-stake-card', text: 'Adding stake...' });
         try {
-          await metamask.contractService.addStakeEthers(this.getIdentityId, this.newStake);
+          await metamask.contractService.addStakeEthers(
+            this.getIdentityId,
+            this.newStake,
+            (msg) => {
+              loader.text = msg;
+            },
+          );
           this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newStake = 0;
