@@ -16,3 +16,24 @@ export const networkList = [
     contentAssetStorageContractAddress: '0x1A061136Ed9f5eD69395f18961a0a535EF4B3E5f',
   },
 ];
+
+export const purposeList = [
+  {
+    label: 'Admin key',
+    value: 1,
+  },
+  {
+    label: 'Operational key',
+    value: 2,
+  },
+];
+export const keyTypeList = [
+  {
+    label: 'ECDSA',
+    value: 1,
+  },
+  {
+    label: 'RSA',
+    value: 2,
+  },
+];

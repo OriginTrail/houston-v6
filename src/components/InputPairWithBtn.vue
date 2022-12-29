@@ -85,7 +85,11 @@ export default {
         return this.value;
       },
       set(val) {
-        if (!isNaN(val) && Number(val) >= 0) {
+        if (this.inputType === 'number') {
+          if (!isNaN(val) && Number(val) >= 0) {
+            this.value = val;
+          }
+        } else {
           this.value = val;
         }
       },

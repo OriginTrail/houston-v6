@@ -64,27 +64,6 @@
             {{ formatNumberWithSpaces(getStakeData.pendingWithdrawal) }} TRAC
           </p>
         </div>
-        <div class="property-wrapper">
-          <p class="title label-inline-12">Node share tokens</p>
-          <p class="item label-body-14">
-            Total amount:
-            <span class="item-value">{{
-              formatNumbersToShort(getNodeSharesToken.totalSupply)
-            }}</span>
-          </p>
-          <p class="item label-body-14">
-            You own:
-            <span class="item-value">{{ formatNumbersToShort(getNodeSharesToken.myBalance) }}</span>
-          </p>
-          <p class="item label-body-14">
-            Share token name: <span class="item-value">{{ getNodeSharesToken.symbol }}</span>
-          </p>
-          <p class="item label-body-14">
-            Share token address:
-            <span class="item-value">{{ getAddressShortForm(getNodeSharesToken.address) }}</span>
-            <copy-button @click="copyAddress(getNodeSharesToken.address)" />
-          </p>
-        </div>
       </Card>
       <div class="stake-update-cards">
         <tokenomics-card title="Add TRAC to Node stake" class="add-stake-card">
@@ -225,11 +204,10 @@ import {
 import BackwardTimer from '@/components/shared/BackwardTimer';
 import * as moment from 'moment';
 import { generateToast } from '@/utils/toastObjectGenerator';
-import CopyButton from '@/components/shared/copyButton';
 
 export default {
   name: 'Tokenomics',
-  components: { CopyButton, BackwardTimer, Card, TokenomicsCard, Button, InputPairWithBtn },
+  components: { BackwardTimer, Card, TokenomicsCard, Button, InputPairWithBtn },
   data() {
     return {
       currentAsk: null,

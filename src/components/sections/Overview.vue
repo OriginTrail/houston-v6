@@ -11,7 +11,7 @@
           </div>
           <div class="property-wrapper">
             <p class="title">Delegated</p>
-            <p class="value">0 TRAC <br />(Delegator share 0%)</p>
+            <p class="value multi-line">0 TRAC <br />(Delegator share 0%)</p>
           </div>
           <div class="property-wrapper property-short">
             <p class="title">Slashed</p>
@@ -45,10 +45,6 @@
             <p class="value label-plat-h5">
               {{ formatNumberWithSpaces(networkMetrics.assetsOnDKG) }}
             </p>
-          </div>
-          <div class="property-wrapper full">
-            <p class="title label-inline-12">Total Graph Size / Number of triples</p>
-            <p class="value label-plat-h5 disabled">(coming soon)</p>
           </div>
           <div class="property-wrapper full">
             <p class="title label-inline-12">TRAC Staked</p>
@@ -170,6 +166,9 @@ export default {
             }
             .faded {
               color: #dadce4;
+            }
+            &.multi-line {
+              line-height: 150%;
             }
           }
         }

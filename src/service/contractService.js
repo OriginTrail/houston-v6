@@ -6,6 +6,7 @@ import stakingStorage from '../abis/StakingStorage.json';
 import profileAbi from '../abis/Profile.json';
 import profileStorage from '../abis/ProfileStorage.json';
 import IdentityStorage from '../abis/identityStorage.json';
+import identity from '../abis/identityContracts.json';
 import hubContractAbi from '../abis/HubContract.json';
 import contentAssetStorage from '../abis/contentAssetStorage.json';
 import ERC20Token from '../abis/ERC20Token.json';
@@ -189,6 +190,29 @@ class ContractService {
     const stakingContractAddress = await this.getContractAddress('Staking');
     const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
     return await stakingContract.methods.withdrawStake(identityId).send({
+      from: this.web3.eth.defaultAccount,
+      gasLimit: 500000,
+    });
+  }
+
+  async addAdminKey(identityId, newAdminWallet, purpose, type) {
+    const identityContractAddress = await this.getContractAddress('Identity');
+    const identityContract = new this.web3.eth.Contract(identity, identityContractAddress);
+    const adminKey = ethers.utils.keccak256(
+      ethers.utils.solidityPack(['address'], [newAdminWallet]),
+    );
+    return await identityContract.methods.addKey(identityId, adminKey, purpose, type).send({
+      from: this.web3.eth.defaultAccount,
+      gasLimit: 500000,
+    });
+  }
+  async removeKey(identityId, newAdminWallet) {
+    const identityContractAddress = await this.getContractAddress('Identity');
+    const identityContract = new this.web3.eth.Contract(identity, identityContractAddress);
+    const adminKey = ethers.utils.keccak256(
+      ethers.utils.solidityPack(['address'], [newAdminWallet]),
+    );
+    return await identityContract.methods.removeKey(identityId, adminKey).send({
       from: this.web3.eth.defaultAccount,
       gasLimit: 500000,
     });
