@@ -64,26 +64,6 @@
             {{ formatNumberWithSpaces(getStakeData.pendingWithdrawal) }} TRAC
           </p>
         </div>
-        <div class="property-wrapper">
-          <p class="title label-inline-12">Node share tokens</p>
-          <p class="item label-body-14">
-            Total amount:
-            <span class="item-value">{{
-              formatNumbersToShort(getNodeSharesToken.totalSupply)
-            }}</span>
-          </p>
-          <p class="item label-body-14">
-            You own:
-            <span class="item-value">{{ formatNumbersToShort(getNodeSharesToken.myBalance) }}</span>
-          </p>
-          <p class="item label-body-14">
-            Share token name: <span class="item-value">{{ getNodeSharesToken.symbol }}</span>
-          </p>
-          <p class="item label-body-14">
-            Share token address:
-            <span class="item-value">{{ getAddressShortForm(getNodeSharesToken.address) }}</span>
-          </p>
-        </div>
       </Card>
       <div class="stake-update-cards">
         <tokenomics-card title="Add TRAC to Node stake" class="add-stake-card">
@@ -175,7 +155,7 @@
               <div class="extra-step-cta">
                 <Button
                   class="cta-button"
-                  :disabled="!isWithdrawalRequestTimeOver"
+                  :disabled="!getRequestTime || getRequestTime < 0 || mustWaitForWithdrawal"
                   @click="withdrawStake"
                   >Withdraw now</Button
                 >
@@ -194,6 +174,7 @@
                   Estimated time:
                   <span
                     ><backward-timer
+                      @over="timerOver"
                       ref="timer"
                       :instantly-start="getRequestTime !== 0"
                       :start-timestamp="null"
@@ -265,22 +246,26 @@ export default {
       return Number(this.getTotalStakeValue) - Number(this.withdrawalStake ?? '0');
     },
     getRequestTime() {
-      return Number(this.getWithdrawalInfo?.requestTime ?? '0');
+      return Number(this.getWithdrawalInfo?.requestTime ?? '0') - 70;
     },
-    isWithdrawalRequestTimeOver() {
-      return Number(this.getRequestTime) > 0 && moment(this.getRequestTime) <= moment();
+    //you need to wait
+    mustWaitForWithdrawal() {
+      return Number(this.getRequestTime) > 0 && moment.unix(this.getRequestTime) >= moment();
     },
   },
   async mounted() {
     await this.refreshAllTokenomicsData();
-    if (this.getRequestTime > 0 && !this.isWithdrawalRequestTimeOver) {
-      this.$refs.timer.startTimer();
-    }
+    this.refreshWithdrawalTimer();
   },
   methods: {
     formatNumberWithSpaces,
     getAddressShortForm,
     formatNumbersToShort,
+    refreshWithdrawalTimer() {
+      if (this.mustWaitForWithdrawal) {
+        this.$refs.timer.startTimer();
+      }
+    },
     async refreshAllTokenomicsData() {
       const loader = this.$loading({ target: '.tokenomics-wrapper' });
       await this.$store.dispatch('getOverviewData', this.getIdentityId);
@@ -344,6 +329,7 @@ export default {
           await this.refreshAllTokenomicsData();
           this.$refs.withdrawStakeInput.value = 0;
           this.withdrawalStake = 0;
+          this.refreshWithdrawalTimer();
         } catch (err) {
           console.log(err);
           this.notify(null, 'An error occurred when requesting stake withdrawal', 'error');
@@ -353,7 +339,7 @@ export default {
       }
     },
     async withdrawStake() {
-      if (this.isWithdrawalRequestTimeOver) {
+      if (!this.mustWaitForWithdrawal) {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
           text: 'Withdrawing stake...',
@@ -362,6 +348,7 @@ export default {
           await metamask.contractService.withdrawStake(this.getIdentityId);
           this.notify(null, 'Stake withdrawn successfully!', 'success');
           await this.refreshAllTokenomicsData();
+          this.refreshWithdrawalTimer();
         } catch (err) {
           console.log(err);
           this.notify(null, 'An error occurred when withdrawing stake', 'error');
@@ -373,6 +360,14 @@ export default {
     notify(title, message, type, options) {
       const notificationArray = generateToast(title, message, type, options);
       return this.$toast(notificationArray[0], notificationArray[1]);
+    },
+    async copyAddress(address) {
+      await navigator.clipboard.writeText(address);
+    },
+    async timerOver() {
+      await this.refreshAllTokenomicsData();
+      this.refreshWithdrawalTimer();
+      this.$forceUpdate();
     },
   },
 };
@@ -539,6 +534,8 @@ export default {
         color: $blue-primary;
       }
       .item {
+        display: flex;
+        flex-direction: row;
       }
     }
 
@@ -572,9 +569,13 @@ export default {
           color: $blue-primary;
         }
         .item {
+          display: flex;
           color: $black-secondary;
           .item-value {
             color: $brand-blue;
+          }
+          .copy-button-wrapper {
+            margin-left: auto;
           }
         }
       }

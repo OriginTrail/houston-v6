@@ -26,22 +26,23 @@ export default {
     return {
       currentTime: '00:00:00:00',
       timerStarted: false,
+      interval: null,
     };
   },
-  mounted() {
-    if (this.instantlyStart) {
-      this.startTimer();
-    }
-  },
+  mounted() {},
   methods: {
+    stopTimer() {
+      clearInterval(this.interval);
+      this.currentTime = '00:00:00:00';
+    },
     startTimer() {
-      let eventTime = this.startTimestamp ?? moment().unix(); // Timestamp - Sun, 21 Apr 2013 13:00:00 GMT
-      let currentTime = this.endTimestamp ?? 1366547400; // Timestamp - Sun, 21 Apr 2013 12:30:00 GMT
+      let currentTime = this.startTimestamp ?? moment().unix(); // Timestamp - Sun, 21 Apr 2013 13:00:00 GMT
+      let eventTime = this.endTimestamp ?? 1366547400; // Timestamp - Sun, 21 Apr 2013 12:30:00 GMT
       let diffTime = eventTime - currentTime;
       let duration = moment.duration(diffTime * 1000, 'milliseconds');
       let interval = 1000;
       this.timerStarted = true;
-      setInterval(() => {
+      this.interval = setInterval(() => {
         duration = moment.duration(duration - interval, 'milliseconds');
         this.currentTime =
           duration.days() +
@@ -51,6 +52,10 @@ export default {
           `${duration.minutes() < 10 ? '0' : ''}${duration.minutes()}` +
           ':' +
           `${duration.seconds() < 10 ? '0' : ''}${duration.seconds()}`;
+        if (duration.seconds() < 0) {
+          this.$emit('over');
+          this.stopTimer();
+        }
       }, interval);
     },
   },

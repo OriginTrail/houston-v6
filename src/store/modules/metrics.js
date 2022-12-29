@@ -35,8 +35,8 @@ export default {
       await Promise.allSettled([
         metamask.contractService.getTotalStake(identity).then((data) => {
           store.commit('SAVE_METRICS', {
-            'tracBalance.staked': getReadableTokenAmount(data, 18, { fixed: 0 }),
-            'tracBalance.total': getReadableTokenAmount(data, 18, { fixed: 0 }),
+            'tracBalance.staked': parseFloat(getReadableTokenAmount(data, 18, { fixed: 12 })),
+            'tracBalance.total': parseFloat(getReadableTokenAmount(data, 18, { fixed: 12 })),
           });
         }),
         metamask.contractService.getAccumulatorOperatorFee(identity).then((data) => {

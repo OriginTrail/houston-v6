@@ -57,42 +57,9 @@ export default {
           route: 'tokenomics',
         },
         {
-          label: 'Connect to node',
-          link: '#',
-          route: 'nodeConfig',
-          disable: true,
-          children: [
-            {
-              label: 'Node configuration',
-              link: '#',
-              route: 'nodeConfiguration',
-              disable: true,
-            },
-            {
-              label: 'API keys',
-              link: '#',
-              route: 'apiKeys',
-              disable: true,
-            },
-            {
-              label: 'Node telemetry',
-              link: '#',
-              route: 'nodeTelemetry',
-              disable: true,
-            },
-            {
-              label: 'Logs',
-              link: '#',
-              route: 'logs',
-              disable: true,
-            },
-            {
-              label: 'Backups',
-              link: '#',
-              route: 'backups',
-              disable: true,
-            },
-          ],
+          label: 'Wallet maangement',
+          link: '/wallet-management',
+          route: 'wallet-management',
         },
       ],
     };

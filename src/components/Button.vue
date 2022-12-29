@@ -1,5 +1,5 @@
 <template>
-  <button @click="onClick" :class="{ 'label-inline-14': true, disabled: disabled }">
+  <button :type="type" @click="onClick" :class="{ 'label-inline-14': true, disabled: disabled }">
     <slot></slot>
   </button>
 </template>
@@ -11,6 +11,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    type: {
+      type: String,
+      default: 'button',
     },
   },
 

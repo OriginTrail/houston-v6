@@ -5,6 +5,7 @@ import Tokenomics from '../components/sections/Tokenomics';
 import store from '../store';
 import LoginPage from '@/views/LoginPage';
 import metamask from '@/service/metamask';
+import Wallets from '@/components/sections/Wallets';
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,11 @@ const routes = [
     path: '/tokenomics',
     name: 'tokenomics',
     component: Tokenomics,
+  },
+  {
+    path: '/wallet-management',
+    name: 'wallet-management',
+    component: Wallets,
   },
   {
     path: '/login',
