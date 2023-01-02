@@ -77,6 +77,8 @@ class ContractService {
     const sanitizedNewAsk = getAmountWithDecimals(newAsk);
     return await ProfileContract.methods.setAsk(identityId, sanitizedNewAsk).send({
       from: this.web3.eth.defaultAccount,
+      gasPrice: 8,
+      gasLimit: 120000,
     });
   }
 
@@ -136,6 +138,8 @@ class ContractService {
     const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
     return await stakingContract.methods.addStake(identityId, sanitizedAmount).send({
       from: this.web3.eth.defaultAccount,
+      gasPrice: 1000,
+      gasLimit: 400000,
     });
   }
   async addStakeEthers(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
@@ -218,7 +222,7 @@ class ContractService {
     );
     return await identityContract.methods.addKey(identityId, adminKey, purpose, type).send({
       from: this.web3.eth.defaultAccount,
-      gasLimit: 500000,
+      gasLimit: 200000,
     });
   }
   async removeKey(identityId, newAdminWallet) {
@@ -229,7 +233,7 @@ class ContractService {
     );
     return await identityContract.methods.removeKey(identityId, adminKey).send({
       from: this.web3.eth.defaultAccount,
-      gasLimit: 500000,
+      gasLimit: 100000,
     });
   }
 }
