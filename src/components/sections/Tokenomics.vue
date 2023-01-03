@@ -304,7 +304,9 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001 ? 'METAMASK_TRANSACTION_REFUSED' : 'Ask update error occurred!',
+            err.code === 'ACTION_REJECTED'
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'Ask update error occurred!',
             'error',
           );
         } finally {
@@ -335,7 +337,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when adding stake',
             'error',
@@ -366,7 +368,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when requesting stake withdrawal',
             'error',
@@ -392,7 +394,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when withdrawing stake',
             'error',
