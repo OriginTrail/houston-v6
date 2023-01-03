@@ -87,8 +87,14 @@ export default {
   methods: {
     formatNumberWithSpaces,
     async getOverviewData() {
-      const loader = this.$loading({ target: '.trac-balance' });
-      const loader2 = this.$loading({ target: '.network-metrics' });
+      const loader = this.$loading({
+        target: '.trac-balance',
+        customClass: 'backdrop_border_radius',
+      });
+      const loader2 = this.$loading({
+        target: '.network-metrics',
+        customClass: 'backdrop_border_radius',
+      });
       await this.$store.dispatch('getOverviewData', this.$store.getters.isIdentityResolved);
       loader.close();
       loader2.close();

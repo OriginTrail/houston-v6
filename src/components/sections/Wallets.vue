@@ -42,10 +42,7 @@
               <div class="form-item">
                 <div class="label label-inline-12">Select key type</div>
                 <el-form-item prop="keyType">
-                  <el-select
-                    v-model="userForm.keyType"
-                    placeholder="Please select your key purpose"
-                  >
+                  <el-select v-model="userForm.keyType" placeholder="Please select your key type">
                     <el-option
                       v-for="net of keyTypeList"
                       :key="net.label"
@@ -57,9 +54,10 @@
                 </el-form-item>
               </div>
               <div class="form-item">
-                <div class="label label-inline-12">New key wallet</div>
+                <div class="label label-inline-12">New public wallet address</div>
                 <el-form-item prop="walletKey">
                   <el-input
+                    ref="walletKeyAddKeyInput"
                     class="walletKey-wallet"
                     placeholder="Please input your wallet address"
                     v-model="userForm.walletKey"
@@ -153,13 +151,18 @@ export default {
     Button,
   },
   data() {
-    const validateWalletAddressWithoutVerification = async (rule, value, callback) => {
+    const validateWalletAddressForRemovingKey = async (rule, value, callback) => {
       if (value === '') {
         callback(new Error('Please input your wallet address'));
       } else if (!metamask.isAddress(value)) {
         callback(new Error('Please input a valid wallet address'));
       } else {
-        callback();
+        const keysMatch = await this.isKeyUsed(value, '.remove-key-card');
+        if (keysMatch) {
+          callback(new Error('Please input a wallet with an existing key'));
+        } else {
+          callback();
+        }
       }
     };
     const validateWalletAddress = async (rule, value, callback) => {
@@ -167,12 +170,13 @@ export default {
         callback(new Error('Please input your wallet address'));
       } else if (!metamask.isAddress(value)) {
         callback(new Error('Please input a valid wallet address'));
-      }
-      const keysMatch = await this.isKeyUsed(value);
-      if (!keysMatch) {
-        callback(new Error('Please input a new wallet'));
       } else {
-        callback();
+        const keysMatch = await this.isKeyUsed(value);
+        if (!keysMatch) {
+          callback(new Error('Please input a new wallet'));
+        } else {
+          callback();
+        }
       }
     };
     return {
@@ -217,6 +221,7 @@ export default {
       },
       validationStatus: { walletKey: false },
       validationKey: 0,
+      validationRemoveKey: 0,
       removeKeyError: null,
       removeKeyUserForm: {
         purpose: null,
@@ -245,8 +250,7 @@ export default {
             trigger: ['blur', 'change'],
           },
           {
-            validator: validateWalletAddressWithoutVerification,
-            message: 'Please input a valid wallet',
+            validator: validateWalletAddressForRemovingKey,
             trigger: ['blur', 'change'],
           },
         ],
@@ -259,6 +263,7 @@ export default {
       return this.$store.getters.isIdentityResolved;
     },
     isRemoveFormInvalid() {
+      this.validationRemoveKey;
       return (
         !this.removeKeyValidationStatus.walletKey || !this.removeKeyValidationStatus['walletKey']
       );
@@ -275,9 +280,9 @@ export default {
   },
   async mounted() {},
   methods: {
-    async isKeyUsed(adminWallet) {
+    async isKeyUsed(adminWallet, cardTarget) {
       const loader = this.$loading({
-        target: '.add-key-card',
+        target: cardTarget ?? '.add-key-card',
         text: 'Validating wallet...',
         customClass: 'backdrop_border_radius',
       });
@@ -324,7 +329,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when adding a new key',
             'error',
@@ -354,7 +359,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when removing a key',
             'error',
@@ -374,6 +379,9 @@ export default {
     validateStatus(prop, status) {
       this.validationKey++;
       this.validationStatus[prop] = status;
+      if (prop === 'walletKey' && status) {
+        this.$refs.walletKeyAddKeyInput.blur();
+      }
     },
     validateRemoveKeyStatus(prop, status) {
       this.removeKeyValidationStatus[prop] = status;

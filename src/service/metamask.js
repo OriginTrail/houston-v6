@@ -1,4 +1,3 @@
-import Web3 from 'web3';
 import ContractService from '@/service/contractService';
 import store from '../store';
 import { ethers } from 'ethers';
@@ -6,7 +5,6 @@ import { networkList } from '@/utils/lists';
 import router from '../router';
 
 class metamaskService {
-  web3;
   networkStatus = false;
   eventsSet = false;
   accountChangedListener = null;
@@ -21,15 +19,12 @@ class metamaskService {
           const metamaskProvider = window.ethereum.providers.find(
             (provider) => provider.isMetaMask,
           );
-          this.web3 = new Web3(metamaskProvider);
           this.ethersProvider = new ethers.providers.Web3Provider(metamaskProvider);
           window.ethereum.setSelectedProvider(metamaskProvider);
         } else {
-          this.web3 = new Web3(window.ethereum);
           this.ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
         }
         this.ethersSigner = this.ethersProvider.getSigner();
-        window.Web3 = this.web3;
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         await this.checkNetwork().catch(() => {
           return this.switchMetamaskChain().catch((err) => {
@@ -39,9 +34,8 @@ class metamaskService {
         this.setUpEvents();
         this.setNetworkStatus(true);
         localStorage.setItem('refuse_wallet', 'false');
-        this.web3.eth.defaultAccount = accounts[0];
         this.accounts = accounts;
-        this.contractService = new ContractService(this.web3, this.ethersSigner);
+        this.contractService = new ContractService(this.ethersSigner);
         return accounts;
       } else {
         console.warn(
@@ -157,7 +151,7 @@ class metamaskService {
           } else {
             store.commit('LOGIN_METAMASK', { address: accounts[0] });
           }
-          this.web3.eth.defaultAccount = accounts[0];
+          this.ethersSigner = this.ethersProvider.getSigner();
           this.accounts = accounts;
         }
       });
@@ -199,16 +193,15 @@ class metamaskService {
   }
 
   //util
-  signMessage(message, address) {
-    const hash = this.web3.utils.sha3(message);
-    return this.web3.eth.personal.sign(hash, address);
+  signMessage(message) {
+    return this.ethersSigner.signMessage(message);
   }
 
   isAddress(address) {
-    return Web3.utils.isAddress(address);
+    return ethers.utils.isAddress(address);
   }
   compareAddresses(addr1, addr2) {
-    return Web3.utils.toChecksumAddress(addr1) === Web3.utils.toChecksumAddress(addr2);
+    return ethers.utils.getAddress(addr1) === ethers.utils.getAddress(addr2);
   }
 }
 

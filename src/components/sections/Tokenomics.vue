@@ -271,7 +271,10 @@ export default {
       }
     },
     async refreshAllTokenomicsData() {
-      const loader = this.$loading({ target: '.tokenomics-wrapper' });
+      const loader = this.$loading({
+        target: '.tokenomics-wrapper',
+        customClass: 'backdrop_border_radius',
+      });
       await this.$store.dispatch('getOverviewData', this.getIdentityId);
       loader.close();
     },
@@ -286,7 +289,11 @@ export default {
 
     async updateAsk() {
       if (this.newAsk) {
-        const loader = this.$loading({ target: '.ask-card', text: 'Updating ask value...' });
+        const loader = this.$loading({
+          target: '.ask-card',
+          text: 'Updating ask value...',
+          customClass: 'backdrop_border_radius',
+        });
         try {
           await metamask.contractService.updateAsk(this.getIdentityId, this.newAsk);
           this.notify(null, 'Ask updated successfully!', 'success');
@@ -297,7 +304,9 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001 ? 'METAMASK_TRANSACTION_REFUSED' : 'Ask update error occurred!',
+            err.code === 'ACTION_REJECTED'
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'Ask update error occurred!',
             'error',
           );
         } finally {
@@ -307,15 +316,15 @@ export default {
     },
     async addStake() {
       if (this.newStake) {
-        const loader = this.$loading({ target: '.add-stake-card', text: 'Adding stake...' });
+        const loader = this.$loading({
+          target: '.add-stake-card',
+          text: 'Adding stake...',
+          customClass: 'backdrop_border_radius',
+        });
         try {
-          await metamask.contractService.addStakeEthers(
-            this.getIdentityId,
-            this.newStake,
-            (msg) => {
-              loader.text = msg;
-            },
-          );
+          await metamask.contractService.addStake(this.getIdentityId, this.newStake, (msg) => {
+            loader.text = msg;
+          });
           this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newStake = 0;
@@ -324,7 +333,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when adding stake',
             'error',
@@ -339,6 +348,7 @@ export default {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
           text: 'Requesting stake withdrawal...',
+          customClass: 'backdrop_border_radius',
         });
         try {
           await metamask.contractService.requestWithdrawal(
@@ -354,7 +364,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when requesting stake withdrawal',
             'error',
@@ -369,6 +379,7 @@ export default {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
           text: 'Withdrawing stake...',
+          customClass: 'backdrop_border_radius',
         });
         try {
           await metamask.contractService.withdrawStake(this.getIdentityId);
@@ -379,7 +390,7 @@ export default {
           console.log(err);
           this.notify(
             null,
-            err.code === 4001
+            err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
               : 'An error occurred when withdrawing stake',
             'error',
