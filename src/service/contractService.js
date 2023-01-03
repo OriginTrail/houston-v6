@@ -23,8 +23,7 @@ import { getAmountWithDecimals } from '@/utils/cryptoUtils';
 import Big from 'big.js';
 
 class ContractService {
-  constructor(web3, ethersSigner) {
-    this.web3 = web3;
+  constructor(ethersSigner) {
     this.ethersSigner = ethersSigner;
   }
 
@@ -34,85 +33,91 @@ class ContractService {
     }
     return this[contractName];
   }
-  getContractAddressesFromHubContract(contractName) {
-    const hubContract = new this.web3.eth.Contract(
-      hubContractAbi,
+  async getContractAddressesFromHubContract(contractName) {
+    const hubContract = new ethers.Contract(
       store.getters.selectedNetwork.hubContract,
+      hubContractAbi,
+      this.ethersSigner,
     );
-    return hubContract.methods.getContractAddress(contractName).call();
+    return await hubContract.getContractAddress(contractName);
   }
 
   async getIdentity(operationalAddress, adminWalletAddress) {
     const address = await this.getContractAddress('IdentityStorage');
-    const IdentityStorageProfile = new this.web3.eth.Contract(IdentityStorage, address);
-    const identity = await IdentityStorageProfile.methods
-      .getIdentityId(operationalAddress)
-      .call({ from: this.web3.eth.defaultAccount });
-    const adminKey = ethers.utils.keccak256(
-      ethers.utils.solidityPack(['address'], [adminWalletAddress]),
+    const IdentityStorageContract = new ethers.Contract(
+      address,
+      IdentityStorage,
+      this.ethersSigner,
     );
-    const hasPurpose = await IdentityStorageProfile.methods
-      .keyHasPurpose(identity, adminKey, 1)
-      .call({ from: this.web3.eth.defaultAccount });
+    const identity = await IdentityStorageContract.getIdentityId(operationalAddress);
+    const adminKey = this.getAdminKeyFromWallet(adminWalletAddress);
+    const hasPurpose = await IdentityStorageContract.keyHasPurpose(identity, adminKey, 1);
     return hasPurpose ? identity : 0;
   }
 
   async getAsk(identityId) {
     const address = await this.getContractAddress('ProfileStorage');
-    const ProfileStorageContract = new this.web3.eth.Contract(profileStorage, address);
-    return ProfileStorageContract.methods.getAsk(identityId).call();
+    const ProfileStorageContract = new ethers.Contract(address, profileStorage, this.ethersSigner);
+    return await ProfileStorageContract.getAsk(identityId);
   }
 
   async isKeyAlreadyUsed(identityId, adminWallet) {
     const address = await this.getContractAddress('IdentityStorage');
-    const IdentityStorageContract = new this.web3.eth.Contract(IdentityStorage, address);
-    const adminKey = ethers.utils.keccak256(ethers.utils.solidityPack(['address'], [adminWallet]));
-    const keyObject = await IdentityStorageContract.methods.getKey(identityId, adminKey).call();
+    const IdentityStorageContract = new ethers.Contract(
+      address,
+      IdentityStorage,
+      this.ethersSigner,
+    );
+    const adminKey = this.getAdminKeyFromWallet(adminWallet);
+    const keyObject = await IdentityStorageContract.getKey(identityId, adminKey);
     return (keyObject['2'] ?? keyObject.key) !== adminKey;
+  }
+
+  getAdminKeyFromWallet(wallet) {
+    return ethers.utils.keccak256(ethers.utils.solidityPack(['address'], [wallet]));
   }
 
   async updateAsk(identityId, newAsk) {
     const address = await this.getContractAddress('Profile');
-    const ProfileContract = new this.web3.eth.Contract(profileAbi, address);
+    const ProfileContract = new ethers.Contract(address, profileAbi, this.ethersSigner);
     const sanitizedNewAsk = getAmountWithDecimals(newAsk);
-    return await ProfileContract.methods.setAsk(identityId, sanitizedNewAsk).send({
-      from: this.web3.eth.defaultAccount,
-      gasPrice: 8,
-      gasLimit: 120000,
-    });
+    return await (
+      await ProfileContract.setAsk(identityId, sanitizedNewAsk, {
+        gasPrice: 8,
+        gasLimit: 120000,
+      })
+    ).wait();
   }
 
   async getStakeAmountPendingWithdrawal(identityId, adminWallet) {
     const address = await this.getContractAddress('StakingStorage');
-    const stakeContract = new this.web3.eth.Contract(stakingStorage, address);
-    return await stakeContract.methods.getWithdrawalRequestAmount(identityId, adminWallet).call();
+    const stakeContract = new ethers.Contract(address, stakingStorage, this.ethersSigner);
+    return await stakeContract.getWithdrawalRequestAmount(identityId, adminWallet);
   }
 
   async getSharesContractInfo(identityId, adminWallet) {
     const address = await this.getContractAddress('ProfileStorage');
-    const ProfileStorageContract = new this.web3.eth.Contract(profileStorage, address);
-    const sharesContractAddress = await ProfileStorageContract.methods
-      .getSharesContractAddress(identityId)
-      .call();
-    const shareContract = new this.web3.eth.Contract(ERC20Token, sharesContractAddress);
+    const ProfileStorageContract = new ethers.Contract(address, profileStorage, this.ethersSigner);
+    const sharesContractAddress = await ProfileStorageContract.getSharesContractAddress(identityId);
+    const shareContract = new ethers.Contract(sharesContractAddress, ERC20Token, this.ethersSigner);
     return {
       address: sharesContractAddress,
-      name: await shareContract.methods.name().call(),
-      symbol: await shareContract.methods.symbol().call(),
-      totalSupply: await shareContract.methods.totalSupply().call(),
-      myBalance: await shareContract.methods.balanceOf(adminWallet).call(),
+      name: await shareContract.name(),
+      symbol: await shareContract.symbol(),
+      totalSupply: await shareContract.totalSupply(),
+      myBalance: await shareContract.balanceOf(adminWallet),
     };
   }
 
   async getTotalStake(identityId) {
     const address = await this.getContractAddress('StakingStorage');
-    const stakeContract = new this.web3.eth.Contract(stakingStorage, address);
-    return await stakeContract.methods.totalStakes(identityId).call();
+    const stakeContract = new ethers.Contract(address, stakingStorage, this.ethersSigner);
+    return await stakeContract.totalStakes(identityId);
   }
   async getAccumulatorOperatorFee(identityId) {
     const address = await this.getContractAddress('ProfileStorage');
-    const ProfileStorageContract = new this.web3.eth.Contract(profileStorage, address);
-    return await ProfileStorageContract.methods.getAccumulatedOperatorFee(identityId).call();
+    const ProfileStorageContract = new ethers.Contract(address, profileStorage, this.ethersSigner);
+    return await ProfileStorageContract.getAccumulatedOperatorFee(identityId);
   }
 
   async getAssetsOnDkg() {
@@ -123,25 +128,10 @@ class ContractService {
   async getStakedTRAC() {
     const address = await this.getContractAddress('Token');
     const StakingStorageAddress = await this.getContractAddress('StakingStorage');
-    const TRACContract = new this.web3.eth.Contract(ERC20Token, address);
-    return await TRACContract.methods.balanceOf(StakingStorageAddress).call();
+    const TRACContract = new ethers.Contract(address, ERC20Token, this.ethersSigner);
+    return await TRACContract.balanceOf(StakingStorageAddress);
   }
 
-  async addStake(identityId, stakeAmountToAdd) {
-    const address = await this.getContractAddress('Token');
-    const stakingContractAddress = await this.getContractAddress('Staking');
-    const TRACContract = new this.web3.eth.Contract(ERC20Token, address);
-    const sanitizedAmount = getAmountWithDecimals(stakeAmountToAdd);
-    await TRACContract.methods.increaseAllowance(stakingContractAddress, sanitizedAmount).send({
-      from: this.web3.eth.defaultAccount,
-    });
-    const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
-    return await stakingContract.methods.addStake(identityId, sanitizedAmount).send({
-      from: this.web3.eth.defaultAccount,
-      gasPrice: 1000,
-      gasLimit: 400000,
-    });
-  }
   async addStakeEthers(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
@@ -161,7 +151,7 @@ class ContractService {
       this.ethersSigner,
     );
     let stakingReceipt = await stakingContract['addStake(uint72,uint96)'](identityId, stakeWei, {
-      gasPrice: 1000,
+      gasPrice: 16,
       gasLimit: 500000,
     });
     if (loadingMessageCallback) {
@@ -172,22 +162,24 @@ class ContractService {
 
   async getLastWithdrawalTimestamp(identityId, adminWallet) {
     const address = await this.getContractAddress('StakingStorage');
-    const stakeContract = new this.web3.eth.Contract(stakingStorage, address);
-    return await stakeContract.methods
-      .getWithdrawalRequestTimestamp(identityId, adminWallet)
-      .call();
+    const stakingStorageContract = new ethers.Contract(address, stakingStorage, this.ethersSigner);
+    return await stakingStorageContract.getWithdrawalRequestTimestamp(identityId, adminWallet);
   }
 
   async requestWithdrawal(identityId, stakeToWithdraw, loadingMessageCallback = null) {
     const address = await this.getContractAddress('ProfileStorage');
     const stakingContractAddress = await this.getContractAddress('Staking');
-    const ProfileStorageContract = new this.web3.eth.Contract(profileStorage, address);
-    const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
-    const sharesContractAddress = await ProfileStorageContract.methods
-      .getSharesContractAddress(identityId)
-      .call();
-    const shareContract = new this.web3.eth.Contract(ERC20Token, sharesContractAddress);
-    const totalSupply = await shareContract.methods.totalSupply().call();
+    const ProfileStorageContract = new ethers.Contract(address, profileStorage, this.ethersSigner);
+    const stakingContract = new ethers.Contract(
+      stakingContractAddress,
+      stakingAbi,
+      this.ethersSigner,
+    );
+    const sharesContractAddress = await ProfileStorageContract.getSharesContractAddress(identityId);
+
+    const shareContract = new ethers.Contract(sharesContractAddress, ERC20Token, this.ethersSigner);
+
+    const totalSupply = await shareContract.totalSupply();
     const totalStakes = await this.getTotalStake(identityId);
     const sharesToBurn = Big(getAmountWithDecimals(stakeToWithdraw))
       .mul(totalSupply)
@@ -195,46 +187,61 @@ class ContractService {
       .round()
       .toString();
 
-    await shareContract.methods.increaseAllowance(stakingContractAddress, sharesToBurn).send({
-      from: this.web3.eth.defaultAccount,
-      gasLimit: 500000,
-    });
-    return await stakingContract.methods.startStakeWithdrawal(identityId, sharesToBurn).send({
-      from: this.web3.eth.defaultAccount,
-      gasLimit: 500000,
-    });
+    await (
+      await shareContract.increaseAllowance(stakingContractAddress, sharesToBurn, {
+        gasPrice: 8,
+        gasLimit: 500000,
+      })
+    ).wait();
+    return await (
+      await stakingContract.startStakeWithdrawal(identityId, sharesToBurn, {
+        gasPrice: 16,
+        gasLimit: 500000,
+      })
+    ).wait();
   }
 
   async withdrawStake(identityId) {
     const stakingContractAddress = await this.getContractAddress('Staking');
-    const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
-    return await stakingContract.methods.withdrawStake(identityId).send({
-      from: this.web3.eth.defaultAccount,
+    const stakingContract = new ethers.Contract(
+      stakingContractAddress,
+      stakingAbi,
+      this.ethersSigner,
+    );
+    const removeKeyReceipt = await stakingContract.withdrawStake(identityId, {
+      gasPrice: 16,
       gasLimit: 500000,
     });
+    return await removeKeyReceipt.wait();
   }
 
   async addAdminKey(identityId, newAdminWallet, purpose, type) {
     const identityContractAddress = await this.getContractAddress('Identity');
-    const identityContract = new this.web3.eth.Contract(identity, identityContractAddress);
-    const adminKey = ethers.utils.keccak256(
-      ethers.utils.solidityPack(['address'], [newAdminWallet]),
+    const identityContract = new ethers.Contract(
+      identityContractAddress,
+      identity,
+      this.ethersSigner,
     );
-    return await identityContract.methods.addKey(identityId, adminKey, purpose, type).send({
-      from: this.web3.eth.defaultAccount,
-      gasLimit: 200000,
+    const adminKey = this.getAdminKeyFromWallet(newAdminWallet);
+    const removeKeyReceipt = await identityContract.addKey(identityId, adminKey, purpose, type, {
+      gasPrice: 16,
+      gasLimit: 500000,
     });
+    return await removeKeyReceipt.wait();
   }
   async removeKey(identityId, newAdminWallet) {
     const identityContractAddress = await this.getContractAddress('Identity');
-    const identityContract = new this.web3.eth.Contract(identity, identityContractAddress);
-    const adminKey = ethers.utils.keccak256(
-      ethers.utils.solidityPack(['address'], [newAdminWallet]),
+    const identityContract = new ethers.Contract(
+      identityContractAddress,
+      identity,
+      this.ethersSigner,
     );
-    return await identityContract.methods.removeKey(identityId, adminKey).send({
-      from: this.web3.eth.defaultAccount,
-      gasLimit: 100000,
+    const adminKey = this.getAdminKeyFromWallet(newAdminWallet);
+    const removeKeyReceipt = await identityContract.removeKey(identityId, adminKey, {
+      gasPrice: 16,
+      gasLimit: 500000,
     });
+    return await removeKeyReceipt.wait();
   }
 }
 

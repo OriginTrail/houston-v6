@@ -271,7 +271,10 @@ export default {
       }
     },
     async refreshAllTokenomicsData() {
-      const loader = this.$loading({ target: '.tokenomics-wrapper' });
+      const loader = this.$loading({
+        target: '.tokenomics-wrapper',
+        customClass: 'backdrop_border_radius',
+      });
       await this.$store.dispatch('getOverviewData', this.getIdentityId);
       loader.close();
     },
@@ -286,7 +289,11 @@ export default {
 
     async updateAsk() {
       if (this.newAsk) {
-        const loader = this.$loading({ target: '.ask-card', text: 'Updating ask value...' });
+        const loader = this.$loading({
+          target: '.ask-card',
+          text: 'Updating ask value...',
+          customClass: 'backdrop_border_radius',
+        });
         try {
           await metamask.contractService.updateAsk(this.getIdentityId, this.newAsk);
           this.notify(null, 'Ask updated successfully!', 'success');
@@ -307,7 +314,11 @@ export default {
     },
     async addStake() {
       if (this.newStake) {
-        const loader = this.$loading({ target: '.add-stake-card', text: 'Adding stake...' });
+        const loader = this.$loading({
+          target: '.add-stake-card',
+          text: 'Adding stake...',
+          customClass: 'backdrop_border_radius',
+        });
         try {
           await metamask.contractService.addStakeEthers(
             this.getIdentityId,
@@ -339,6 +350,7 @@ export default {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
           text: 'Requesting stake withdrawal...',
+          customClass: 'backdrop_border_radius',
         });
         try {
           await metamask.contractService.requestWithdrawal(
@@ -369,6 +381,7 @@ export default {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
           text: 'Withdrawing stake...',
+          customClass: 'backdrop_border_radius',
         });
         try {
           await metamask.contractService.withdrawStake(this.getIdentityId);
