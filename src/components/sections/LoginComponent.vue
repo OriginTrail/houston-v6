@@ -231,7 +231,6 @@ export default {
   display: flex;
   flex-direction: column;
   border-radius: 16px;
-  margin: auto;
   text-align: left;
   width: 415px;
   background-color: white;
