@@ -23,8 +23,9 @@ import { getAmountWithDecimals } from '@/utils/cryptoUtils';
 import Big from 'big.js';
 
 class ContractService {
-  constructor(web3) {
+  constructor(web3, ethersSigner) {
     this.web3 = web3;
+    this.ethersSigner = ethersSigner;
   }
 
   async getContractAddress(contractName) {
@@ -41,17 +42,15 @@ class ContractService {
     return hubContract.methods.getContractAddress(contractName).call();
   }
 
-  getKeyFromWallet(wallet) {
-    return this.web3.utils.keccak256(this.web3.utils.toChecksumAddress(wallet));
-  }
-
   async getIdentity(operationalAddress, adminWalletAddress) {
     const address = await this.getContractAddress('IdentityStorage');
     const IdentityStorageProfile = new this.web3.eth.Contract(IdentityStorage, address);
     const identity = await IdentityStorageProfile.methods
       .getIdentityId(operationalAddress)
       .call({ from: this.web3.eth.defaultAccount });
-    const adminKey = this.getKeyFromWallet(adminWalletAddress);
+    const adminKey = ethers.utils.keccak256(
+      ethers.utils.solidityPack(['address'], [adminWalletAddress]),
+    );
     const hasPurpose = await IdentityStorageProfile.methods
       .keyHasPurpose(identity, adminKey, 1)
       .call({ from: this.web3.eth.defaultAccount });
@@ -67,7 +66,7 @@ class ContractService {
   async isKeyAlreadyUsed(identityId, adminWallet) {
     const address = await this.getContractAddress('IdentityStorage');
     const IdentityStorageContract = new this.web3.eth.Contract(IdentityStorage, address);
-    const adminKey = this.getKeyFromWallet(adminWallet);
+    const adminKey = ethers.utils.keccak256(ethers.utils.solidityPack(['address'], [adminWallet]));
     const keyObject = await IdentityStorageContract.methods.getKey(identityId, adminKey).call();
     return (keyObject['2'] ?? keyObject.key) !== adminKey;
   }
@@ -118,7 +117,7 @@ class ContractService {
 
   async getAssetsOnDkg() {
     const address = store.getters.selectedNetwork.contentAssetStorageContractAddress;
-    return await this.web3.eth.getStorageAt(address, 7);
+    return await this.ethersSigner.provider.getStorageAt(address, 7);
   }
 
   async getStakedTRAC() {
@@ -128,28 +127,47 @@ class ContractService {
     return await TRACContract.methods.balanceOf(StakingStorageAddress).call();
   }
 
-  async addStake(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
+  async addStake(identityId, stakeAmountToAdd) {
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const TRACContract = new this.web3.eth.Contract(ERC20Token, address);
     const sanitizedAmount = getAmountWithDecimals(stakeAmountToAdd);
-    if (loadingMessageCallback) {
-      loadingMessageCallback('Adding stake (Transaction 1 of 2: Increasing Allowance)');
-    }
     await TRACContract.methods.increaseAllowance(stakingContractAddress, sanitizedAmount).send({
       from: this.web3.eth.defaultAccount,
-      gasPrice: 8,
-      gasLimit: 500000,
     });
     const stakingContract = new this.web3.eth.Contract(stakingAbi, stakingContractAddress);
-    if (loadingMessageCallback) {
-      loadingMessageCallback('Adding stake (Transaction 2 of 2: Adding stake to the node)');
-    }
     return await stakingContract.methods.addStake(identityId, sanitizedAmount).send({
       from: this.web3.eth.defaultAccount,
       gasPrice: 1000,
+      gasLimit: 400000,
+    });
+  }
+  async addStakeEthers(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
+    const address = await this.getContractAddress('Token');
+    const stakingContractAddress = await this.getContractAddress('Staking');
+    const tokenContract = new ethers.Contract(address, ERC20Token, this.ethersSigner);
+    const stakeWei = ethers.utils.parseEther(stakeAmountToAdd);
+    let allowanceReceipt = await tokenContract.increaseAllowance(stakingContractAddress, stakeWei, {
+      gasPrice: 8,
       gasLimit: 500000,
     });
+    if (loadingMessageCallback) {
+      loadingMessageCallback('Adding stake (Transaction 1 of 2: Increasing Allowance)');
+    }
+    await allowanceReceipt.wait();
+    const stakingContract = new ethers.Contract(
+      stakingContractAddress,
+      stakingAbi,
+      this.ethersSigner,
+    );
+    let stakingReceipt = await stakingContract['addStake(uint72,uint96)'](identityId, stakeWei, {
+      gasPrice: 1000,
+      gasLimit: 500000,
+    });
+    if (loadingMessageCallback) {
+      loadingMessageCallback('Adding stake (Transaction 2 of 2: Adding stake to the node)');
+    }
+    await stakingReceipt.wait();
   }
 
   async getLastWithdrawalTimestamp(identityId, adminWallet) {
@@ -199,7 +217,9 @@ class ContractService {
   async addAdminKey(identityId, newAdminWallet, purpose, type) {
     const identityContractAddress = await this.getContractAddress('Identity');
     const identityContract = new this.web3.eth.Contract(identity, identityContractAddress);
-    const adminKey = this.getKeyFromWallet(newAdminWallet);
+    const adminKey = ethers.utils.keccak256(
+      ethers.utils.solidityPack(['address'], [newAdminWallet]),
+    );
     return await identityContract.methods.addKey(identityId, adminKey, purpose, type).send({
       from: this.web3.eth.defaultAccount,
       gasLimit: 200000,
@@ -208,7 +228,9 @@ class ContractService {
   async removeKey(identityId, newAdminWallet) {
     const identityContractAddress = await this.getContractAddress('Identity');
     const identityContract = new this.web3.eth.Contract(identity, identityContractAddress);
-    const adminKey = this.web3.utils.keccak256(this.web3.utils.toChecksumAddress(newAdminWallet));
+    const adminKey = ethers.utils.keccak256(
+      ethers.utils.solidityPack(['address'], [newAdminWallet]),
+    );
     return await identityContract.methods.removeKey(identityId, adminKey).send({
       from: this.web3.eth.defaultAccount,
       gasLimit: 100000,

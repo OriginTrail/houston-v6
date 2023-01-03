@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import ContractService from '@/service/contractService';
 import store from '../store';
+import { ethers } from 'ethers';
 import { networkList } from '@/utils/lists';
 import router from '../router';
 
@@ -10,6 +11,8 @@ class metamaskService {
   eventsSet = false;
   accountChangedListener = null;
   contractService = null;
+  ethersProvider = null;
+  ethersSigner = null;
   accounts = [];
   async connectToMetamask() {
     try {
@@ -19,10 +22,13 @@ class metamaskService {
             (provider) => provider.isMetaMask,
           );
           this.web3 = new Web3(metamaskProvider);
+          this.ethersProvider = new ethers.providers.Web3Provider(metamaskProvider);
           window.ethereum.setSelectedProvider(metamaskProvider);
         } else {
           this.web3 = new Web3(window.ethereum);
+          this.ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
         }
+        this.ethersSigner = this.ethersProvider.getSigner();
         window.Web3 = this.web3;
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         await this.checkNetwork().catch(() => {
@@ -35,7 +41,7 @@ class metamaskService {
         localStorage.setItem('refuse_wallet', 'false');
         this.web3.eth.defaultAccount = accounts[0];
         this.accounts = accounts;
-        this.contractService = new ContractService(this.web3);
+        this.contractService = new ContractService(this.web3, this.ethersSigner);
         return accounts;
       } else {
         console.warn(

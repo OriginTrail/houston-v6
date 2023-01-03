@@ -57,7 +57,7 @@
                 </el-form-item>
               </div>
               <div class="form-item">
-                <div class="label label-inline-12">New public wallet address</div>
+                <div class="label label-inline-12">New key wallet</div>
                 <el-form-item prop="walletKey">
                   <el-input
                     class="walletKey-wallet"
