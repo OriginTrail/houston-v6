@@ -162,7 +162,6 @@ export default {
           });
         })
         .catch((err) => {
-          console.log(err);
           this.error =
             err?.data?.message ??
             err?.message ??

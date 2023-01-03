@@ -322,13 +322,9 @@ export default {
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.addStakeEthers(
-            this.getIdentityId,
-            this.newStake,
-            (msg) => {
-              loader.text = msg;
-            },
-          );
+          await metamask.contractService.addStake(this.getIdentityId, this.newStake, (msg) => {
+            loader.text = msg;
+          });
           this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newStake = 0;

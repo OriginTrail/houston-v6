@@ -13,12 +13,7 @@ import ERC20Token from '../abis/ERC20Token.json';
 import { ethers } from 'ethers';
 import store from '../store';
 
-import {
-  STAKING_CONTRACT_ADDRESS,
-  PROFILE_CONTRACT_ADDRESS,
-  STAKING_STORAGE_CONTRACT_ADDRESS,
-  HUB_CONTRACT_ADDRESS,
-} from '@/utils/constants';
+import { ADMIN_KEY_PURPOSE } from '@/utils/constants';
 import { getAmountWithDecimals } from '@/utils/cryptoUtils';
 import Big from 'big.js';
 
@@ -51,7 +46,11 @@ class ContractService {
     );
     const identity = await IdentityStorageContract.getIdentityId(operationalAddress);
     const adminKey = this.getAdminKeyFromWallet(adminWalletAddress);
-    const hasPurpose = await IdentityStorageContract.keyHasPurpose(identity, adminKey, 1);
+    const hasPurpose = await IdentityStorageContract.keyHasPurpose(
+      identity,
+      adminKey,
+      ADMIN_KEY_PURPOSE,
+    );
     return hasPurpose ? identity : 0;
   }
 
@@ -132,7 +131,7 @@ class ContractService {
     return await TRACContract.balanceOf(StakingStorageAddress);
   }
 
-  async addStakeEthers(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
+  async addStake(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const tokenContract = new ethers.Contract(address, ERC20Token, this.ethersSigner);
