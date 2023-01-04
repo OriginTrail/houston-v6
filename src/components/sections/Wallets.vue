@@ -106,6 +106,7 @@
                 <div class="label label-inline-12">Wallet address to remove</div>
                 <el-form-item prop="walletKey">
                   <el-input
+                    ref="walletKeyRemoveKeyInput"
                     class="walletKey-wallet"
                     placeholder="Please input your wallet address"
                     v-model="removeKeyUserForm.walletKey"
@@ -385,6 +386,9 @@ export default {
     },
     validateRemoveKeyStatus(prop, status) {
       this.removeKeyValidationStatus[prop] = status;
+      if (prop === 'walletKey' && status) {
+        this.$refs.walletKeyRemoveKeyInput.blur();
+      }
     },
   },
 };

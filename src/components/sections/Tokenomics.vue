@@ -44,11 +44,7 @@
         <div class="property-wrapper">
           <p class="title label-inline-12">Total stake</p>
           <p class="value label-inline-14">
-            {{
-              formatNumberWithSpaces(
-                Number(getStakeData.activeStake) + Number(getStakeData.pendingWithdrawal),
-              )
-            }}
+            {{ getTotalStake }}
             TRAC
           </p>
         </div>
@@ -254,6 +250,13 @@ export default {
     mustWaitForWithdrawal() {
       this.timerActive;
       return Number(this.getRequestTime) > 0 && moment.unix(this.getRequestTime) >= moment();
+    },
+
+    getTotalStake() {
+      return formatNumberWithSpaces(
+        Number(formatNumberWithSpaces(this.getStakeData.activeStake).replace(/\s/g, '')) +
+          Number(formatNumberWithSpaces(this.getStakeData.pendingWithdrawal).replace(/\s/g, '')),
+      );
     },
   },
   async mounted() {
