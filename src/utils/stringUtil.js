@@ -12,7 +12,7 @@ export const getAddressShortForm = (address, { rightHandLength, leftHandLength }
 
 export const formatNumberWithSpaces = (input) => {
   return (input && !isNaN(Number(input))) || input === 0
-    ? Number(input).toLocaleString('en', { maximumFractionDigits: 3 }).replace(/,/g, ' ')
+    ? Number(input).toLocaleString('en').replace(/,/g, ' ')
     : '';
 };
 
