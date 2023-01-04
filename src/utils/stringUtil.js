@@ -12,7 +12,17 @@ export const getAddressShortForm = (address, { rightHandLength, leftHandLength }
 
 export const formatNumberWithSpaces = (input) => {
   return (input && !isNaN(Number(input))) || input === 0
-    ? Number(input).toLocaleString('en').replace(/,/g, ' ')
+    ? Number(input).toLocaleString('en', { maximumFractionDigits: 3 }).replace(/,/g, ' ')
+    : '';
+};
+
+export const formatNumberWithSpacesWithNoPrecision = (input) => {
+  return (input && !isNaN(Number(input))) || input === 0
+    ? !Number.isInteger(Number(input))
+      ? `${Intl.NumberFormat('en-US').format(parseInt(input)).replace(/,/g, ' ')}.${
+          (Number(input) % 1).toString().split('.')[1]
+        }`
+      : Intl.NumberFormat('en-US').format(Number(input)).replace(/,/g, ' ')
     : '';
 };
 
