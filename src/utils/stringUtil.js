@@ -16,6 +16,16 @@ export const formatNumberWithSpaces = (input) => {
     : '';
 };
 
+export const formatNumberWithSpacesWithNoPrecision = (input) => {
+  return (input && !isNaN(Number(input))) || input === 0
+    ? !Number.isInteger(Number(input))
+      ? `${Intl.NumberFormat('en-US').format(parseInt(input)).replace(/,/g, ' ')}.${
+          (Number(input) % 1).toString().split('.')[1]
+        }`
+      : Intl.NumberFormat('en-US').format(Number(input)).replace(/,/g, ' ')
+    : '';
+};
+
 export const formatNumbersToShort = (input) => {
   return Intl.NumberFormat('en-US', {
     notation: 'compact',

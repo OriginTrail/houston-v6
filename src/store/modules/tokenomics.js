@@ -47,7 +47,9 @@ export default {
           .getStakeAmountPendingWithdrawal(identity, store.getters.connectedAddress)
           .then((data) => {
             store.commit('SAVE_METRICS', {
-              'stake.pendingWithdrawal': getReadableTokenAmount(data, 18, { fixed: 12 }),
+              'stake.pendingWithdrawal': parseFloat(
+                getReadableTokenAmount(data, 18, { fixed: 12 }),
+              ),
             });
           }),
         metamask.contractService
