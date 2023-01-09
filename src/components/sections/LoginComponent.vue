@@ -11,7 +11,7 @@
             <el-select v-model="userForm.network" placeholder="Please select your network">
               <el-option
                 v-for="net of networkOptions"
-                :key="net.chainId"
+                :key="net.chainId + net.label"
                 :label="net.label"
                 :value="net.chainId"
               ></el-option>
@@ -73,7 +73,7 @@ import { getAddressShortForm } from '@/utils/stringUtil';
 import metamask from '@/service/metamask';
 import MNotification from '@/components/shared/Notification';
 import Button from '@/components/Button';
-import { networkList } from '@/utils/lists';
+import { getTestingNetwork, networkList } from '@/utils/lists';
 import { networkErrors } from '@/utils/errorMessages';
 export default {
   name: 'LoginComponent',
@@ -114,7 +114,7 @@ export default {
       error: null,
       metamaskError: null,
       networkError: null,
-      networkOptions: networkList,
+      networkOptions: [...networkList, ...getTestingNetwork()],
     };
   },
   computed: {
