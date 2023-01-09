@@ -17,6 +17,21 @@ export const networkList = [
   },
 ];
 
+export const getTestingNetwork = () => {
+  return process.env.NODE_ENV === 'test'
+    ? [
+        {
+          label: process.env.VUE_APP_TEST_NETWORK_NAME,
+          hubContract: process.env.VUE_APP_TEST_NETWORK_HUB_CONTRACT,
+          chainId: process.env.VUE_APP_TEST_CHAIN_ID,
+          rpc: process.env.VUE_APP_RPC_URL,
+          bcNetworkName: process.env.VUE_APP_BC_NETWORK_NAME,
+          contentAssetStorageContractAddress: process.env.VUE_APP_CONTENT_ASSET_STORAGE_ADDRESS,
+        },
+      ]
+    : [];
+};
+
 export const purposeList = [
   {
     label: 'Admin key',
