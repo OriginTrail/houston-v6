@@ -15,7 +15,6 @@ import store from '../store';
 
 import { ADMIN_KEY_PURPOSE } from '@/utils/constants';
 import { getAmountWithDecimals } from '@/utils/cryptoUtils';
-import Big from 'big.js';
 
 class ContractService {
   constructor(ethersSigner) {
@@ -180,11 +179,10 @@ class ContractService {
 
     const totalSupply = await shareContract.totalSupply();
     const totalStakes = await this.getTotalStake(identityId);
-    const sharesToBurn = Big(getAmountWithDecimals(stakeToWithdraw))
+    const sharesToBurn = ethers.utils
+      .parseUnits(stakeToWithdraw, 18)
       .mul(totalSupply)
-      .div(totalStakes)
-      .round()
-      .toString();
+      .div(totalStakes);
 
     await (
       await shareContract.increaseAllowance(stakingContractAddress, sharesToBurn, {

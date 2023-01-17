@@ -10,7 +10,6 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "big.js": "^6.2.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.12",
     "ethers": "^5.7.2",
