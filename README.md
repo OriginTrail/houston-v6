@@ -85,5 +85,5 @@ npm run build
 ```
 
 ## Contribution guidelines
-For more information on how to contribute, please follow this [link](https://docs.origintrail.io/useful-resources/contribute).
+For more information on how to contribute, please follow this [link](https://docs.origintrail.io/useful-resources/contribute)
 
