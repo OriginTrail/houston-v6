@@ -53,6 +53,7 @@ export default {
 @import '../assets/variable.scss';
 
 .disclaimer-box-wrapper {
+  // color: black;
   display: flex;
   flex-direction: column;
   row-gap: 10px;
