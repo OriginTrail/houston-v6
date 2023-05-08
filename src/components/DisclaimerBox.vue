@@ -11,9 +11,9 @@
     </p>
 
     <p>
-      This means that, in case of you wanting to use multiple admin wallets to manage your node (by
-      adding additional admin wallets), only the wallets that own share tokens will be able to
-      manage the TRAC stake.
+      This means that, in case you want to use multiple admin wallets to manage your node (by adding
+      additional admin wallets), only the wallets that own share tokens will be able to manage the
+      TRAC stake.
     </p>
 
     <p>
@@ -63,5 +63,9 @@ export default {
   border: 1px solid $yellow-500;
   border-radius: 8px;
   overflow-y: auto;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: $dark-text-primary;
 }
 </style>
