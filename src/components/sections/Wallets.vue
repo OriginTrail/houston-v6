@@ -131,6 +131,7 @@
           </div>
         </div>
       </tokenomics-card>
+      <DisclaimerBox class="disclaimer-box" />
     </div>
   </div>
 </template>
@@ -143,6 +144,7 @@ import { getAddressShortForm } from '@/utils/stringUtil';
 import { generateToast } from '@/utils/toastObjectGenerator';
 import { keyTypeList, purposeList } from '@/utils/lists';
 import MNotification from '@/components/shared/Notification';
+import DisclaimerBox from '../DisclaimerBox';
 
 export default {
   name: 'WalletManagement',
@@ -150,6 +152,7 @@ export default {
     MNotification,
     TokenomicsCard,
     Button,
+    DisclaimerBox,
   },
   data() {
     const validateWalletAddressForRemovingKey = async (rule, value, callback) => {
@@ -691,6 +694,10 @@ export default {
         }
       }
     }
+  }
+
+  .disclaimer-box {
+    margin-top: 32px;
   }
 }
 </style>
