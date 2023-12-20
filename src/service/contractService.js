@@ -132,6 +132,7 @@ class ContractService {
   }
 
   async addStake(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const tokenContract = new ethers.Contract(address, ERC20Token, this.ethersSigner);
@@ -139,7 +140,7 @@ class ContractService {
     let allowanceReceipt = await tokenContract.increaseAllowance(
       stakingContractAddress,
       stakeWei,
-      store.getters.selectedNetwork.gasInfo.low,
+      gasPrices.low,
     );
     if (loadingMessageCallback) {
       loadingMessageCallback('Adding stake (Transaction 1 of 2: Increasing Allowance)');
@@ -153,7 +154,7 @@ class ContractService {
     let stakingReceipt = await stakingContract['addStake(uint72,uint96)'](
       identityId,
       stakeWei,
-      store.getters.selectedNetwork.gasInfo.high,
+      gasPrices.high,
     );
     if (loadingMessageCallback) {
       loadingMessageCallback('Adding stake (Transaction 2 of 2: Adding stake to the node)');
