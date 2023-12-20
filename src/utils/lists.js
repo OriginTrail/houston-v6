@@ -1,3 +1,26 @@
+import { ethers } from 'ethers';
+
+const otpGasPrices = {
+  high: {
+    gasPrice: 16,
+    gasLimit: 500000,
+  },
+  low: {
+    gasPrice: 8,
+    gasLimit: 120000,
+  },
+};
+const gnosisGasPrices = {
+  high: {
+    gasPrice: ethers.utils.parseUnits('2', 'gwei'),
+    gasLimit: 500000,
+  },
+  low: {
+    gasPrice: ethers.utils.parseUnits('1.5', 'gwei'),
+    gasLimit: 500000,
+  },
+};
+
 export const networkList = [
   {
     label: 'OriginTrail DKG Mainnet',
@@ -15,6 +38,7 @@ export const networkList = [
         bcNetworkName: 'OTP Parachain mainnet',
         contentAssetStorageContractAddress: '0x5cAC41237127F94c2D21dAe0b14bFeFa99880630',
         coinTicker: 'MOTP',
+        gasInfo: otpGasPrices,
       },
       {
         label: 'Gnosis Mainnet',
@@ -24,6 +48,7 @@ export const networkList = [
         bcNetworkName: 'Gnosis Mainnet',
         contentAssetStorageContractAddress: '0x9157595f26F6069A7c29e988c4249bA98A53c697',
         coinTicker: 'xDai',
+        gasInfo: gnosisGasPrices,
       },
     ],
   },
@@ -43,6 +68,7 @@ export const networkList = [
         bcNetworkName: 'OTP Parachain testnet',
         contentAssetStorageContractAddress: '0x1A061136Ed9f5eD69395f18961a0a535EF4B3E5f',
         coinTicker: 'MOTP',
+        gasInfo: otpGasPrices,
       },
       {
         label: 'Gnosis Chiado Testnet',
@@ -52,6 +78,7 @@ export const networkList = [
         bcNetworkName: 'Gnosis Chiado testnet',
         contentAssetStorageContractAddress: '0xeA3423e02c8d231532dab1BCE5D034f3737B3638',
         coinTicker: 'xDai',
+        gasInfo: gnosisGasPrices,
       },
     ],
   },

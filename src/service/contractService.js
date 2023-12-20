@@ -135,10 +135,11 @@ class ContractService {
     const stakingContractAddress = await this.getContractAddress('Staking');
     const tokenContract = new ethers.Contract(address, ERC20Token, this.ethersSigner);
     const stakeWei = ethers.utils.parseEther(stakeAmountToAdd);
-    let allowanceReceipt = await tokenContract.increaseAllowance(stakingContractAddress, stakeWei, {
-      gasPrice: 8,
-      gasLimit: 500000,
-    });
+    let allowanceReceipt = await tokenContract.increaseAllowance(
+      stakingContractAddress,
+      stakeWei,
+      store.getters.selectedNetwork.gasInfo.low,
+    );
     if (loadingMessageCallback) {
       loadingMessageCallback('Adding stake (Transaction 1 of 2: Increasing Allowance)');
     }
@@ -148,10 +149,11 @@ class ContractService {
       stakingAbi,
       this.ethersSigner,
     );
-    let stakingReceipt = await stakingContract['addStake(uint72,uint96)'](identityId, stakeWei, {
-      gasPrice: 16,
-      gasLimit: 500000,
-    });
+    let stakingReceipt = await stakingContract['addStake(uint72,uint96)'](
+      identityId,
+      stakeWei,
+      store.getters.selectedNetwork.gasInfo.high,
+    );
     if (loadingMessageCallback) {
       loadingMessageCallback('Adding stake (Transaction 2 of 2: Adding stake to the node)');
     }
@@ -185,16 +187,18 @@ class ContractService {
       .div(totalStakes);
 
     await (
-      await shareContract.increaseAllowance(stakingContractAddress, sharesToBurn, {
-        gasPrice: 8,
-        gasLimit: 500000,
-      })
+      await shareContract.increaseAllowance(
+        stakingContractAddress,
+        sharesToBurn,
+        store.getters.selectedNetwork.gasInfo.low,
+      )
     ).wait();
     return await (
-      await stakingContract.startStakeWithdrawal(identityId, sharesToBurn, {
-        gasPrice: 16,
-        gasLimit: 500000,
-      })
+      await stakingContract.startStakeWithdrawal(
+        identityId,
+        sharesToBurn,
+        store.getters.selectedNetwork.gasInfo.high,
+      )
     ).wait();
   }
 
@@ -205,10 +209,10 @@ class ContractService {
       stakingAbi,
       this.ethersSigner,
     );
-    const removeKeyReceipt = await stakingContract.withdrawStake(identityId, {
-      gasPrice: 16,
-      gasLimit: 500000,
-    });
+    const removeKeyReceipt = await stakingContract.withdrawStake(
+      identityId,
+      store.getters.selectedNetwork.gasInfo.high,
+    );
     return await removeKeyReceipt.wait();
   }
 
@@ -220,10 +224,13 @@ class ContractService {
       this.ethersSigner,
     );
     const adminKey = this.getAdminKeyFromWallet(newAdminWallet);
-    const removeKeyReceipt = await identityContract.addKey(identityId, adminKey, purpose, type, {
-      gasPrice: 16,
-      gasLimit: 500000,
-    });
+    const removeKeyReceipt = await identityContract.addKey(
+      identityId,
+      adminKey,
+      purpose,
+      type,
+      store.getters.selectedNetwork.gasInfo.high,
+    );
     return await removeKeyReceipt.wait();
   }
   async removeKey(identityId, newAdminWallet) {
@@ -234,10 +241,11 @@ class ContractService {
       this.ethersSigner,
     );
     const adminKey = this.getAdminKeyFromWallet(newAdminWallet);
-    const removeKeyReceipt = await identityContract.removeKey(identityId, adminKey, {
-      gasPrice: 16,
-      gasLimit: 500000,
-    });
+    const removeKeyReceipt = await identityContract.removeKey(
+      identityId,
+      adminKey,
+      store.getters.selectedNetwork.gasInfo.high,
+    );
     return await removeKeyReceipt.wait();
   }
 }
