@@ -22,7 +22,7 @@ class metamaskService {
           this.ethersProvider = new ethers.providers.Web3Provider(metamaskProvider);
           window.ethereum.setSelectedProvider(metamaskProvider);
         } else {
-          this.ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
+          this.ethersProvider = new ethers.providers.Web3Provider(window.ethereum, 'any');
         }
         this.ethersSigner = this.ethersProvider.getSigner();
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -164,6 +164,7 @@ class metamaskService {
   }
 
   chainUpdateProcess = (chainId) => {
+    console.log(chainId);
     return this.switchMetamaskChain(chainId)
       .then(() => store.dispatch('connectToMetamask'))
       .catch((error) => {
