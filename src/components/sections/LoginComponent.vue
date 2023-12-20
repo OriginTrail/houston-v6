@@ -11,6 +11,19 @@
             <el-select v-model="userForm.network" placeholder="Please select your network">
               <el-option
                 v-for="net of networkOptions"
+                :key="net.internalId"
+                :label="net.label"
+                :value="net.internalId"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <div class="label label-inline-12 blockchain-select" v-if="userForm.network">
+            Choose the blockchain
+          </div>
+          <el-form-item prop="blockchain" v-if="userForm.network">
+            <el-select v-model="userForm.blockchain" placeholder="Please select your blockchain">
+              <el-option
+                v-for="net of selectedSubnetworks"
                 :key="net.chainId"
                 :label="net.label"
                 :value="net.chainId"
@@ -92,10 +105,18 @@ export default {
       userForm: {
         network: null,
         operationalWallet: null,
+        blockchain: null,
       },
       userRules: {
         network: [
           { required: true, message: 'Please choose your network.', trigger: ['blur', 'change'] },
+        ],
+        blockchain: [
+          {
+            required: true,
+            message: 'Please choose your blockchain.',
+            trigger: ['blur', 'change'],
+          },
         ],
         operationalWallet: [
           {
@@ -124,6 +145,12 @@ export default {
         ? getAddressShortForm(address, { rightHandLength: 15, leftHandLength: 12 })
         : 'Connect admin wallet';
     },
+    selectedSubnetworks() {
+      return (
+        this.userForm.network &&
+        this.networkOptions.find((e) => e.internalId === this.userForm.network)?.subNetworks
+      );
+    },
     connectedAddress() {
       return this.$store.getters.connectedAddress;
     },
@@ -133,12 +160,17 @@ export default {
       return metamask.addMetamaskChain(this.$store.getters.selectedNetwork);
     },
     validateStatus(prop, status) {
-      if (prop === 'network' && status) {
-        const network = this.networkOptions.find((e) => e.chainId === this.userForm.network);
+      if (prop === 'blockchain' && status) {
+        const network = this.networkOptions
+          .find((e) => e.internalId === this.userForm.network)
+          ?.subNetworks.find((e) => e.chainId === this.userForm.blockchain);
         this.$store.commit('SAVE_NETWORK_CHOICE', network);
         if (this.$store.getters.isLoggedIn) {
           metamask.chainUpdateProcess(network.chainId);
         }
+      }
+      if (prop === 'network' && status) {
+        this.userForm.blockchain = null;
       }
       this.validationStatus[prop] = status;
     },
@@ -280,6 +312,10 @@ export default {
           margin-top: 0.8em;
           width: 100%;
         }
+      }
+
+      .blockchain-select {
+        margin-top: 24px;
       }
       .metamask-button {
         height: 40px;
