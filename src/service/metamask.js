@@ -106,8 +106,8 @@ class metamaskService {
             chainName: chainData.bcNetworkName,
             rpcUrls: [chainData.rpc],
             nativeCurrency: {
-              name: 'MOTP',
-              symbol: 'MOTP',
+              name: chainData.coinTicker ?? 'MOTP',
+              symbol: chainData.coinTicker ?? 'MOTP',
               decimals: 18,
             },
           },
@@ -164,14 +164,14 @@ class metamaskService {
   }
 
   chainUpdateProcess = (chainId) => {
-    console.log(chainId);
     return this.switchMetamaskChain(chainId)
       .then(() => store.dispatch('connectToMetamask'))
       .catch((error) => {
         this.disconnectFromMetamask();
         if (error.code === 4902) {
           //network not registered
-          const newNetwork = networkList.find((e) => e.chainId === chainId);
+          const allNetworks = networkList.map((e) => e.subNetworks).flat();
+          const newNetwork = allNetworks.find((e) => e.chainId === chainId);
           if (newNetwork) {
             this.addMetamaskChain(newNetwork).then(() => {
               return store.dispatch('connectToMetamask');
