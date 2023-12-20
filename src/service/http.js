@@ -1,27 +1,11 @@
-const TIMEOUT = 1000; // ms
+import axios from 'axios';
 
-const get = (data, shouldFail) => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      if (shouldFail) {
-        rej(data);
-      } else {
-        res(data);
-      }
-    }, TIMEOUT);
-  });
-};
+const oracleHTTPService = axios.create({
+  timeout: 60000,
+});
 
-const post = (data, shouldFail) => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      if (shouldFail) {
-        rej(data);
-      } else {
-        res(data);
-      }
-    }, TIMEOUT);
-  });
-};
+oracleHTTPService.interceptors.response.use((res) => {
+  return res.data;
+});
 
-export default { get, post };
+export const gnosisOracleService = oracleHTTPService;

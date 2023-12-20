@@ -15,6 +15,7 @@ import store from '../store';
 
 import { ADMIN_KEY_PURPOSE } from '@/utils/constants';
 import { getAmountWithDecimals } from '@/utils/cryptoUtils';
+import { getOracleGnosisGasPrice } from '@/service/priceOracleService';
 
 class ContractService {
   constructor(ethersSigner) {
@@ -167,6 +168,7 @@ class ContractService {
   }
 
   async requestWithdrawal(identityId, stakeToWithdraw, loadingMessageCallback = null) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const address = await this.getContractAddress('ProfileStorage');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const ProfileStorageContract = new ethers.Contract(address, profileStorage, this.ethersSigner);
@@ -187,36 +189,27 @@ class ContractService {
       .div(totalStakes);
 
     await (
-      await shareContract.increaseAllowance(
-        stakingContractAddress,
-        sharesToBurn,
-        store.getters.selectedNetwork.gasInfo.low,
-      )
+      await shareContract.increaseAllowance(stakingContractAddress, sharesToBurn, gasPrices.low)
     ).wait();
     return await (
-      await stakingContract.startStakeWithdrawal(
-        identityId,
-        sharesToBurn,
-        store.getters.selectedNetwork.gasInfo.high,
-      )
+      await stakingContract.startStakeWithdrawal(identityId, sharesToBurn, gasPrices.high)
     ).wait();
   }
 
   async withdrawStake(identityId) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const stakingContractAddress = await this.getContractAddress('Staking');
     const stakingContract = new ethers.Contract(
       stakingContractAddress,
       stakingAbi,
       this.ethersSigner,
     );
-    const removeKeyReceipt = await stakingContract.withdrawStake(
-      identityId,
-      store.getters.selectedNetwork.gasInfo.high,
-    );
+    const removeKeyReceipt = await stakingContract.withdrawStake(identityId, gasPrices.high);
     return await removeKeyReceipt.wait();
   }
 
   async addAdminKey(identityId, newAdminWallet, purpose, type) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const identityContractAddress = await this.getContractAddress('Identity');
     const identityContract = new ethers.Contract(
       identityContractAddress,
@@ -229,11 +222,12 @@ class ContractService {
       adminKey,
       purpose,
       type,
-      store.getters.selectedNetwork.gasInfo.high,
+      gasPrices.high,
     );
     return await removeKeyReceipt.wait();
   }
   async removeKey(identityId, newAdminWallet) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const identityContractAddress = await this.getContractAddress('Identity');
     const identityContract = new ethers.Contract(
       identityContractAddress,
@@ -241,11 +235,7 @@ class ContractService {
       this.ethersSigner,
     );
     const adminKey = this.getAdminKeyFromWallet(newAdminWallet);
-    const removeKeyReceipt = await identityContract.removeKey(
-      identityId,
-      adminKey,
-      store.getters.selectedNetwork.gasInfo.high,
-    );
+    const removeKeyReceipt = await identityContract.removeKey(identityId, adminKey, gasPrices.high);
     return await removeKeyReceipt.wait();
   }
 }
