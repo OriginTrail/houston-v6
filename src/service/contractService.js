@@ -22,11 +22,24 @@ class ContractService {
     this.ethersSigner = ethersSigner;
   }
 
-  async getContractAddress(contractName) {
+  async getContractAddress(contractName, isAssetStorage) {
     if (!this[contractName]) {
-      this[contractName] = await this.getContractAddressesFromHubContract(contractName);
+      if (isAssetStorage) {
+        this[contractName] = await this.getContentStorageContract(contractName);
+      } else {
+        this[contractName] = await this.getContractAddressesFromHubContract(contractName);
+      }
     }
     return this[contractName];
+  }
+
+  async getContentStorageContract(contractName) {
+    const hubContract = new ethers.Contract(
+      store.getters.selectedNetwork.hubContract,
+      hubContractAbi,
+      this.ethersSigner,
+    );
+    return await hubContract.getAssetStorageAddress(contractName);
   }
   async getContractAddressesFromHubContract(contractName) {
     const hubContract = new ethers.Contract(
@@ -120,7 +133,7 @@ class ContractService {
   }
 
   async getAssetsOnDkg() {
-    const address = store.getters.selectedNetwork.contentAssetStorageContractAddress;
+    const address = await this.getContractAddress('ContentAssetStorage', true);
     return await this.ethersSigner.provider.getStorageAt(address, 7);
   }
 
