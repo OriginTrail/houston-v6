@@ -148,7 +148,9 @@ export default {
     selectedSubnetworks() {
       return (
         this.userForm.network &&
-        this.networkOptions.find((e) => e.internalId === this.userForm.network)?.subNetworks
+        this.networkOptions
+          .find((e) => e.internalId === this.userForm.network)
+          ?.subNetworks?.filter((e) => !e.disabled)
       );
     },
     connectedAddress() {

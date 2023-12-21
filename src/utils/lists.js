@@ -28,7 +28,6 @@ export const networkList = [
     internalId: '1',
     rpc: 'https://astrosat-parachain-rpc.origin-trail.network/',
     bcNetworkName: 'OTP Parachain mainnet',
-    contentAssetStorageContractAddress: '0x5cAC41237127F94c2D21dAe0b14bFeFa99880630',
     subNetworks: [
       {
         label: 'OTP Parachain Mainnet',
@@ -36,7 +35,6 @@ export const networkList = [
         chainId: `0x${Number('2043').toString(16)}`,
         rpc: 'https://astrosat-parachain-rpc.origin-trail.network/',
         bcNetworkName: 'OTP Parachain mainnet',
-        contentAssetStorageContractAddress: '0x5cAC41237127F94c2D21dAe0b14bFeFa99880630',
         coinTicker: 'MOTP',
         gasInfo: otpGasPrices,
       },
@@ -46,9 +44,9 @@ export const networkList = [
         chainId: `0x${Number('100').toString(16)}`,
         rpc: 'https://rpc.gnosis.gateway.fm',
         bcNetworkName: 'Gnosis Mainnet',
-        contentAssetStorageContractAddress: '0x9157595f26F6069A7c29e988c4249bA98A53c697',
         coinTicker: 'xDai',
         gasInfo: gnosisGasPrices,
+        disabled: true,
       },
     ],
   },
@@ -58,7 +56,6 @@ export const networkList = [
     internalId: '2',
     rpc: 'https://lofar-testnet.origin-trail.network/',
     bcNetworkName: 'OTP Parachain testnet',
-    contentAssetStorageContractAddress: '0x1A061136Ed9f5eD69395f18961a0a535EF4B3E5f',
     subNetworks: [
       {
         label: 'OTP Parachain Testnet',
@@ -66,7 +63,6 @@ export const networkList = [
         chainId: `0x${Number('20430').toString(16)}`,
         rpc: 'https://lofar-testnet.origin-trail.network/',
         bcNetworkName: 'OTP Parachain testnet',
-        contentAssetStorageContractAddress: '0x1A061136Ed9f5eD69395f18961a0a535EF4B3E5f',
         coinTicker: 'MOTP',
         gasInfo: otpGasPrices,
       },
@@ -76,7 +72,6 @@ export const networkList = [
         chainId: `0x${Number('10200').toString(16)}`,
         rpc: 'https://rpc.chiado.gnosis.gateway.fm',
         bcNetworkName: 'Gnosis Chiado testnet',
-        contentAssetStorageContractAddress: '0xeA3423e02c8d231532dab1BCE5D034f3737B3638',
         coinTicker: 'xDai',
         gasInfo: gnosisGasPrices,
       },
