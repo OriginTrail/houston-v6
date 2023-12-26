@@ -22,7 +22,7 @@ class metamaskService {
           this.ethersProvider = new ethers.providers.Web3Provider(metamaskProvider);
           window.ethereum.setSelectedProvider(metamaskProvider);
         } else {
-          this.ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
+          this.ethersProvider = new ethers.providers.Web3Provider(window.ethereum, 'any');
         }
         this.ethersSigner = this.ethersProvider.getSigner();
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -106,8 +106,8 @@ class metamaskService {
             chainName: chainData.bcNetworkName,
             rpcUrls: [chainData.rpc],
             nativeCurrency: {
-              name: 'MOTP',
-              symbol: 'MOTP',
+              name: chainData.coinTicker ?? 'MOTP',
+              symbol: chainData.coinTicker ?? 'MOTP',
               decimals: 18,
             },
           },
@@ -170,7 +170,8 @@ class metamaskService {
         this.disconnectFromMetamask();
         if (error.code === 4902) {
           //network not registered
-          const newNetwork = networkList.find((e) => e.chainId === chainId);
+          const allNetworks = networkList.map((e) => e.subNetworks).flat();
+          const newNetwork = allNetworks.find((e) => e.chainId === chainId);
           if (newNetwork) {
             this.addMetamaskChain(newNetwork).then(() => {
               return store.dispatch('connectToMetamask');
