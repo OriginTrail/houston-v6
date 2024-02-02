@@ -35,6 +35,89 @@
           </div>
         </div>
       </tokenomics-card>
+      <tokenomics-card
+        title="Set node operator fee"
+        class="operator-fee-card"
+        v-if="doesSupportV2Features"
+      >
+        <div class="card-content">
+          <div class="description label-inline-14">
+            The operator fee is a percentage of TRAC fees your node will collect prior to including
+            it into the delegator share pool.
+            <b>Changing the operator fee incurs a 28 day delay</b> (and requires two transactions -
+            the initiating transaction and completing transaction)
+          </div>
+          <div class="form operator-fee-form">
+            <InputPairWithBtn
+              ref="setOperatorFeeInput"
+              input-type="number"
+              :button="false"
+              color="blue"
+              input-suffix="%"
+              btnLabel="start operator fee change"
+              :input-value="Number(getCurrentOperatorFee)"
+              @update="(v) => (operatorFee = v)"
+              :max="100"
+            >
+            </InputPairWithBtn>
+            <div class="sub-label label-inline-12">
+              Current operator fee :
+              <span class="trac-amount">{{ formatNumberWithSpaces(getCurrentOperatorFee) }}%</span>
+            </div>
+            <div class="sub-label italic label-inline-12">
+              * Note: The 28 day delay is not applied only when you set your node operator fee for
+              the first time
+            </div>
+          </div>
+          <div class="cta-section-with-steps">
+            <div class="step-count">Step 1</div>
+            <div>
+              <Button
+                :disabled="!operatorFee || !operatorFee.toString().length"
+                class="cta-button"
+                @click="startOperatorFeeUpdate"
+                >Update operator fee</Button
+              >
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-count">Step 2</div>
+            <div class="extra-step-cta">
+              <Button
+                class="cta-button"
+                :disabled="
+                  !getOperatorFeeChangeTime ||
+                  getOperatorFeeChangeTime < 0 ||
+                  mustWaitForOperatorFee
+                "
+                @click="changeOperatorFee"
+                >Complete fee update</Button
+              >
+              <el-tooltip
+                content="How long until withdrawal is available"
+                placement="top"
+                effect="light"
+              >
+                <img src="/images/icons/info-icon.svg" />
+                <div slot="content" class="withdrawal-availability-message label-inline-14">
+                  How long until operator fee update is available
+                </div>
+              </el-tooltip>
+
+              <div class="estimate-time-counter label-inline-12">
+                Waiting time:
+                <span
+                  ><backward-timer
+                    @over="operatorFeeTimerOver"
+                    ref="opFeeTimer"
+                    :instantly-start="getOperatorFeeChangeTime !== 0"
+                    :start-timestamp="null"
+                    :end-timestamp="getOperatorFeeChangeTime"
+                /></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </tokenomics-card>
     </div>
 
     <!-- Stake Settings -->
@@ -184,6 +267,117 @@
         </tokenomics-card>
       </div>
     </div>
+
+    <!-- Fees Management -->
+    <h2
+      class="section-heading stake-settings-heading fees-management-settings"
+      v-if="supportFeesManagement && doesSupportV2Features"
+    >
+      Node fees management
+    </h2>
+    <div class="node-stake" v-if="supportFeesManagement && doesSupportV2Features">
+      <div class="stake-update-cards">
+        <tokenomics-card title="Restake accumulated fee" class="restake-card">
+          <div class="card-content">
+            <div class="description label-inline-14">
+              Restaking your accumulated fee will increase your stake position and mint additional
+              node share tokens for you, increasing the nodes propensity for acquiring additional
+              fees.
+            </div>
+            <div class="form ask-form">
+              <div class="sub-label label-inline-12">
+                Accumulated fees:
+                <span class="trac-amount"
+                  >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
+                >
+              </div>
+              <div class="sub-label label-inline-12">
+                Total stake after addition::
+                <span class="trac-amount"
+                  >{{ formatNumberWithSpaces(getTotalStakeValueAfterRestake) }} TRAC</span
+                >
+              </div>
+            </div>
+            <div class="cta-section">
+              <Button
+                :disabled="
+                  !getOperatorInfo.accumulatedFee || Number(getOperatorInfo.accumulatedFee) <= 0
+                "
+                class="cta-button"
+                @click="restakeAccumulatedFee"
+                >Restake all fees</Button
+              >
+            </div>
+          </div>
+        </tokenomics-card>
+        <tokenomics-card title="Withdraw accumulated fees" class="withdraw-accumulated-fees-card">
+          <div class="card-content">
+            <div class="description label-inline-14">
+              Withdrawing fees from your node is executed in two transactions, with the second
+              transaction being delayed in time for 28 days. Once you start the withdrawal, a
+              counter will appear to instruct you on when to execute the second transaction.
+            </div>
+            <div class="form ask-form">
+              <div class="sub-label label-inline-12">
+                Accumulated fees:
+                <span class="trac-amount"
+                  >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
+                >
+              </div>
+            </div>
+            <div class="cta-section-with-steps">
+              <div class="step-count">Step 1</div>
+              <div>
+                <Button
+                  :disabled="
+                    !getOperatorInfo.accumulatedFee || Number(getOperatorInfo.accumulatedFee) <= 0
+                  "
+                  class="cta-button"
+                  @click="startAccumulatedFeesWithdrawal"
+                  >Start withdrawal</Button
+                >
+              </div>
+              <div class="step-divider"></div>
+              <div class="step-count">Step 2</div>
+              <div class="extra-step-cta">
+                <Button
+                  class="cta-button"
+                  :disabled="
+                    !getAccumulatedFeeWithdrawalChangeTime ||
+                    getAccumulatedFeeWithdrawalChangeTime < 0 ||
+                    mustWaitForAccumulatedFee
+                  "
+                  @click="withdrawAccumulatedFeesStake"
+                  >Withdraw now</Button
+                >
+                <el-tooltip
+                  content="How long until withdrawal is available"
+                  placement="top"
+                  effect="light"
+                >
+                  <img src="/images/icons/info-icon.svg" />
+                  <div slot="content" class="withdrawal-availability-message label-inline-14">
+                    How long until withdrawal is available
+                  </div>
+                </el-tooltip>
+
+                <div class="estimate-time-counter label-inline-12">
+                  Estimated time:
+                  <span
+                    ><backward-timer
+                      @over="accumulatedFeesTimerOver"
+                      ref="accumulatedFees"
+                      :instantly-start="getAccumulatedFeeWithdrawalChangeTime !== 0"
+                      :start-timestamp="null"
+                      :end-timestamp="getAccumulatedFeeWithdrawalChangeTime"
+                  /></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </tokenomics-card>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -202,6 +396,7 @@ import {
 import BackwardTimer from '@/components/shared/BackwardTimer';
 import * as moment from 'moment';
 import { generateToast } from '@/utils/toastObjectGenerator';
+import { FeatureVersions } from '@/utils/lists';
 
 export default {
   name: 'Tokenomics',
@@ -209,13 +404,22 @@ export default {
   data() {
     return {
       currentAsk: null,
+      supportFeesManagement: false,
       newAsk: null,
       newStake: null,
       withdrawalStake: null,
+      operatorFee: null,
       timerActive: 0,
+      operatorFeeTimer: 0,
+      accumulatedFeeTimer: 0,
     };
   },
   computed: {
+    doesSupportV2Features() {
+      return this.$store.getters.selectedNetwork.featureList.includes(
+        FeatureVersions.OPERATOR_FEES_FEATURES,
+      );
+    },
     getIdentityId() {
       return this.$store.getters.isIdentityResolved;
     },
@@ -231,7 +435,13 @@ export default {
     getWithdrawalInfo() {
       return this.$store.getters.getWithdrawalInfo;
     },
+    getOperatorInfo() {
+      return this.$store.getters.getOperationalInfo;
+    },
     getAskValueInString() {
+      return this.getAskData?.currentAsk ?? '0';
+    },
+    getCurrentOperatorFeeInString() {
       return this.getAskData?.currentAsk ?? '0';
     },
     getTotalStakeValue() {
@@ -243,13 +453,41 @@ export default {
     getTotalStakeAfterWithdrawal() {
       return Number(this.getTotalStakeValue) - Number(this.withdrawalStake ?? '0');
     },
+    getCurrentOperatorFee() {
+      return this.getOperatorInfo.currentFee;
+    },
     getRequestTime() {
       return Number(this.getWithdrawalInfo?.requestTime ?? '0');
+    },
+    getOperatorFeeChangeTime() {
+      return Number(this.getOperatorInfo?.requestTime ?? '0');
+    },
+    getAccumulatedFeeWithdrawalChangeTime() {
+      return Number(this.getOperatorInfo?.accumulatedFeeRequestTime ?? '0');
+    },
+    getTotalStakeValueAfterRestake() {
+      return Number(this.getTotalStakeValue) + Number(this.getOperatorInfo.accumulatedFee ?? '0');
     },
     //you need to wait
     mustWaitForWithdrawal() {
       this.timerActive;
       return Number(this.getRequestTime) > 0 && moment.unix(this.getRequestTime) >= moment();
+    },
+    //you need to wait for operatorFee change
+    mustWaitForOperatorFee() {
+      this.operatorFeeTimer;
+      return (
+        Number(this.getOperatorFeeChangeTime) > 0 &&
+        moment.unix(this.getOperatorFeeChangeTime) >= moment()
+      );
+    },
+    //you need to wait for accumulated fee withdrawal
+    mustWaitForAccumulatedFee() {
+      this.accumulatedFeeTimer;
+      return (
+        Number(this.getAccumulatedFeeWithdrawalChangeTime) > 0 &&
+        moment.unix(this.getAccumulatedFeeWithdrawalChangeTime) >= moment()
+      );
     },
 
     getTotalStake() {
@@ -271,6 +509,18 @@ export default {
       this.timerActive++;
       if (this.mustWaitForWithdrawal) {
         this.$refs.timer.startTimer();
+      }
+    },
+    refreshOperatorFeeTimer() {
+      this.operatorFeeTimer++;
+      if (this.mustWaitForOperatorFee) {
+        this.$refs.opFeeTimer.startTimer();
+      }
+    },
+    refreshAccumulatedFeesTimer() {
+      this.accumulatedFeeTimer++;
+      if (this.mustWaitForAccumulatedFee) {
+        this.$refs.accumulatedFees.startTimer();
       }
     },
     async refreshAllTokenomicsData() {
@@ -403,6 +653,144 @@ export default {
         }
       }
     },
+    async startOperatorFeeUpdate() {
+      if (this.operatorFee) {
+        const loader = this.$loading({
+          target: '.operator-fee-card',
+          text: 'Requesting operator fee change...',
+          customClass: 'backdrop_border_radius',
+        });
+        try {
+          await metamask.contractService.requestOperatorFeeChange(
+            this.getIdentityId,
+            this.operatorFee,
+          );
+          this.notify(null, 'Operator fee change requested successfully!', 'success');
+          await this.refreshAllTokenomicsData();
+          this.$refs.setOperatorFeeInput.value = 0;
+          this.operatorFee = 0;
+          this.refreshOperatorFeeTimer();
+        } catch (err) {
+          console.log(err);
+          this.notify(
+            null,
+            err.code === 'ACTION_REJECTED'
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when changing operator fee',
+            'error',
+          );
+        } finally {
+          loader.close();
+        }
+      }
+    },
+    async changeOperatorFee() {
+      if (!this.mustWaitForOperatorFee) {
+        const loader = this.$loading({
+          target: '.operator-fee-card',
+          text: 'Updating Operator fee...',
+          customClass: 'backdrop_border_radius',
+        });
+        try {
+          await metamask.contractService.changeOperatorFee(this.getIdentityId);
+          this.notify(null, 'Operator fee updated successfully!', 'success');
+          await this.refreshAllTokenomicsData();
+          this.refreshOperatorFeeTimer();
+        } catch (err) {
+          console.log(err);
+          this.notify(
+            null,
+            err.code === 'ACTION_REJECTED'
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when updating operator fee',
+            'error',
+          );
+        } finally {
+          loader.close();
+        }
+      }
+    },
+    async restakeAccumulatedFee() {
+      if (this.newStake) {
+        const loader = this.$loading({
+          target: '.restake-card',
+          text: 'Restaking fees...',
+          customClass: 'backdrop_border_radius',
+        });
+        try {
+          await metamask.contractService.stakeAccumulatedOperatorFee(this.getIdentityId, (msg) => {
+            loader.text = msg;
+          });
+          this.notify(null, 'Stake added successfully!', 'success');
+          await this.refreshAllTokenomicsData();
+        } catch (err) {
+          console.log(err);
+          this.notify(
+            null,
+            err.code === 'ACTION_REJECTED'
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when adding stake',
+            'error',
+          );
+        } finally {
+          loader.close();
+        }
+      }
+    },
+    async startAccumulatedFeesWithdrawal() {
+      if (this.withdrawalStake) {
+        const loader = this.$loading({
+          target: '.withdraw-accumulated-fees-card',
+          text: 'Requesting stake withdrawal...',
+          customClass: 'backdrop_border_radius',
+        });
+        try {
+          await metamask.contractService.requestAccumulatedOperatorFeeWithdrawal(
+            this.getIdentityId,
+          );
+          this.notify(null, 'Accumulated fees withdrawal requested successfully!', 'success');
+          await this.refreshAllTokenomicsData();
+          this.refreshAccumulatedFeesTimer();
+        } catch (err) {
+          console.log(err);
+          this.notify(
+            null,
+            err.code === 'ACTION_REJECTED'
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when requesting accumulated fees withdrawal',
+            'error',
+          );
+        } finally {
+          loader.close();
+        }
+      }
+    },
+    async withdrawAccumulatedFeesStake() {
+      if (!this.mustWaitForWithdrawal) {
+        const loader = this.$loading({
+          target: '.withdraw-accumulated-fees-card',
+          text: 'Withdrawing stake...',
+          customClass: 'backdrop_border_radius',
+        });
+        try {
+          await metamask.contractService.withdrawAccumulatedOperatorFee(this.getIdentityId);
+          this.notify(null, 'Accumulated fees withdrawn successfully!', 'success');
+          await this.refreshAllTokenomicsData();
+          this.refreshAccumulatedFeesTimer();
+        } catch (err) {
+          console.log(err);
+          this.notify(
+            null,
+            err.code === 'ACTION_REJECTED'
+              ? 'METAMASK_TRANSACTION_REFUSED'
+              : 'An error occurred when withdrawing accumulated fees',
+            'error',
+          );
+        } finally {
+          loader.close();
+        }
+      }
+    },
     notify(title, message, type, options) {
       const notificationArray = generateToast(title, message, type, options);
       return this.$toast(notificationArray[0], notificationArray[1]);
@@ -413,6 +801,18 @@ export default {
     async timerOver() {
       await this.refreshAllTokenomicsData();
       this.refreshWithdrawalTimer();
+      this.refreshOperatorFeeTimer();
+      this.refreshAccumulatedFeesTimer();
+      this.$forceUpdate();
+    },
+    async operatorFeeTimerOver() {
+      await this.refreshAllTokenomicsData();
+      this.refreshOperatorFeeTimer();
+      this.$forceUpdate();
+    },
+    async accumulatedFeesTimerOver() {
+      await this.refreshAllTokenomicsData();
+      this.refreshOperatorFeeTimer();
       this.$forceUpdate();
     },
   },
@@ -630,6 +1030,18 @@ export default {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
+    }
+  }
+  .node-ask {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    .operator-fee-card {
+      .operator-fee-form {
+        .italic {
+          font-style: italic;
+        }
+      }
     }
   }
 }
