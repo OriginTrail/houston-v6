@@ -1,6 +1,7 @@
 import metamask from '@/service/metamask';
 import * as _ from 'lodash';
 import { getReadableTokenAmount } from '@/utils/cryptoUtils';
+import { FeatureVersions } from '@/utils/lists';
 
 export default {
   state: {
@@ -21,6 +22,12 @@ export default {
     },
     withdrawal: {
       requestTime: 0,
+    },
+    operatorInfo: {
+      requestTime: 0,
+      currentFee: 0,
+      accumulatedFee: 0,
+      accumulatedFeeRequestTime: 0,
     },
   },
   mutations: {
@@ -70,6 +77,33 @@ export default {
               'withdrawal.requestTime': data,
             });
           }),
+        ...(store.getters.selectedNetwork.featureList.includes(
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        )
+          ? [
+              metamask.contractService
+                .getLastOperatorFeeChangeTimestamp(identity, store.getters.connectedAddress)
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.requestTime': data,
+                  });
+                }),
+              metamask.contractService
+                .getOperatorFee(identity, store.getters.connectedAddress)
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.currentFee': data,
+                  });
+                }),
+              metamask.contractService
+                .getAccumulatedOperatorFee(identity, store.getters.connectedAddress)
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.accumulatedFee': data,
+                  });
+                }),
+            ]
+          : []),
       ]).then((data) => {
         return data
           .map((e) => {
@@ -94,6 +128,9 @@ export default {
     },
     getWithdrawalInfo(state) {
       return state.withdrawal;
+    },
+    getOperationalInfo(state) {
+      return state.operatorInfo;
     },
   },
 };

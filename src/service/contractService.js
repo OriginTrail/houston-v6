@@ -10,6 +10,7 @@ import identity from '../abis/identityContracts.json';
 import hubContractAbi from '../abis/HubContract.json';
 import contentAssetStorage from '../abis/contentAssetStorage.json';
 import ERC20Token from '../abis/ERC20Token.json';
+import NodeOperatorFeeChangesStorage from '../abis/NodeOperatorFeeChangesStorage.json';
 import { ethers } from 'ethers';
 import store from '../store';
 
@@ -251,6 +252,102 @@ class ContractService {
     const adminKey = this.getAdminKeyFromWallet(newAdminWallet);
     const removeKeyReceipt = await identityContract.removeKey(identityId, adminKey, gasPrices.high);
     return await removeKeyReceipt.wait();
+  }
+
+  async getOperatorFee(identityId) {
+    const address = await this.getContractAddress('StakingStorage');
+    const StakingStorageContract = new ethers.Contract(address, stakingStorage, this.ethersSigner);
+    const data = await StakingStorageContract.operatorFees(identityId);
+    return data;
+  }
+
+  async getLastOperatorFeeChangeTimestamp(identityId, adminWallet) {
+    const address = await this.getContractAddress('NodeOperatorFeeChangesStorage');
+    const NodeOperatorFeeChangesStorageContract = new ethers.Contract(
+      address,
+      NodeOperatorFeeChangesStorage,
+      this.ethersSigner,
+    );
+    return await NodeOperatorFeeChangesStorageContract.getOperatorFeeChangeRequestTimestamp(
+      identityId,
+    );
+  }
+
+  async requestOperatorFeeChange(identityId, newOperatorFee, loadingMessageCallback = null) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const stakingContractAddress = await this.getContractAddress('Staking');
+    const stakingContract = new ethers.Contract(
+      stakingContractAddress,
+      stakingAbi,
+      this.ethersSigner,
+    );
+
+    return await (
+      await stakingContract.startOperatorFeeChange(identityId, newOperatorFee, gasPrices.high)
+    ).wait();
+  }
+
+  async changeOperatorFee(identityId) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const stakingContractAddress = await this.getContractAddress('Staking');
+    const stakingContract = new ethers.Contract(
+      stakingContractAddress,
+      stakingAbi,
+      this.ethersSigner,
+    );
+    const finishOperatorFeeChangeReceipt = await stakingContract.finishOperatorFeeChange(
+      identityId,
+      gasPrices.high,
+    );
+    return await finishOperatorFeeChangeReceipt.wait();
+  }
+
+  async getAccumulatedOperatorFee(identityId, adminWallet) {
+    const address = await this.getContractAddress('ProfileStorage');
+    const profileStorageContract = new ethers.Contract(address, profileStorage, this.ethersSigner);
+    return await profileStorageContract.getAccumulatedOperatorFee(identityId);
+  }
+
+  async stakeAccumulatedOperatorFee(identityId) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const ProfileContractAddress = await this.getContractAddress('Profile');
+    const ProfileContract = new ethers.Contract(
+      ProfileContractAddress,
+      profileAbi,
+      this.ethersSigner,
+    );
+    const stakeOperatorFee = await ProfileContract.stakeAccumulatedOperatorFee(
+      identityId,
+      gasPrices.high,
+    );
+    return await stakeOperatorFee.wait();
+  }
+
+  async requestAccumulatedOperatorFeeWithdrawal(identityId, loadingMessageCallback = null) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const ProfileContractAddress = await this.getContractAddress('Profile');
+    const ProfileContract = new ethers.Contract(
+      ProfileContractAddress,
+      profileAbi,
+      this.ethersSigner,
+    );
+
+    return await (
+      await ProfileContract.startAccumulatedOperatorFeeWithdrawal(identityId, gasPrices.high)
+    ).wait();
+  }
+
+  async withdrawAccumulatedOperatorFee(identityId) {
+    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const ProfileContractAddress = await this.getContractAddress('Profile');
+    const ProfileContract = new ethers.Contract(
+      ProfileContractAddress,
+      profileAbi,
+      this.ethersSigner,
+    );
+    const withdrawAccumulatedOperatorFeeReceipt =
+      await ProfileContract.withdrawAccumulatedOperatorFee(identityId, gasPrices.high);
+    return await withdrawAccumulatedOperatorFeeReceipt.wait();
   }
 }
 

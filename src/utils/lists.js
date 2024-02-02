@@ -1,5 +1,10 @@
 import { ethers } from 'ethers';
 
+export const FeatureVersions = {
+  ASK_AND_STAKE_FEATURES: 'v1',
+  OPERATOR_FEES_FEATURES: 'v2',
+};
+
 const otpGasPrices = {
   high: {
     gasPrice: 16,
@@ -37,6 +42,7 @@ export const networkList = [
         bcNetworkName: 'OTP Parachain mainnet',
         coinTicker: 'MOTP',
         gasInfo: otpGasPrices,
+        featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
       },
       {
         label: 'Gnosis Mainnet',
@@ -47,6 +53,10 @@ export const networkList = [
         coinTicker: 'xDai',
         gasInfo: gnosisGasPrices,
         disabled: true,
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
       },
     ],
   },
@@ -65,6 +75,7 @@ export const networkList = [
         bcNetworkName: 'OTP Parachain testnet',
         coinTicker: 'MOTP',
         gasInfo: otpGasPrices,
+        featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
       },
       {
         label: 'Gnosis Chiado Testnet',
@@ -74,6 +85,10 @@ export const networkList = [
         bcNetworkName: 'Gnosis Chiado testnet',
         coinTicker: 'xDai',
         gasInfo: gnosisGasPrices,
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
       },
     ],
   },
