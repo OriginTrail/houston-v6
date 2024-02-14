@@ -18,11 +18,11 @@ const otpGasPrices = {
 const gnosisGasPrices = {
   high: {
     gasPrice: ethers.utils.parseUnits('2', 'gwei'),
-    gasLimit: 500000,
+    gasLimit: 2000000,
   },
   low: {
     gasPrice: ethers.utils.parseUnits('1.5', 'gwei'),
-    gasLimit: 500000,
+    gasLimit: 2000000,
   },
 };
 
