@@ -52,7 +52,7 @@ export const networkList = [
         bcNetworkName: 'Gnosis Mainnet',
         coinTicker: 'xDai',
         gasInfo: gnosisGasPrices,
-        disabled: true,
+        disabled: false,
         featureList: [
           FeatureVersions.ASK_AND_STAKE_FEATURES,
           FeatureVersions.OPERATOR_FEES_FEATURES,
