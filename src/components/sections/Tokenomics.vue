@@ -575,9 +575,14 @@ export default {
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.addStake(this.getIdentityId, this.newStake, (msg) => {
-            loader.text = msg;
-          });
+          await metamask.contractService.addStake(
+            this.getIdentityId,
+            this.newStake,
+            (msg) => {
+              loader.text = msg;
+            },
+            this.$store.getters.selectedNetwork,
+          );
           this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newStake = 0;
@@ -607,6 +612,7 @@ export default {
           await metamask.contractService.requestWithdrawal(
             this.getIdentityId,
             this.withdrawalStake,
+            this.$store.getters.selectedNetwork,
           );
           this.notify(null, 'Stake withdrawal requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
@@ -635,7 +641,10 @@ export default {
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.withdrawStake(this.getIdentityId);
+          await metamask.contractService.withdrawStake(
+            this.getIdentityId,
+            this.$store.getters.selectedNetwork,
+          );
           this.notify(null, 'Stake withdrawn successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.refreshWithdrawalTimer();
