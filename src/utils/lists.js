@@ -1,6 +1,4 @@
 import { ethers } from 'ethers';
-import StakingV1ABI from '../abis/StakingV1.json';
-import StakingV2ABI from '../abis/Staking.json';
 export const FeatureVersions = {
   ASK_AND_STAKE_FEATURES: 'v1',
   OPERATOR_FEES_FEATURES: 'v2',
@@ -44,7 +42,6 @@ export const networkList = [
         coinTicker: 'MOTP',
         gasInfo: otpGasPrices,
         featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
-        stakingABI: StakingV1ABI,
       },
       {
         label: 'Gnosis Mainnet',
@@ -59,7 +56,6 @@ export const networkList = [
           FeatureVersions.ASK_AND_STAKE_FEATURES,
           FeatureVersions.OPERATOR_FEES_FEATURES,
         ],
-        stakingABI: StakingV2ABI,
       },
     ],
   },
@@ -79,7 +75,6 @@ export const networkList = [
         coinTicker: 'MOTP',
         gasInfo: otpGasPrices,
         featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
-        stakingABI: StakingV1ABI,
       },
       {
         label: 'Gnosis Chiado Testnet',
@@ -93,7 +88,6 @@ export const networkList = [
           FeatureVersions.ASK_AND_STAKE_FEATURES,
           FeatureVersions.OPERATOR_FEES_FEATURES,
         ],
-        stakingABI: StakingV2ABI,
       },
     ],
   },
