@@ -69,15 +69,72 @@
               the first time
             </div>
           </div>
-          <div class="cta-section-with-steps">
+          <div class="cta-with-timer-section">
+            <Button
+              :disabled="!operatorFee || !operatorFee.toString().length"
+              class="cta-button"
+              @click="startOperatorFeeUpdate"
+              >Update operator fee</Button
+            >
+            <template v-if="mustWaitForOperatorFee">
+              <el-tooltip
+                content="How long until withdrawal is available"
+                placement="top"
+                effect="light"
+              >
+                <img src="/images/icons/info-icon.svg" />
+                <div slot="content" class="withdrawal-availability-message label-inline-14">
+                  How long until operator fee is automatically updated
+                </div>
+              </el-tooltip>
+
+              <div class="estimate-time-counter label-inline-12">
+                Waiting time:
+                <span
+                  ><backward-timer
+                    @over="operatorFeeTimerOver"
+                    ref="opFeeTimer"
+                    :instantly-start="getOperatorFeeChangeTime !== 0"
+                    :start-timestamp="null"
+                    :end-timestamp="getOperatorFeeChangeTime"
+                /></span>
+              </div>
+            </template>
+          </div>
+          <!--          <div class="cta-section-with-steps">
             <div class="step-count">Step 1</div>
             <div>
-              <Button
+
+              <div class="">
+                <Button
                 :disabled="!operatorFee || !operatorFee.toString().length"
-                class="cta-button"
-                @click="startOperatorFeeUpdate"
-                >Update operator fee</Button
-              >
+              class="cta-button"
+              @click="startOperatorFeeUpdate"
+              >Update operator fee</Button
+                >
+                <el-tooltip
+                  content="How long until withdrawal is available"
+                  placement="top"
+                  effect="light"
+                >
+                  <img src="/images/icons/info-icon.svg" />
+                  <div slot="content" class="withdrawal-availability-message label-inline-14">
+                    How long until operator fee update is available
+                  </div>
+                </el-tooltip>
+
+                <div class="estimate-time-counter label-inline-12">
+                  Waiting time:
+                  <span
+                    ><backward-timer
+                      @over="operatorFeeTimerOver"
+                      ref="opFeeTimer"
+                      :instantly-start="getOperatorFeeChangeTime !== 0"
+                      :start-timestamp="null"
+                      :end-timestamp="getOperatorFeeChangeTime"
+                  /></span>
+                </div>
+              </div>
             </div>
             <div class="step-divider"></div>
             <div class="step-count">Step 2</div>
@@ -115,7 +172,7 @@
                 /></span>
               </div>
             </div>
-          </div>
+          </div>-->
         </div>
       </tokenomics-card>
     </div>
@@ -514,6 +571,7 @@ export default {
     refreshOperatorFeeTimer() {
       this.operatorFeeTimer++;
       if (this.mustWaitForOperatorFee) {
+        this.$refs.opFeeTimer.clearTimer();
         this.$refs.opFeeTimer.startTimer();
       }
     },
@@ -575,13 +633,9 @@ export default {
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.addStake(
-            this.getIdentityId,
-            this.newStake,
-            (msg) => {
-              loader.text = msg;
-            },
-          );
+          await metamask.contractService.addStake(this.getIdentityId, this.newStake, (msg) => {
+            loader.text = msg;
+          });
           this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.newStake = 0;
@@ -608,7 +662,10 @@ export default {
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.requestWithdrawal(this.getIdentityId, this.withdrawalStake);
+          await metamask.contractService.requestWithdrawal(
+            this.getIdentityId,
+            this.withdrawalStake,
+          );
           this.notify(null, 'Stake withdrawal requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.$refs.withdrawStakeInput.value = 0;
@@ -662,10 +719,7 @@ export default {
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.requestOperatorFeeChange(
-            this.getIdentityId,
-            this.operatorFee,
-          );
+          await metamask.contractService.changeOperatorFee(this.getIdentityId, this.operatorFee);
           this.notify(null, 'Operator fee change requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.$refs.setOperatorFeeInput.value = 0;
@@ -1041,6 +1095,18 @@ export default {
       .operator-fee-form {
         .italic {
           font-style: italic;
+        }
+      }
+      .cta-with-timer-section {
+        display: flex;
+        gap: 16px;
+        .cta-button {
+          align-self: flex-start;
+        }
+        .estimate-time-counter {
+          display: flex;
+          gap: 12px;
+          align-items: center;
         }
       }
     }

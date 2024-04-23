@@ -37,6 +37,11 @@ export default {
       this.$emit('over');
       return;
     },
+    clearTimer() {
+      clearInterval(this.interval);
+      this.currentTime = '00:00:00:00';
+      return;
+    },
     startTimer() {
       let currentTime = this.startTimestamp ?? moment().unix(); // Timestamp - Sun, 21 Apr 2013 13:00:00 GMT
       let eventTime = this.endTimestamp ?? 1366547400; // Timestamp - Sun, 21 Apr 2013 12:30:00 GMT
