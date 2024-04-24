@@ -44,8 +44,7 @@
           <div class="description label-inline-14">
             The operator fee is a percentage of TRAC fees your node will collect prior to including
             it into the delegator share pool.
-            <b>Changing the operator fee incurs a 28 day delay</b> (and requires two transactions -
-            the initiating transaction and completing transaction)
+            <b>Changing the operator fee incurs a 28 day delay</b>
           </div>
           <div class="form operator-fee-form">
             <InputPairWithBtn
@@ -485,6 +484,7 @@ export default {
   async mounted() {
     await this.refreshAllTokenomicsData();
     this.refreshWithdrawalTimer();
+    this.refreshOperatorFeeTimer();
   },
   methods: {
     formatNumberWithSpaces,
