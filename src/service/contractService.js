@@ -10,7 +10,7 @@ import {
   IdentityABI,
   HubABI,
   TokenABI,
-  NodeOperatorFeesStorageABI
+  NodeOperatorFeesStorageABI,
 } from 'dkg-evm-module';
 import { ethers } from 'ethers';
 import store from '../store';
@@ -72,7 +72,11 @@ class ContractService {
 
   async getAsk(identityId) {
     const address = await this.getContractAddress('ProfileStorage');
-    const ProfileStorageContract = new ethers.Contract(address, ProfileStorageABI, this.ethersSigner);
+    const ProfileStorageContract = new ethers.Contract(
+      address,
+      ProfileStorageABI,
+      this.ethersSigner,
+    );
     return await ProfileStorageContract.getAsk(identityId);
   }
 
@@ -112,7 +116,11 @@ class ContractService {
 
   async getSharesContractInfo(identityId, adminWallet) {
     const address = await this.getContractAddress('ProfileStorage');
-    const ProfileStorageContract = new ethers.Contract(address, ProfileStorageABI, this.ethersSigner);
+    const ProfileStorageContract = new ethers.Contract(
+      address,
+      ProfileStorageABI,
+      this.ethersSigner,
+    );
     const sharesContractAddress = await ProfileStorageContract.getSharesContractAddress(identityId);
     const shareContract = new ethers.Contract(sharesContractAddress, TokenABI, this.ethersSigner);
     return {
@@ -142,11 +150,7 @@ class ContractService {
     return await TRACContract.balanceOf(StakingStorageAddress);
   }
 
-  async addStake(
-    identityId,
-    stakeAmountToAdd,
-    loadingMessageCallback = null,
-  ) {
+  async addStake(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
     const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
@@ -179,7 +183,11 @@ class ContractService {
 
   async getLastWithdrawalTimestamp(identityId, adminWallet) {
     const address = await this.getContractAddress('StakingStorage');
-    const stakingStorageContract = new ethers.Contract(address, StakingStorageABI, this.ethersSigner);
+    const stakingStorageContract = new ethers.Contract(
+      address,
+      StakingStorageABI,
+      this.ethersSigner,
+    );
     return await stakingStorageContract.getWithdrawalRequestTimestamp(identityId, adminWallet);
   }
 
@@ -187,7 +195,11 @@ class ContractService {
     const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const address = await this.getContractAddress('ProfileStorage');
     const stakingContractAddress = await this.getContractAddress('Staking');
-    const ProfileStorageContract = new ethers.Contract(address, ProfileStorageABI, this.ethersSigner);
+    const ProfileStorageContract = new ethers.Contract(
+      address,
+      ProfileStorageABI,
+      this.ethersSigner,
+    );
     const stakingContract = new ethers.Contract(
       stakingContractAddress,
       StakingABI,
@@ -292,7 +304,11 @@ class ContractService {
 
   async getAccumulatedOperatorFee(identityId) {
     const address = await this.getContractAddress('ProfileStorage');
-    const ProfileStorageContract = new ethers.Contract(address, ProfileStorageABI, this.ethersSigner);
+    const ProfileStorageContract = new ethers.Contract(
+      address,
+      ProfileStorageABI,
+      this.ethersSigner,
+    );
     return await ProfileStorageContract.getAccumulatedOperatorFee(identityId);
   }
 
