@@ -106,8 +106,8 @@ class metamaskService {
             chainName: chainData.bcNetworkName,
             rpcUrls: [chainData.rpc],
             nativeCurrency: {
-              name: chainData.coinTicker ?? 'MOTP',
-              symbol: chainData.coinTicker ?? 'MOTP',
+              name: chainData.coinTicker ?? 'NEURO',
+              symbol: chainData.coinTicker ?? 'NEURO',
               decimals: 18,
             },
           },

@@ -31,17 +31,20 @@ export const networkList = [
     hubContract: '0x5fA7916c48Fe6D5F1738d12Ad234b78c90B4cAdA',
     internalId: '1',
     rpc: 'https://astrosat-parachain-rpc.origin-trail.network/',
-    bcNetworkName: 'OTP Parachain mainnet',
+    bcNetworkName: 'NeuroWeb mainnet',
     subNetworks: [
       {
-        label: 'OTP Parachain Mainnet',
+        label: 'NeuroWeb Mainnet',
         hubContract: '0x5fA7916c48Fe6D5F1738d12Ad234b78c90B4cAdA',
         chainId: `0x${Number('2043').toString(16)}`,
         rpc: 'https://astrosat-parachain-rpc.origin-trail.network/',
-        bcNetworkName: 'OTP Parachain mainnet',
-        coinTicker: 'MOTP',
+        bcNetworkName: 'NeuroWeb mainnet',
+        coinTicker: 'NEURO',
         gasInfo: otpGasPrices,
-        featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
       },
       {
         label: 'Gnosis Mainnet',
@@ -64,17 +67,20 @@ export const networkList = [
     hubContract: '0xBbfF7Ea6b2Addc1f38A0798329e12C08f03750A6',
     internalId: '2',
     rpc: 'https://lofar-testnet.origin-trail.network/',
-    bcNetworkName: 'OTP Parachain testnet',
+    bcNetworkName: 'NeuroWeb testnet',
     subNetworks: [
       {
-        label: 'OTP Parachain Testnet',
+        label: 'NeuroWeb Testnet',
         hubContract: '0xBbfF7Ea6b2Addc1f38A0798329e12C08f03750A6',
         chainId: `0x${Number('20430').toString(16)}`,
         rpc: 'https://lofar-testnet.origin-trail.network/',
-        bcNetworkName: 'OTP Parachain testnet',
-        coinTicker: 'MOTP',
+        bcNetworkName: 'NeuroWeb testnet',
+        coinTicker: 'NEURO',
         gasInfo: otpGasPrices,
-        featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
       },
       {
         label: 'Gnosis Chiado Testnet',
