@@ -82,7 +82,7 @@ export default {
         )
           ? [
               metamask.contractService
-                .getLastOperatorFeeChangeTimestamp(identity, store.getters.connectedAddress)
+                .getLastOperatorFeeChangeTimestamp(identity)
                 .then((data) => {
                   store.commit('SAVE_METRICS', {
                     'operatorInfo.requestTime': data,

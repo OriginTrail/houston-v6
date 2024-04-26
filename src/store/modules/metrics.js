@@ -39,7 +39,7 @@ export default {
             'tracBalance.total': parseFloat(getReadableTokenAmount(data, 18, { fixed: 12 })),
           });
         }),
-        metamask.contractService.getAccumulatorOperatorFee(identity).then((data) => {
+        metamask.contractService.getAccumulatedOperatorFee(identity).then((data) => {
           store.commit('SAVE_METRICS', {
             'rewards.operatorFee': getReadableTokenAmount(data, 18, { fixed: 0 }),
           });
