@@ -33,7 +33,7 @@
             </p>
           </div>
           <div class="property-wrapper full">
-            <p class="title label-inline-12">Total TRAC Staked</p>
+            <p class="title label-inline-12">Total TRAC Staked on {{ selectedNetworkName }}</p>
             <p class="value label-plat-h5">
               {{ formatNumberWithSpaces(networkMetrics.stakedTRAC) }} TRAC
             </p>
@@ -49,7 +49,7 @@
           target="_blank"
           ><img src="images/icons/file-icon.svg" alt=""
         /></link-button>
-        <link-button href="https://discord.com/invite/FCgYk2S">
+        <link-button href="https://discord.com/invite/QctFuPCMew">
           <img src="images/icons/discord-icon.svg" alt="" />
         </link-button>
         <link-button href="https://origintrail.io/">
@@ -79,6 +79,9 @@ export default {
     },
     networkMetrics() {
       return this.$store.getters.getNetworkMetrics;
+    },
+    selectedNetworkName() {
+      return this.$store.getters.selectedNetwork?.bcNetworkName;
     },
   },
   mounted() {
@@ -153,6 +156,7 @@ export default {
             font-size: 14px;
             line-height: 16px;
             color: $blue-primary;
+            white-space: nowrap;
             &.disabled {
               color: $black-tertiary;
             }
