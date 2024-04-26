@@ -41,7 +41,10 @@ export const networkList = [
         bcNetworkName: 'NeuroWeb mainnet',
         coinTicker: 'NEURO',
         gasInfo: otpGasPrices,
-        featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
       },
       {
         label: 'Gnosis Mainnet',
@@ -74,7 +77,10 @@ export const networkList = [
         bcNetworkName: 'NeuroWeb testnet',
         coinTicker: 'NEURO',
         gasInfo: otpGasPrices,
-        featureList: [FeatureVersions.ASK_AND_STAKE_FEATURES],
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
       },
       {
         label: 'Gnosis Chiado Testnet',
