@@ -81,13 +81,11 @@ export default {
           FeatureVersions.OPERATOR_FEES_FEATURES,
         )
           ? [
-              metamask.contractService
-                .getLastOperatorFeeChangeTimestamp(identity)
-                .then((data) => {
-                  store.commit('SAVE_METRICS', {
-                    'operatorInfo.requestTime': data,
-                  });
-                }),
+              metamask.contractService.getLastOperatorFeeChangeTimestamp(identity).then((data) => {
+                store.commit('SAVE_METRICS', {
+                  'operatorInfo.requestTime': data,
+                });
+              }),
               metamask.contractService
                 .getOperatorFee(identity, store.getters.connectedAddress)
                 .then((data) => {
@@ -99,7 +97,7 @@ export default {
                 .getAccumulatedOperatorFee(identity, store.getters.connectedAddress)
                 .then((data) => {
                   store.commit('SAVE_METRICS', {
-                    'operatorInfo.accumulatedFee': data,
+                    'operatorInfo.accumulatedFee': getReadableTokenAmount(data),
                   });
                 }),
             ]
