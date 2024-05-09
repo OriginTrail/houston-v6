@@ -388,7 +388,7 @@ export default {
   data() {
     return {
       currentAsk: null,
-      supportFeesManagement: false,
+      supportFeesManagement: true,
       newAsk: null,
       newStake: null,
       withdrawalStake: null,
