@@ -308,6 +308,15 @@
                   >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
                 >
               </div>
+              <div class="sub-label label-inline-12">
+                Fees pending withdrawal:
+                <span class="trac-amount"
+                  >{{
+                    formatNumberWithSpaces(getOperatorInfo.accumulatedFeeWithdrawalAmount)
+                  }}
+                  TRAC</span
+                >
+              </div>
             </div>
             <div class="cta-section-with-steps">
               <div class="step-count">Step 1</div>

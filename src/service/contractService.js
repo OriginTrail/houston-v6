@@ -312,6 +312,25 @@ class ContractService {
     return await ProfileStorageContract.getAccumulatedOperatorFee(identityId);
   }
 
+  async getAccumulatedOperatorFeeWithdrawalTimestamp(identityId) {
+    const address = await this.getContractAddress('ProfileStorage');
+    const ProfileStorageContract = new ethers.Contract(
+      address,
+      ProfileStorageABI,
+      this.ethersSigner,
+    );
+    return await ProfileStorageContract.getAccumulatedOperatorFeeWithdrawalTimestamp(identityId);
+  }
+  async getAccumulatedOperatorFeeWithdrawalAmount(identityId) {
+    const address = await this.getContractAddress('ProfileStorage');
+    const ProfileStorageContract = new ethers.Contract(
+      address,
+      ProfileStorageABI,
+      this.ethersSigner,
+    );
+    return await ProfileStorageContract.getAccumulatedOperatorFeeWithdrawalAmount(identityId);
+  }
+
   async stakeAccumulatedOperatorFee(identityId) {
     const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
     const ProfileContractAddress = await this.getContractAddress('Profile');
