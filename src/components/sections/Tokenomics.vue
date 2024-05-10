@@ -308,7 +308,7 @@
                   >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
                 >
               </div>
-              <div class="sub-label label-inline-12">
+              <div v-if="getAccumulatedFeeWithdrawalChangeTime" class="sub-label label-inline-12">
                 Fees pending withdrawal:
                 <span class="trac-amount"
                   >{{
