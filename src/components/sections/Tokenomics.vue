@@ -694,7 +694,7 @@ export default {
       }
     },
     async restakeAccumulatedFee() {
-      if (this.newStake) {
+      if (Number(this.getOperatorInfo.accumulatedFee ?? 0) >= 0) {
         const loader = this.$loading({
           target: '.restake-card',
           text: 'Restaking fees...',
@@ -721,7 +721,7 @@ export default {
       }
     },
     async startAccumulatedFeesWithdrawal() {
-      if (this.withdrawalStake) {
+      if (this.getOperatorInfo.accumulatedFee) {
         const loader = this.$loading({
           target: '.withdraw-accumulated-fees-card',
           text: 'Requesting stake withdrawal...',
@@ -749,7 +749,7 @@ export default {
       }
     },
     async withdrawAccumulatedFeesStake() {
-      if (!this.mustWaitForWithdrawal) {
+      if (!this.mustWaitForAccumulatedFee) {
         const loader = this.$loading({
           target: '.withdraw-accumulated-fees-card',
           text: 'Withdrawing stake...',
