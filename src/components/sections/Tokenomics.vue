@@ -269,6 +269,24 @@
               fees.
             </div>
             <div class="form ask-form">
+              <InputPairWithBtn
+                ref="restakeFeeInput"
+                input-type="number"
+                :button="false"
+                color="red"
+                input-suffix="TRAC"
+                input-prefix="+"
+                btnLabel="Re-stake fees"
+                :input-value="'0'"
+                @update="(v) => (feeToReStake = v)"
+                :max="Number(getOperatorInfo.accumulatedFee)"
+              >
+                <img
+                  slot="inputPrefix"
+                  class="input-prefix-plus"
+                  src="/images/icons/plus-grey-icon.svg"
+                />
+              </InputPairWithBtn>
               <div class="sub-label label-inline-12">
                 Accumulated fees:
                 <span class="trac-amount"
@@ -289,7 +307,7 @@
                 "
                 class="cta-button"
                 @click="restakeAccumulatedFee"
-                >Restake all fees</Button
+                >Restake fees</Button
               >
             </div>
           </div>
@@ -302,6 +320,24 @@
               counter will appear to instruct you on when to execute the second transaction.
             </div>
             <div class="form ask-form">
+              <InputPairWithBtn
+                ref="withdrawFeeInput"
+                input-type="number"
+                :button="false"
+                color="red"
+                input-suffix="TRAC"
+                input-prefix="+"
+                btnLabel="withdrawFee fees"
+                :input-value="'0'"
+                @update="(v) => (feeToWithdraw = v)"
+                :max="Number(getOperatorInfo.accumulatedFee)"
+              >
+                <img
+                  slot="inputPrefix"
+                  class="input-prefix-plus"
+                  src="/images/icons/minus-grey-icon.svg"
+                />
+              </InputPairWithBtn>
               <div class="sub-label label-inline-12">
                 Accumulated fees:
                 <span class="trac-amount"
@@ -323,11 +359,13 @@
               <div>
                 <Button
                   :disabled="
-                    !getOperatorInfo.accumulatedFee || Number(getOperatorInfo.accumulatedFee) <= 0
+                    !getOperatorInfo.accumulatedFee ||
+                    Number(getOperatorInfo.accumulatedFee) <= 0 ||
+                    Number(feeToWithdraw) <= 0
                   "
                   class="cta-button"
                   @click="startAccumulatedFeesWithdrawal"
-                  >Start withdrawal</Button
+                  >Start fees withdrawal</Button
                 >
               </div>
               <div class="step-divider"></div>
@@ -405,6 +443,8 @@ export default {
       timerActive: 0,
       operatorFeeTimer: 0,
       accumulatedFeeTimer: 0,
+      feeToReStake: null,
+      feeToWithdraw: null,
     };
   },
   computed: {
@@ -459,7 +499,7 @@ export default {
       return Number(this.getOperatorInfo?.accumulatedFeeRequestTime ?? '0');
     },
     getTotalStakeValueAfterRestake() {
-      return Number(this.getTotalStakeValue) + Number(this.getOperatorInfo.accumulatedFee ?? '0');
+      return Number(this.getTotalStakeValue) + Number(this.feeToReStake ?? '0');
     },
     //you need to wait
     mustWaitForWithdrawal() {
@@ -494,6 +534,7 @@ export default {
     await this.refreshAllTokenomicsData();
     this.refreshWithdrawalTimer();
     this.refreshOperatorFeeTimer();
+    this.refreshAccumulatedFeesTimer();
   },
   methods: {
     formatNumberWithSpaces,
@@ -710,9 +751,13 @@ export default {
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.stakeAccumulatedOperatorFee(this.getIdentityId, (msg) => {
-            loader.text = msg;
-          });
+          await metamask.contractService.stakeAccumulatedOperatorFee(
+            this.getIdentityId,
+            this.feeToReStake,
+            (msg) => {
+              loader.text = msg;
+            },
+          );
           this.notify(null, 'Stake added successfully!', 'success');
           await this.refreshAllTokenomicsData();
         } catch (err) {
@@ -739,10 +784,12 @@ export default {
         try {
           await metamask.contractService.requestAccumulatedOperatorFeeWithdrawal(
             this.getIdentityId,
+            this.feeToWithdraw,
           );
           this.notify(null, 'Accumulated fees withdrawal requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.refreshAccumulatedFeesTimer();
+          this.feeToWithdraw = 0;
         } catch (err) {
           console.log(err);
           this.notify(
