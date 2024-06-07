@@ -28,6 +28,7 @@ export default {
       currentFee: 0,
       accumulatedFee: 0,
       accumulatedFeeRequestTime: 0,
+      accumulatedFeeWithdrawalAmount: 0,
     },
   },
   mutations: {
@@ -98,6 +99,23 @@ export default {
                 .then((data) => {
                   store.commit('SAVE_METRICS', {
                     'operatorInfo.accumulatedFee': getReadableTokenAmount(data),
+                  });
+                }),
+              metamask.contractService
+                .getAccumulatedOperatorFeeWithdrawalTimestamp(
+                  identity,
+                  store.getters.connectedAddress,
+                )
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.accumulatedFeeRequestTime': data,
+                  });
+                }),
+              metamask.contractService
+                .getAccumulatedOperatorFeeWithdrawalAmount(identity, store.getters.connectedAddress)
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.accumulatedFeeWithdrawalAmount': getReadableTokenAmount(data),
                   });
                 }),
             ]
