@@ -10,9 +10,13 @@ export const getAddressShortForm = (address, { rightHandLength, leftHandLength }
   return value[1] + '...' + value[3];
 };
 
-export const formatNumberWithSpaces = (input) => {
+export const formatNumberWithSpaces = (input, { keepPrecision = false } = {}) => {
   return (input && !isNaN(Number(input))) || input === 0
-    ? Number(input).toLocaleString('en').replace(/,/g, ' ')
+    ? Number(input)
+        .toLocaleString('en', {
+          maximumFractionDigits: keepPrecision ? 6 : 0,
+        })
+        .replace(/,/g, ' ')
     : '';
 };
 

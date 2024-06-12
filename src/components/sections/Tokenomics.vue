@@ -290,7 +290,11 @@
               <div class="sub-label label-inline-12">
                 Accumulated fees:
                 <span class="trac-amount"
-                  >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
+                  >{{ hasFeesToRestake ? '~' : '' }}
+                  {{
+                    formatNumberWithSpaces(getOperatorInfo.accumulatedFee, { keepPrecision: true })
+                  }}
+                  TRAC</span
                 >
               </div>
               <div class="sub-label label-inline-12">
@@ -302,9 +306,7 @@
             </div>
             <div class="cta-section">
               <Button
-                :disabled="
-                  !getOperatorInfo.accumulatedFee || Number(getOperatorInfo.accumulatedFee) <= 0
-                "
+                :disabled="!hasFeesToRestake"
                 class="cta-button"
                 @click="restakeAccumulatedFee"
                 >Restake fees</Button
@@ -341,7 +343,11 @@
               <div class="sub-label label-inline-12">
                 Accumulated fees:
                 <span class="trac-amount"
-                  >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
+                  >{{ hasFeesToRestake ? '~' : '' }}
+                  {{
+                    formatNumberWithSpaces(getOperatorInfo.accumulatedFee, { keepPrecision: true })
+                  }}
+                  TRAC</span
                 >
               </div>
               <div v-if="getAccumulatedFeeWithdrawalChangeTime" class="sub-label label-inline-12">
@@ -358,11 +364,7 @@
               <div class="step-count">Step 1</div>
               <div>
                 <Button
-                  :disabled="
-                    !getOperatorInfo.accumulatedFee ||
-                    Number(getOperatorInfo.accumulatedFee) <= 0 ||
-                    Number(feeToWithdraw) <= 0
-                  "
+                  :disabled="!hasFeesToRestake || Number(feeToWithdraw) <= 0"
                   class="cta-button"
                   @click="startAccumulatedFeesWithdrawal"
                   >Start fees withdrawal</Button
@@ -500,6 +502,9 @@ export default {
     },
     getTotalStakeValueAfterRestake() {
       return Number(this.getTotalStakeValue) + Number(this.feeToReStake ?? '0');
+    },
+    hasFeesToRestake() {
+      return this.getOperatorInfo.accumulatedFee && Number(this.getOperatorInfo.accumulatedFee) > 0;
     },
     //you need to wait
     mustWaitForWithdrawal() {
@@ -758,15 +763,16 @@ export default {
               loader.text = msg;
             },
           );
-          this.notify(null, 'Stake added successfully!', 'success');
+          this.notify(null, 'Accumulated fees re-staked successfully!', 'success');
           await this.refreshAllTokenomicsData();
+          this.feeToReStake = null;
         } catch (err) {
           console.log(err);
           this.notify(
             null,
             err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
-              : 'An error occurred when adding stake',
+              : 'An error occurred when re-staking accumulated fees',
             'error',
           );
         } finally {
