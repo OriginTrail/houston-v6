@@ -205,47 +205,49 @@
               </div>
             </div>
             <div class="cta-section-with-steps">
-              <div class="step-count">Step 1</div>
+              <div class="step-count" v-if="!canDirectlyWithdraw">Step 1</div>
               <div>
                 <Button
                   :disabled="!withdrawalStake || Number(withdrawalStake) <= 0"
                   class="cta-button"
                   @click="startWithdrawal"
-                  >Start withdrawal</Button
+                  >{{ canDirectlyWithdraw ? 'Withdraw' : 'Start withdrawal' }}</Button
                 >
               </div>
-              <div class="step-divider"></div>
-              <div class="step-count">Step 2</div>
-              <div class="extra-step-cta">
-                <Button
-                  class="cta-button"
-                  :disabled="!getRequestTime || getRequestTime < 0 || mustWaitForWithdrawal"
-                  @click="withdrawStake"
-                  >Withdraw now</Button
-                >
-                <el-tooltip
-                  content="How long until withdrawal is available"
-                  placement="top"
-                  effect="light"
-                >
-                  <img src="/images/icons/info-icon.svg" />
-                  <div slot="content" class="withdrawal-availability-message label-inline-14">
-                    How long until withdrawal is available
-                  </div>
-                </el-tooltip>
+              <template v-if="!canDirectlyWithdraw">
+                <div class="step-divider"></div>
+                <div class="step-count">Step 2</div>
+                <div class="extra-step-cta">
+                  <Button
+                    class="cta-button"
+                    :disabled="!getRequestTime || getRequestTime < 0 || mustWaitForWithdrawal"
+                    @click="withdrawStake"
+                    >Withdraw now</Button
+                  >
+                  <el-tooltip
+                    content="How long until withdrawal is available"
+                    placement="top"
+                    effect="light"
+                  >
+                    <img src="/images/icons/info-icon.svg" />
+                    <div slot="content" class="withdrawal-availability-message label-inline-14">
+                      How long until withdrawal is available
+                    </div>
+                  </el-tooltip>
 
-                <div class="estimate-time-counter label-inline-12">
-                  Estimated time:
-                  <span
-                    ><backward-timer
-                      @over="timerOver"
-                      ref="timer"
-                      :instantly-start="getRequestTime !== 0"
-                      :start-timestamp="null"
-                      :end-timestamp="getRequestTime"
-                  /></span>
+                  <div class="estimate-time-counter label-inline-12">
+                    Estimated time:
+                    <span
+                      ><backward-timer
+                        @over="timerOver"
+                        ref="timer"
+                        :instantly-start="getRequestTime !== 0"
+                        :start-timestamp="null"
+                        :end-timestamp="getRequestTime"
+                    /></span>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </tokenomics-card>
@@ -430,6 +432,7 @@ import BackwardTimer from '@/components/shared/BackwardTimer';
 import * as moment from 'moment';
 import { generateToast } from '@/utils/toastObjectGenerator';
 import { FeatureVersions } from '@/utils/lists';
+import { ethers } from 'ethers';
 
 export default {
   name: 'Tokenomics',
@@ -510,6 +513,12 @@ export default {
     mustWaitForWithdrawal() {
       this.timerActive;
       return Number(this.getRequestTime) > 0 && moment.unix(this.getRequestTime) >= moment();
+    },
+    canDirectlyWithdraw() {
+      return ethers.utils
+        .parseEther(this.getStakeData.activeStake?.toString() ?? '0')
+        .sub(ethers.utils.parseEther(this.withdrawalStake?.toString() ?? '0'))
+        .gte(ethers.utils.parseEther('2000000'));
     },
     //you need to wait for operatorFee change
     mustWaitForOperatorFee() {
@@ -641,7 +650,9 @@ export default {
       if (this.withdrawalStake) {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
-          text: 'Requesting stake withdrawal...',
+          text: this.canDirectlyWithdraw
+            ? 'Withdrawing stake...'
+            : 'Requesting stake withdrawal...',
           customClass: 'backdrop_border_radius',
         });
         try {
