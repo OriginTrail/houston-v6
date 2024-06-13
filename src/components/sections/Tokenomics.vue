@@ -279,7 +279,7 @@
                 input-suffix="TRAC"
                 input-prefix="+"
                 btnLabel="Re-stake fees"
-                :input-value="'0'"
+                :input-value="feeToReStake"
                 @update="(v) => (feeToReStake = v)"
                 :max="Number(getOperatorInfo.accumulatedFee)"
               >
