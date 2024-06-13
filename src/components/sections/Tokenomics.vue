@@ -516,8 +516,8 @@ export default {
     },
     canDirectlyWithdraw() {
       return ethers.utils
-        .parseEther(this.getStakeData.activeStake?.toString() ?? '0')
-        .sub(ethers.utils.parseEther(this.withdrawalStake?.toString() ?? '0'))
+        .parseEther(this.getStakeData.activeStake?.toString() || '0')
+        .sub(ethers.utils.parseEther(this.withdrawalStake?.toString() || '0'))
         .gte(ethers.utils.parseEther('2000000'));
     },
     //you need to wait for operatorFee change
