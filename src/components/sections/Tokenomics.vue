@@ -448,7 +448,7 @@ export default {
       timerActive: 0,
       operatorFeeTimer: 0,
       accumulatedFeeTimer: 0,
-      feeToReStake: null,
+      feeToReStake: '0',
       feeToWithdraw: null,
     };
   },
@@ -776,7 +776,7 @@ export default {
           );
           this.notify(null, 'Accumulated fees re-staked successfully!', 'success');
           await this.refreshAllTokenomicsData();
-          this.feeToReStake = null;
+          this.feeToReStake = '0';
         } catch (err) {
           console.log(err);
           this.notify(
