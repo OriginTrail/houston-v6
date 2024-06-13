@@ -7,5 +7,5 @@ export const getReadableTokenAmount = (amount, decimals = 18) => {
 
 export const getAmountWithDecimals = (amount, decimals = 18) => {
   if (!amount) return '';
-  return ethers.utils.parseUnits(amount, decimals);
+  return ethers.utils.parseUnits(amount?.toString(), decimals);
 };
