@@ -28,6 +28,7 @@ export default {
       currentFee: 0,
       accumulatedFee: 0,
       accumulatedFeeRequestTime: 0,
+      accumulatedFeeWithdrawalAmount: 0,
     },
   },
   mutations: {
@@ -81,13 +82,11 @@ export default {
           FeatureVersions.OPERATOR_FEES_FEATURES,
         )
           ? [
-              metamask.contractService
-                .getLastOperatorFeeChangeTimestamp(identity)
-                .then((data) => {
-                  store.commit('SAVE_METRICS', {
-                    'operatorInfo.requestTime': data,
-                  });
-                }),
+              metamask.contractService.getLastOperatorFeeChangeTimestamp(identity).then((data) => {
+                store.commit('SAVE_METRICS', {
+                  'operatorInfo.requestTime': data,
+                });
+              }),
               metamask.contractService
                 .getOperatorFee(identity, store.getters.connectedAddress)
                 .then((data) => {
@@ -99,7 +98,24 @@ export default {
                 .getAccumulatedOperatorFee(identity, store.getters.connectedAddress)
                 .then((data) => {
                   store.commit('SAVE_METRICS', {
-                    'operatorInfo.accumulatedFee': data,
+                    'operatorInfo.accumulatedFee': getReadableTokenAmount(data),
+                  });
+                }),
+              metamask.contractService
+                .getAccumulatedOperatorFeeWithdrawalTimestamp(
+                  identity,
+                  store.getters.connectedAddress,
+                )
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.accumulatedFeeRequestTime': data,
+                  });
+                }),
+              metamask.contractService
+                .getAccumulatedOperatorFeeWithdrawalAmount(identity, store.getters.connectedAddress)
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.accumulatedFeeWithdrawalAmount': getReadableTokenAmount(data),
                   });
                 }),
             ]

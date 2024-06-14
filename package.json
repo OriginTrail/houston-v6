@@ -12,7 +12,7 @@
   "dependencies": {
     "axios": "^1.6.2",
     "core-js": "^3.6.5",
-    "dkg-evm-module": "^4.2.7",
+    "dkg-evm-module": "^4.3.0",
     "element-ui": "^2.15.12",
     "ethers": "^5.7.2",
     "lodash": "^4.17.21",

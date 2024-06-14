@@ -205,47 +205,49 @@
               </div>
             </div>
             <div class="cta-section-with-steps">
-              <div class="step-count">Step 1</div>
+              <div class="step-count" v-if="!canDirectlyWithdraw">Step 1</div>
               <div>
                 <Button
                   :disabled="!withdrawalStake || Number(withdrawalStake) <= 0"
                   class="cta-button"
                   @click="startWithdrawal"
-                  >Start withdrawal</Button
+                  >{{ canDirectlyWithdraw ? 'Withdraw' : 'Start withdrawal' }}</Button
                 >
               </div>
-              <div class="step-divider"></div>
-              <div class="step-count">Step 2</div>
-              <div class="extra-step-cta">
-                <Button
-                  class="cta-button"
-                  :disabled="!getRequestTime || getRequestTime < 0 || mustWaitForWithdrawal"
-                  @click="withdrawStake"
-                  >Withdraw now</Button
-                >
-                <el-tooltip
-                  content="How long until withdrawal is available"
-                  placement="top"
-                  effect="light"
-                >
-                  <img src="/images/icons/info-icon.svg" />
-                  <div slot="content" class="withdrawal-availability-message label-inline-14">
-                    How long until withdrawal is available
-                  </div>
-                </el-tooltip>
+              <template v-if="!canDirectlyWithdraw">
+                <div class="step-divider"></div>
+                <div class="step-count">Step 2</div>
+                <div class="extra-step-cta">
+                  <Button
+                    class="cta-button"
+                    :disabled="!getRequestTime || getRequestTime < 0 || mustWaitForWithdrawal"
+                    @click="withdrawStake"
+                    >Withdraw now</Button
+                  >
+                  <el-tooltip
+                    content="How long until withdrawal is available"
+                    placement="top"
+                    effect="light"
+                  >
+                    <img src="/images/icons/info-icon.svg" />
+                    <div slot="content" class="withdrawal-availability-message label-inline-14">
+                      How long until withdrawal is available
+                    </div>
+                  </el-tooltip>
 
-                <div class="estimate-time-counter label-inline-12">
-                  Estimated time:
-                  <span
-                    ><backward-timer
-                      @over="timerOver"
-                      ref="timer"
-                      :instantly-start="getRequestTime !== 0"
-                      :start-timestamp="null"
-                      :end-timestamp="getRequestTime"
-                  /></span>
+                  <div class="estimate-time-counter label-inline-12">
+                    Estimated time:
+                    <span
+                      ><backward-timer
+                        @over="timerOver"
+                        ref="timer"
+                        :instantly-start="getRequestTime !== 0"
+                        :start-timestamp="null"
+                        :end-timestamp="getRequestTime"
+                    /></span>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </tokenomics-card>
@@ -269,10 +271,32 @@
               fees.
             </div>
             <div class="form ask-form">
+              <InputPairWithBtn
+                ref="restakeFeeInput"
+                input-type="number"
+                :button="false"
+                color="red"
+                input-suffix="TRAC"
+                input-prefix="+"
+                btnLabel="Re-stake fees"
+                :input-value="feeToReStake"
+                @update="(v) => (feeToReStake = v)"
+                :max="Number(getOperatorInfo.accumulatedFee)"
+              >
+                <img
+                  slot="inputPrefix"
+                  class="input-prefix-plus"
+                  src="/images/icons/plus-grey-icon.svg"
+                />
+              </InputPairWithBtn>
               <div class="sub-label label-inline-12">
                 Accumulated fees:
                 <span class="trac-amount"
-                  >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
+                  >{{ hasFeesToRestake ? '~' : '' }}
+                  {{
+                    formatNumberWithSpaces(getOperatorInfo.accumulatedFee, { keepPrecision: true })
+                  }}
+                  TRAC</span
                 >
               </div>
               <div class="sub-label label-inline-12">
@@ -284,12 +308,10 @@
             </div>
             <div class="cta-section">
               <Button
-                :disabled="
-                  !getOperatorInfo.accumulatedFee || Number(getOperatorInfo.accumulatedFee) <= 0
-                "
+                :disabled="!hasFeesToRestake"
                 class="cta-button"
                 @click="restakeAccumulatedFee"
-                >Restake all fees</Button
+                >Restake fees</Button
               >
             </div>
           </div>
@@ -302,10 +324,41 @@
               counter will appear to instruct you on when to execute the second transaction.
             </div>
             <div class="form ask-form">
+              <InputPairWithBtn
+                ref="withdrawFeeInput"
+                input-type="number"
+                :button="false"
+                color="red"
+                input-suffix="TRAC"
+                input-prefix="+"
+                btnLabel="withdrawFee fees"
+                :input-value="'0'"
+                @update="(v) => (feeToWithdraw = v)"
+                :max="Number(getOperatorInfo.accumulatedFee)"
+              >
+                <img
+                  slot="inputPrefix"
+                  class="input-prefix-plus"
+                  src="/images/icons/minus-grey-icon.svg"
+                />
+              </InputPairWithBtn>
               <div class="sub-label label-inline-12">
                 Accumulated fees:
                 <span class="trac-amount"
-                  >{{ formatNumberWithSpaces(getOperatorInfo.accumulatedFee) }} TRAC</span
+                  >{{ hasFeesToRestake ? '~' : '' }}
+                  {{
+                    formatNumberWithSpaces(getOperatorInfo.accumulatedFee, { keepPrecision: true })
+                  }}
+                  TRAC</span
+                >
+              </div>
+              <div v-if="getAccumulatedFeeWithdrawalChangeTime" class="sub-label label-inline-12">
+                Fees pending withdrawal:
+                <span class="trac-amount"
+                  >{{
+                    formatNumberWithSpaces(getOperatorInfo.accumulatedFeeWithdrawalAmount)
+                  }}
+                  TRAC</span
                 >
               </div>
             </div>
@@ -313,12 +366,10 @@
               <div class="step-count">Step 1</div>
               <div>
                 <Button
-                  :disabled="
-                    !getOperatorInfo.accumulatedFee || Number(getOperatorInfo.accumulatedFee) <= 0
-                  "
+                  :disabled="!hasFeesToRestake || Number(feeToWithdraw) <= 0"
                   class="cta-button"
                   @click="startAccumulatedFeesWithdrawal"
-                  >Start withdrawal</Button
+                  >Start fees withdrawal</Button
                 >
               </div>
               <div class="step-divider"></div>
@@ -381,6 +432,7 @@ import BackwardTimer from '@/components/shared/BackwardTimer';
 import * as moment from 'moment';
 import { generateToast } from '@/utils/toastObjectGenerator';
 import { FeatureVersions } from '@/utils/lists';
+import { ethers } from 'ethers';
 
 export default {
   name: 'Tokenomics',
@@ -388,7 +440,7 @@ export default {
   data() {
     return {
       currentAsk: null,
-      supportFeesManagement: false,
+      supportFeesManagement: true,
       newAsk: null,
       newStake: null,
       withdrawalStake: null,
@@ -396,6 +448,8 @@ export default {
       timerActive: 0,
       operatorFeeTimer: 0,
       accumulatedFeeTimer: 0,
+      feeToReStake: '0',
+      feeToWithdraw: null,
     };
   },
   computed: {
@@ -450,12 +504,21 @@ export default {
       return Number(this.getOperatorInfo?.accumulatedFeeRequestTime ?? '0');
     },
     getTotalStakeValueAfterRestake() {
-      return Number(this.getTotalStakeValue) + Number(this.getOperatorInfo.accumulatedFee ?? '0');
+      return Number(this.getTotalStakeValue) + Number(this.feeToReStake ?? '0');
+    },
+    hasFeesToRestake() {
+      return this.getOperatorInfo.accumulatedFee && Number(this.getOperatorInfo.accumulatedFee) > 0;
     },
     //you need to wait
     mustWaitForWithdrawal() {
       this.timerActive;
       return Number(this.getRequestTime) > 0 && moment.unix(this.getRequestTime) >= moment();
+    },
+    canDirectlyWithdraw() {
+      return ethers.utils
+        .parseEther(this.getStakeData.activeStake?.toString() || '0')
+        .sub(ethers.utils.parseEther(this.withdrawalStake?.toString() || '0'))
+        .gte(ethers.utils.parseEther('2000000'));
     },
     //you need to wait for operatorFee change
     mustWaitForOperatorFee() {
@@ -485,6 +548,7 @@ export default {
     await this.refreshAllTokenomicsData();
     this.refreshWithdrawalTimer();
     this.refreshOperatorFeeTimer();
+    this.refreshAccumulatedFeesTimer();
   },
   methods: {
     formatNumberWithSpaces,
@@ -586,7 +650,9 @@ export default {
       if (this.withdrawalStake) {
         const loader = this.$loading({
           target: '.withdraw-stake-card',
-          text: 'Requesting stake withdrawal...',
+          text: this.canDirectlyWithdraw
+            ? 'Withdrawing stake...'
+            : 'Requesting stake withdrawal...',
           customClass: 'backdrop_border_radius',
         });
         try {
@@ -694,25 +760,30 @@ export default {
       }
     },
     async restakeAccumulatedFee() {
-      if (this.newStake) {
+      if (Number(this.getOperatorInfo.accumulatedFee ?? 0) >= 0) {
         const loader = this.$loading({
           target: '.restake-card',
           text: 'Restaking fees...',
           customClass: 'backdrop_border_radius',
         });
         try {
-          await metamask.contractService.stakeAccumulatedOperatorFee(this.getIdentityId, (msg) => {
-            loader.text = msg;
-          });
-          this.notify(null, 'Stake added successfully!', 'success');
+          await metamask.contractService.stakeAccumulatedOperatorFee(
+            this.getIdentityId,
+            this.feeToReStake,
+            (msg) => {
+              loader.text = msg;
+            },
+          );
+          this.notify(null, 'Accumulated fees re-staked successfully!', 'success');
           await this.refreshAllTokenomicsData();
+          this.feeToReStake = '0';
         } catch (err) {
           console.log(err);
           this.notify(
             null,
             err.code === 'ACTION_REJECTED'
               ? 'METAMASK_TRANSACTION_REFUSED'
-              : 'An error occurred when adding stake',
+              : 'An error occurred when re-staking accumulated fees',
             'error',
           );
         } finally {
@@ -721,7 +792,7 @@ export default {
       }
     },
     async startAccumulatedFeesWithdrawal() {
-      if (this.withdrawalStake) {
+      if (this.getOperatorInfo.accumulatedFee) {
         const loader = this.$loading({
           target: '.withdraw-accumulated-fees-card',
           text: 'Requesting stake withdrawal...',
@@ -730,10 +801,12 @@ export default {
         try {
           await metamask.contractService.requestAccumulatedOperatorFeeWithdrawal(
             this.getIdentityId,
+            this.feeToWithdraw,
           );
           this.notify(null, 'Accumulated fees withdrawal requested successfully!', 'success');
           await this.refreshAllTokenomicsData();
           this.refreshAccumulatedFeesTimer();
+          this.feeToWithdraw = 0;
         } catch (err) {
           console.log(err);
           this.notify(
@@ -749,7 +822,7 @@ export default {
       }
     },
     async withdrawAccumulatedFeesStake() {
-      if (!this.mustWaitForWithdrawal) {
+      if (!this.mustWaitForAccumulatedFee) {
         const loader = this.$loading({
           target: '.withdraw-accumulated-fees-card',
           text: 'Withdrawing stake...',

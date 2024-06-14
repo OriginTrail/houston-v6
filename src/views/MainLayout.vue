@@ -44,17 +44,8 @@ export default {
       return this.$store.getters.isIdentityResolved;
     },
   },
-  async created() {
-    try {
-      this.list = await this.fetchData();
-    } catch (e) {
-      console.log('ERROR HANDLING');
-    }
-  },
+  async created() {},
   methods: {
-    async fetchData() {
-      return this.$http.get([1, 2, 3, 4, 5], true);
-    },
     connectToMetamask() {
       const isAlreadyConnected = this.$store.getters.isLoggedIn;
       if (isAlreadyConnected) {
