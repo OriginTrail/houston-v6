@@ -211,10 +211,7 @@ class ContractService {
 
     const totalSupply = await shareContract.totalSupply();
     const totalStakes = await this.getTotalStake(identityId);
-    const sharesToBurn = ethers.utils
-      .parseUnits(stakeToWithdraw, 18)
-      .mul(totalSupply)
-      .div(totalStakes);
+    const sharesToBurn = getAmountWithDecimals(stakeToWithdraw).mul(totalSupply).div(totalStakes);
 
     await (
       await shareContract.increaseAllowance(stakingContractAddress, sharesToBurn, gasPrices.low)
