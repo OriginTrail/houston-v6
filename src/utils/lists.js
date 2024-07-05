@@ -1,7 +1,14 @@
 import { ethers } from 'ethers';
+import { NETWORK_IDS } from '@/utils/constants';
 export const FeatureVersions = {
   ASK_AND_STAKE_FEATURES: 'v1',
   OPERATOR_FEES_FEATURES: 'v2',
+};
+
+const BLOCKCHAIN_ICONS = {
+  GNOSIS: '/images/icons/blockchains/gnosis.svg',
+  NEURO: '/images/icons/blockchains/neuroweb.svg',
+  BASE: '/images/icons/base-icon.png',
 };
 
 const otpGasPrices = {
@@ -60,6 +67,21 @@ export const networkList = [
           FeatureVersions.OPERATOR_FEES_FEATURES,
         ],
       },
+      {
+        label: 'Base Mainnet',
+        hubContract: '0xaBfcf2ad1718828E7D3ec20435b0d0b5EAfbDf2c',
+        chainId: NETWORK_IDS.BASE_MAINNET,
+        rpc: 'https://base.gateway.tenderly.co',
+        bcNetworkName: 'Base Mainnet',
+        coinTicker: 'ETH',
+        coinIcon: BLOCKCHAIN_ICONS.BASE,
+        disabled: false,
+        gasInfo: gnosisGasPrices,
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
+      },
     ],
   },
   {
@@ -89,6 +111,20 @@ export const networkList = [
         rpc: 'https://rpc.chiado.gnosis.gateway.fm',
         bcNetworkName: 'Gnosis Chiado testnet',
         coinTicker: 'xDai',
+        gasInfo: gnosisGasPrices,
+        featureList: [
+          FeatureVersions.ASK_AND_STAKE_FEATURES,
+          FeatureVersions.OPERATOR_FEES_FEATURES,
+        ],
+      },
+      {
+        label: 'Base Sepolia Testnet',
+        hubContract: '0x144eDa5cbf8926327cb2cceef168A121F0E4A299',
+        chainId: NETWORK_IDS.BASE_TESTNET,
+        rpc: 'https://base-sepolia-rpc.publicnode.com',
+        bcNetworkName: 'Base Sepolia Testnet',
+        coinTicker: 'ETH',
+        coinIcon: BLOCKCHAIN_ICONS.BASE,
         gasInfo: gnosisGasPrices,
         featureList: [
           FeatureVersions.ASK_AND_STAKE_FEATURES,

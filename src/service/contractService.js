@@ -97,15 +97,14 @@ class ContractService {
   }
 
   async updateAsk(identityId, newAsk) {
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const address = await this.getContractAddress('Profile');
     const ProfileContract = new ethers.Contract(address, ProfileABI, this.ethersSigner);
     const sanitizedNewAsk = getAmountWithDecimals(newAsk);
-    return await (
-      await ProfileContract.setAsk(identityId, sanitizedNewAsk, {
-        gasPrice: 8,
-        gasLimit: 120000,
-      })
-    ).wait();
+    return await (await ProfileContract.setAsk(identityId, sanitizedNewAsk, gasPrices.high)).wait();
   }
 
   async getStakeAmountPendingWithdrawal(identityId, adminWallet) {
@@ -151,7 +150,10 @@ class ContractService {
   }
 
   async addStake(identityId, stakeAmountToAdd, loadingMessageCallback = null) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const address = await this.getContractAddress('Token');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const tokenContract = new ethers.Contract(address, TokenABI, this.ethersSigner);
@@ -192,7 +194,10 @@ class ContractService {
   }
 
   async requestWithdrawal(identityId, stakeToWithdraw) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const address = await this.getContractAddress('ProfileStorage');
     const stakingContractAddress = await this.getContractAddress('Staking');
     const ProfileStorageContract = new ethers.Contract(
@@ -222,7 +227,10 @@ class ContractService {
   }
 
   async withdrawStake(identityId) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const stakingContractAddress = await this.getContractAddress('Staking');
     const stakingContract = new ethers.Contract(
       stakingContractAddress,
@@ -234,7 +242,10 @@ class ContractService {
   }
 
   async addAdminKey(identityId, newAdminWallet, purpose, type) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const identityContractAddress = await this.getContractAddress('Identity');
     const identityContract = new ethers.Contract(
       identityContractAddress,
@@ -253,7 +264,10 @@ class ContractService {
   }
 
   async removeKey(identityId, newAdminWallet) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const identityContractAddress = await this.getContractAddress('Identity');
     const identityContract = new ethers.Contract(
       identityContractAddress,
@@ -286,7 +300,10 @@ class ContractService {
   }
 
   async changeOperatorFee(identityId, newOperatorFee) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const stakingContractAddress = await this.getContractAddress('Staking');
     const stakingContract = new ethers.Contract(
       stakingContractAddress,
@@ -329,7 +346,10 @@ class ContractService {
   }
 
   async stakeAccumulatedOperatorFee(identityId, amount) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const ProfileContractAddress = await this.getContractAddress('Profile');
     const ProfileContract = new ethers.Contract(
       ProfileContractAddress,
@@ -346,7 +366,10 @@ class ContractService {
   }
 
   async requestAccumulatedOperatorFeeWithdrawal(identityId, amount) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const ProfileContractAddress = await this.getContractAddress('Profile');
     const ProfileContract = new ethers.Contract(
       ProfileContractAddress,
@@ -365,7 +388,10 @@ class ContractService {
   }
 
   async withdrawAccumulatedOperatorFee(identityId) {
-    const gasPrices = await getOracleGnosisGasPrice(store.getters.selectedNetwork);
+    const gasPrices = await getOracleGnosisGasPrice(
+      store.getters.selectedNetwork,
+      this.ethersSigner,
+    );
     const ProfileContractAddress = await this.getContractAddress('Profile');
     const ProfileContract = new ethers.Contract(
       ProfileContractAddress,
