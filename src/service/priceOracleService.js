@@ -8,7 +8,7 @@ import {
 import { gnosisOracleService } from '@/service/http';
 import { ethers } from 'ethers';
 
-export const getOracleGnosisGasPrice = async (network) => {
+export const getOracleGnosisGasPrice = async (network, ethersSigner) => {
   switch (network.chainId) {
     case NETWORK_IDS.GNOSIS_TESTNET: {
       return await gnosisOracleService
@@ -56,6 +56,45 @@ export const getOracleGnosisGasPrice = async (network) => {
                 : network.gasInfo.high.gasPrice,
             },
           };
+        });
+    }
+    case NETWORK_IDS.BASE_TESTNET: {
+      return ethersSigner.provider
+        .getGasPrice()
+        .then((gasPrice) => {
+          console.log('gasPrice', gasPrice);
+          return {
+            low: {
+              ...network.gasInfo.low,
+              gasPrice: gasPrice,
+            },
+            high: {
+              ...network.gasInfo.high,
+              gasPrice: gasPrice,
+            },
+          };
+        })
+        .catch(() => {
+          return network.gasInfo;
+        });
+    }
+    case NETWORK_IDS.BASE_MAINNET: {
+      return ethersSigner.provider
+        .getGasPrice()
+        .then((gasPrice) => {
+          return {
+            low: {
+              ...network.gasInfo.low,
+              gasPrice: gasPrice,
+            },
+            high: {
+              ...network.gasInfo.high,
+              gasPrice: gasPrice,
+            },
+          };
+        })
+        .catch(() => {
+          return network.gasInfo;
         });
     }
     default: {
