@@ -26,6 +26,7 @@ export default {
     operatorInfo: {
       requestTime: 0,
       currentFee: 0,
+      latestFee: 0,
       accumulatedFee: 0,
       accumulatedFeeRequestTime: 0,
       accumulatedFeeWithdrawalAmount: 0,
@@ -92,6 +93,13 @@ export default {
                 .then((data) => {
                   store.commit('SAVE_METRICS', {
                     'operatorInfo.currentFee': data,
+                  });
+                }),
+              metamask.contractService
+                .getLatestOperatorFeePercentage(identity, store.getters.connectedAddress)
+                .then((data) => {
+                  store.commit('SAVE_METRICS', {
+                    'operatorInfo.latestFee': data,
                   });
                 }),
               metamask.contractService

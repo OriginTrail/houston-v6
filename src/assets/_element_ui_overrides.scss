@@ -1,0 +1,5 @@
+.el-tooltip__popper.is-light {
+  &:not(.el-dropdown__popper) {
+    @extend .label-inline-14;
+  }
+}

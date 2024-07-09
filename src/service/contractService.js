@@ -289,6 +289,16 @@ class ContractService {
     return await NodeOperatorFeesStorageContract.getActiveOperatorFeePercentage(identityId);
   }
 
+  async getLatestOperatorFeePercentage(identityId) {
+    const address = await this.getContractAddress('NodeOperatorFeesStorage');
+    const NodeOperatorFeesStorageContract = new ethers.Contract(
+      address,
+      NodeOperatorFeesStorageABI,
+      this.ethersSigner,
+    );
+    return await NodeOperatorFeesStorageContract.getLatestOperatorFeePercentage(identityId);
+  }
+
   async getLastOperatorFeeChangeTimestamp(identityId) {
     const address = await this.getContractAddress('NodeOperatorFeesStorage');
     const NodeOperatorFeesStorageContract = new ethers.Contract(
