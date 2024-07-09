@@ -1,0 +1,15 @@
+.el-tooltip__popper.is-light {
+  &:not(.el-dropdown__popper) {
+    border: 1px solid #0c0c0c;
+
+    .el-popper__arrow::before {
+      border: 1px solid #0c0c0c;
+    }
+    @extend .label-inline-14;
+  }
+
+  &.el-dropdown__popper {
+    border: none;
+  }
+
+}

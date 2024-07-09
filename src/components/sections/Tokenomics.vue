@@ -63,6 +63,13 @@
               Current operator fee :
               <span class="trac-amount">{{ formatNumberWithSpaces(getCurrentOperatorFee) }}%</span>
             </div>
+            <div
+              class="sub-label label-inline-12"
+              v-if="getChangingOperatorFee !== getCurrentOperatorFee"
+            >
+              Changing operator fee :
+              <span class="trac-amount">{{ formatNumberWithSpaces(getChangingOperatorFee) }}%</span>
+            </div>
             <div class="sub-label italic label-inline-12">
               * Note: The 28 day delay is not applied only when you set your node operator fee for
               the first time
@@ -162,12 +169,19 @@
               </div>
             </div>
             <div class="cta-section">
-              <Button
-                :disabled="!newStake || Number(newStake) <= 0"
-                class="cta-button"
-                @click="addStake"
-                >Add stake</Button
+              <el-tooltip
+                content="Node has already reach the limit of 2M stake"
+                placement="top"
+                effect="light"
+                :disabled="canAddStake"
               >
+                <Button
+                  :disabled="!newStake || Number(newStake) <= 0 || !canAddStake"
+                  class="cta-button"
+                  @click="addStake"
+                  >Add stake</Button
+                >
+              </el-tooltip>
             </div>
           </div>
         </tokenomics-card>
@@ -433,6 +447,7 @@ import * as moment from 'moment';
 import { generateToast } from '@/utils/toastObjectGenerator';
 import { FeatureVersions } from '@/utils/lists';
 import { ethers } from 'ethers';
+import { MAX_NODE_STAKE_AMOUNT } from '@/utils/constants';
 
 export default {
   name: 'Tokenomics',
@@ -457,6 +472,10 @@ export default {
       return this.$store.getters.selectedNetwork.featureList.includes(
         FeatureVersions.OPERATOR_FEES_FEATURES,
       );
+    },
+    canAddStake() {
+      console.log(this.getStakeData?.activeStake);
+      return this.getStakeData?.activeStake < MAX_NODE_STAKE_AMOUNT;
     },
     getIdentityId() {
       return this.$store.getters.isIdentityResolved;
@@ -493,6 +512,9 @@ export default {
     },
     getCurrentOperatorFee() {
       return this.getOperatorInfo.currentFee;
+    },
+    getChangingOperatorFee() {
+      return this.getOperatorInfo.latestFee;
     },
     getRequestTime() {
       return Number(this.getWithdrawalInfo?.requestTime ?? '0');

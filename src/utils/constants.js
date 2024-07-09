@@ -14,3 +14,5 @@ export const NETWORK_IDS = {
   BASE_MAINNET: `0x${Number('8453').toString(16)}`,
   BASE_TESTNET: `0x${Number('84532').toString(16)}`,
 };
+
+export const MAX_NODE_STAKE_AMOUNT = 2000000;
