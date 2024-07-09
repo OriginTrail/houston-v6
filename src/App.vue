@@ -25,6 +25,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Roboto:wght@500&display=swap');
 @import './assets/variable';
 @import './assets/general';
+@import './assets/element_ui_overrides';
 
 body {
   font-family: 'Roboto', sans-serif;

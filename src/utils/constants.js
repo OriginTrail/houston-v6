@@ -11,4 +11,8 @@ export const NETWORK_IDS = {
   GNOSIS_TESTNET: `0x${Number('10200').toString(16)}`,
   OTP_TESTNET: `0x${Number('20430').toString(16)}`,
   OTP_MAINNET: `0x${Number('2043').toString(16)}`,
+  BASE_MAINNET: `0x${Number('8453').toString(16)}`,
+  BASE_TESTNET: `0x${Number('84532').toString(16)}`,
 };
+
+export const MAX_NODE_STAKE_AMOUNT = 2000000;
