@@ -474,7 +474,6 @@ export default {
       );
     },
     canAddStake() {
-      console.log(this.getStakeData?.activeStake);
       return this.getStakeData?.activeStake < MAX_NODE_STAKE_AMOUNT;
     },
     getIdentityId() {
