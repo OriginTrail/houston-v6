@@ -170,7 +170,7 @@
             </div>
             <div class="cta-section">
               <el-tooltip
-                content="Node has already reach the limit of 2M stake"
+                content="Node has reached the limit of 2M stake"
                 placement="top"
                 effect="light"
                 :disabled="canAddStake"
