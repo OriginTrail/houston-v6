@@ -20,7 +20,9 @@ class metamaskService {
             (provider) => provider.isMetaMask,
           );
           this.ethersProvider = new ethers.providers.Web3Provider(metamaskProvider);
-          window.ethereum.setSelectedProvider(metamaskProvider);
+          if (window.ethereum && typeof window.ethereum?.setSelectedProvider === 'function') {
+            window.ethereum.setSelectedProvider(metamaskProvider);
+          }
         } else {
           this.ethersProvider = new ethers.providers.Web3Provider(window.ethereum, 'any');
         }
